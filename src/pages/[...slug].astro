@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getDecoratedNavigation, extractAllPaths, hrefToSlug, type DecoratedPage } from '../lib/mintlify';
+
+export async function getStaticPaths() {
+  const nav = await getDecoratedNavigation();
+  console.log('Decorated Navigation:', JSON.stringify(nav, null, 2));
+  const allPages = extractAllPaths(nav);
+
+  return allPages.map((page) => {
+    const slug = hrefToSlug(page.href);
+    return {
+      params: { slug: slug.length > 0 ? slug.join('/') : undefined },
+      props: { page, nav },
+    };
+  });
+}
+
+interface Props {
+  page: DecoratedPage;
+  nav: Awaited<ReturnType<typeof getDecoratedNavigation>>;
+}
+
+const { page, nav } = Astro.props;
+const allPages = extractAllPaths(nav);
+---
+
+<Layout title={page.title} description={page.description}>
+  <div class="container">
+    <aside class="sidebar">
+      <nav>
+        <h3>Navigation</h3>
+        <ul>
+          {allPages.map((p) => (
+            <li class={p.href === page.href ? 'active' : ''}>
+              <a href={p.href}>
+                {p.sidebarTitle || p.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <article>
+        <h1>{page.title}</h1>
+        {page.description && <p class="description">{page.description}</p>}
+
+        <div class="meta">
+          <p><strong>Path:</strong> {page.href}</p>
+          {page.lastUpdatedDate && <p><strong>Last updated:</strong> {page.lastUpdatedDate}</p>}
+          {page.deprecated && <p class="deprecated">This page is deprecated</p>}
+        </div>
+
+        <div class="placeholder">
+          <p>Page content would be fetched from the content API endpoint here.</p>
+          <p>This POC demonstrates that all {allPages.length} pages were generated from the decorated navigation.</p>
+        </div>
+      </article>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 250px;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+  }
+
+  .sidebar h3 {
+    margin-top: 0;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sidebar li {
+    margin: 0.25rem 0;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+
+  .sidebar a:hover {
+    background: #e0e0e0;
+  }
+
+  .sidebar li.active a {
+    background: #0070f3;
+    color: white;
+  }
+
+  .content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 800px;
+  }
+
+  h1 {
+    margin-top: 0;
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 1.125rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .meta {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .meta p {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+  }
+
+  .deprecated {
+    color: #d32f2f;
+    font-weight: bold;
+  }
+
+  .placeholder {
+    padding: 2rem;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    text-align: center;
+  }
+</style>

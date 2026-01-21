@@ -1,11 +1,113 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { getDecoratedNavigation, extractAllPaths } from '../lib/mintlify';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const nav = await getDecoratedNavigation();
+const allPages = extractAllPaths(nav);
+const firstPage = allPages[0];
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Documentation Home">
+  <div class="home">
+    <h1>Documentation</h1>
+    <p>Welcome to the documentation. This site was generated using Mintlify's decorated navigation API.</p>
+	
+    {firstPage && (
+      <a href={firstPage.href} class="cta">
+        Get Started &rarr;
+      </a>
+    )}
+
+    <div class="stats">
+      <p><strong>{allPages.length}</strong> pages generated from the navigation API</p>
+    </div>
+
+    <div class="pages-list">
+      <h2>All Pages</h2>
+      <ul>
+        {allPages.map((page) => (
+          <li>
+            <a href={page.href}>
+              <strong>{page.title}</strong>
+              {page.description && <span class="desc">{page.description}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
 </Layout>
+
+<style>
+  .home {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .cta {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #0070f3;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    margin: 1rem 0;
+  }
+
+  .cta:hover {
+    background: #0051a8;
+  }
+
+  .stats {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #f0f9ff;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .pages-list {
+    margin-top: 2rem;
+  }
+
+  .pages-list h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .pages-list ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .pages-list li {
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+  }
+
+  .pages-list a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .pages-list a:hover {
+    background: #f9f9f9;
+  }
+
+  .pages-list .desc {
+    display: block;
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+</style>
