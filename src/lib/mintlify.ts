@@ -41,10 +41,12 @@ interface NavigationResponse {
 
 const API_KEY = import.meta.env.MINTLIFY_API_KEY;
 const PROJECT_ID = import.meta.env.MINTLIFY_PROJECT_ID;
-const BASE_URL = import.meta.env.MINTLIFY_BASE_URL || "http://localhost:5000/";
+const BASE_URL = import.meta.env.PROD
+  ? "https://api.mintlify.com/"
+  : "http://localhost:3000/api/external/";
 
 export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfig> {
-  const url = `${BASE_URL}api/external/v1/headless/${PROJECT_ID}/navigation`;
+  const url = `${BASE_URL}v1/headless/${PROJECT_ID}/navigation`;
 
   const response = await fetch(url, {
     headers: {
