@@ -1,32 +1,29 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getDecoratedNavigation, getMdxPage, extractAllPaths, hrefToSlug, type DecoratedPage, type MdxPageResponse } from '../lib/mintlify';
-import { marked } from 'marked';
+import { getDecoratedNavigation, getRenderedMdxPage, extractAllPaths, hrefToSlug, type DecoratedPage, type RenderedMdxPage } from '../lib/mintlify';
 
 export async function getStaticPaths() {
   const nav = await getDecoratedNavigation();
-  console.log('Decorated Navigation:', JSON.stringify(nav, null, 2));
-  const allPages = extractAllPaths(nav);
+  // This is a testing limit just to reduce the number of requests to the Mintlify API.
+  const allPages = extractAllPaths(nav).slice(0, 25);
 
   return await Promise.all(allPages.map(async (page) => {
     const slug = hrefToSlug(page.href);
-    const mdxContent = await getMdxPage(page.href);
+    const renderedMdx = await getRenderedMdxPage(page.href);
     return {
       params: { slug: slug.length > 0 ? slug.join('/') : undefined },
-      props: { page, nav, mdxContent },
+      props: { page, allPages, renderedMdx },
     };
   }));
 }
 
 interface Props {
   page: DecoratedPage;
-  nav: Awaited<ReturnType<typeof getDecoratedNavigation>>;
-  mdxContent: MdxPageResponse;
+  allPages: DecoratedPage[];
+  renderedMdx: RenderedMdxPage;
 }
 
-const { page, nav, mdxContent } = Astro.props;
-const allPages = extractAllPaths(nav);
-const htmlContent = await marked(mdxContent.content);
+const { page, allPages, renderedMdx } = Astro.props;
 ---
 
 <Layout title={page.title} description={page.description}>
@@ -57,7 +54,7 @@ const htmlContent = await marked(mdxContent.content);
           {page.deprecated && <p class="deprecated">This page is deprecated</p>}
         </div>
 
-        <div class="mdx-content" set:html={htmlContent}></div>
+        <div class="mdx-content" set:html={renderedMdx.html} />
       </article>
     </main>
   </div>
