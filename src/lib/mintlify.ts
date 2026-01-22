@@ -62,6 +62,39 @@ export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfi
   return data.docsDecoratedNav;
 }
 
+interface MdxPageResponse {
+  content: string;
+  metadata?: {
+    title?: string;
+    description?: string;
+    icon?: string;
+    href?: string;
+  };
+}
+
+export async function getMdxPage(href: string): Promise<MdxPageResponse> {
+  const strippedHref = href.startsWith("/") ? href.slice(1) : href;
+  const url = `${BASE_URL}api/external/v1/headless/${PROJECT_ID}/content/${encodeURIComponent(strippedHref)}`;
+  console.log("Fetching MDX page from URL:", url);
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${API_KEY}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch MDX page: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const data: MdxPageResponse = await response.json();
+  console.log("Fetched MDX page:", data);
+
+  return data;
+}
+
 export function extractAllPaths(
   nav: DecoratedNavigationConfig,
 ): DecoratedPage[] {
@@ -133,4 +166,9 @@ export function hrefToSlug(href: string): string[] {
   return cleaned.split("/");
 }
 
-export type { DecoratedPage, DecoratedGroup, DecoratedNavigationConfig };
+export type {
+  DecoratedPage,
+  DecoratedGroup,
+  DecoratedNavigationConfig,
+  MdxPageResponse,
+};
