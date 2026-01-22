@@ -4,8 +4,8 @@ import { getDecoratedNavigation, getRenderedMdxPage, extractAllPaths, hrefToSlug
 
 export async function getStaticPaths() {
   const nav = await getDecoratedNavigation();
-  // This is a testing limit just to reduce the number of requests to the Mintlify API.
-  const allPages = extractAllPaths(nav).slice(0, 25);
+  const MAX_PAGES_FOR_TESTING = 50; // This is a testing limit just to reduce the number of requests to the Mintlify API.
+  const allPages = extractAllPaths(nav).slice(0, MAX_PAGES_FOR_TESTING);
 
   return await Promise.all(allPages.map(async (page) => {
     const slug = hrefToSlug(page.href);
