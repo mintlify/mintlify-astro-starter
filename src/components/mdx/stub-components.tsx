@@ -44,6 +44,7 @@ export const Expandable = stub("Expandable");
 export const Latex = stub("Latex");
 export const Columns = stub("Columns");
 export const Column = stub("Column");
+export const Tooltip = stub("Tooltip");
 
 export const stubComponents = {
   Card,
@@ -70,4 +71,5 @@ export const stubComponents = {
   Latex,
   Columns,
   Column,
+  Tooltip,
 };
