@@ -1,28 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getDecoratedNavigation, extractAllPaths, hrefToSlug, type DecoratedPage } from '../lib/mintlify';
+import { getDecoratedNavigation, getRenderedMdxPage, extractAllPaths, hrefToSlug, type DecoratedPage, type RenderedMdxPage } from '../lib/mintlify';
 
 export async function getStaticPaths() {
   const nav = await getDecoratedNavigation();
-  console.log('Decorated Navigation:', JSON.stringify(nav, null, 2));
-  const allPages = extractAllPaths(nav);
+  const MAX_PAGES_FOR_TESTING = 50; // This is a testing limit just to reduce the number of requests to the Mintlify API.
+  const allPages = extractAllPaths(nav).slice(0, MAX_PAGES_FOR_TESTING);
 
-  return allPages.map((page) => {
+  return await Promise.all(allPages.map(async (page) => {
     const slug = hrefToSlug(page.href);
+    const renderedMdx = await getRenderedMdxPage(page.href);
+    
+    const isIndexPage = slug.length === 1 && slug[0] === 'index';
+    const slugParam = (isIndexPage || slug.length === 0) ? undefined : slug.join('/');
+    
     return {
-      params: { slug: slug.length > 0 ? slug.join('/') : undefined },
-      props: { page, nav },
+      params: { slug: slugParam },
+      props: { page, allPages, renderedMdx },
     };
-  });
+  }));
 }
 
 interface Props {
   page: DecoratedPage;
-  nav: Awaited<ReturnType<typeof getDecoratedNavigation>>;
+  allPages: DecoratedPage[];
+  renderedMdx: RenderedMdxPage;
 }
 
-const { page, nav } = Astro.props;
-const allPages = extractAllPaths(nav);
+const { page, allPages, renderedMdx } = Astro.props;
 ---
 
 <Layout title={page.title} description={page.description}>
@@ -53,10 +58,7 @@ const allPages = extractAllPaths(nav);
           {page.deprecated && <p class="deprecated">This page is deprecated</p>}
         </div>
 
-        <div class="placeholder">
-          <p>Page content would be fetched from the content API endpoint here.</p>
-          <p>This POC demonstrates that all {allPages.length} pages were generated from the decorated navigation.</p>
-        </div>
+        <div class="mdx-content" set:html={renderedMdx.html} />
       </article>
     </main>
   </div>
@@ -76,20 +78,10 @@ const allPages = extractAllPaths(nav);
     overflow-y: auto;
   }
 
-  .sidebar h3 {
-    margin-top: 0;
-    font-size: 1rem;
-    color: #333;
-  }
-
   .sidebar ul {
     list-style: none;
     padding: 0;
     margin: 0;
-  }
-
-  .sidebar li {
-    margin: 0.25rem 0;
   }
 
   .sidebar a {
@@ -98,11 +90,6 @@ const allPages = extractAllPaths(nav);
     text-decoration: none;
     color: #333;
     border-radius: 4px;
-    font-size: 0.875rem;
-  }
-
-  .sidebar a:hover {
-    background: #e0e0e0;
   }
 
   .sidebar li.active a {
@@ -114,41 +101,5 @@ const allPages = extractAllPaths(nav);
     flex: 1;
     padding: 2rem;
     max-width: 800px;
-  }
-
-  h1 {
-    margin-top: 0;
-    font-size: 2rem;
-  }
-
-  .description {
-    font-size: 1.125rem;
-    color: #666;
-    margin-bottom: 2rem;
-  }
-
-  .meta {
-    background: #f9f9f9;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-  }
-
-  .meta p {
-    margin: 0.5rem 0;
-    font-size: 0.875rem;
-  }
-
-  .deprecated {
-    color: #d32f2f;
-    font-weight: bold;
-  }
-
-  .placeholder {
-    padding: 2rem;
-    background: #fff3cd;
-    border: 1px solid #ffc107;
-    border-radius: 8px;
-    text-align: center;
   }
 </style>

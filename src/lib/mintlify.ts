@@ -1,3 +1,9 @@
+import { evaluate } from "@mdx-js/mdx";
+import { renderToStaticMarkup } from "react-dom/server";
+import { createElement } from "react";
+import * as jsxRuntime from "react/jsx-runtime";
+import { stubComponents } from "../components/mdx/stub-components";
+
 interface DecoratedPage {
   title: string;
   href: string;
@@ -41,12 +47,16 @@ interface NavigationResponse {
 
 const API_KEY = import.meta.env.MINTLIFY_API_KEY;
 const PROJECT_ID = import.meta.env.MINTLIFY_PROJECT_ID;
-const BASE_URL = import.meta.env.PROD
-  ? "https://api.mintlify.com/"
-  : "http://localhost:3000/api/external/";
+const BASE_URL = import.meta.env.MINTLIFY_API_BASE_URL;
+
+if (!API_KEY || !PROJECT_ID || !BASE_URL) {
+  throw new Error(
+    "Missing required environment variables: MINTLIFY_API_KEY, MINTLIFY_PROJECT_ID, and MINTLIFY_API_BASE_URL must be set",
+  );
+}
 
 export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfig> {
-  const url = `${BASE_URL}v1/headless/${PROJECT_ID}/navigation`;
+  const url = `${BASE_URL}/v1/headless/${PROJECT_ID}/navigation`;
 
   const response = await fetch(url, {
     headers: {
@@ -62,6 +72,74 @@ export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfi
 
   const data: NavigationResponse = await response.json();
   return data.docsDecoratedNav;
+}
+
+interface MdxPageResponse {
+  content: string;
+  metadata?: {
+    title?: string;
+    description?: string;
+    icon?: string;
+    href?: string;
+  };
+}
+
+export interface RenderedMdxPage {
+  html: string;
+  metadata?: MdxPageResponse["metadata"];
+}
+
+export async function getMdxPage(href: string): Promise<MdxPageResponse> {
+  const strippedHref = href.startsWith("/") ? href.slice(1) : href; // paths have leading slash
+  const url = `${BASE_URL}/v1/headless/${PROJECT_ID}/content/${strippedHref}`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${API_KEY}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch MDX page: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const data: MdxPageResponse = await response.json();
+
+  return data;
+}
+
+export async function getRenderedMdxPage(
+  href: string,
+): Promise<RenderedMdxPage> {
+  const page = await getMdxPage(href);
+
+  try {
+    const { default: MDXContent } = await evaluate(page.content, {
+      ...jsxRuntime,
+      development: false,
+    });
+
+    const html = renderToStaticMarkup(
+      createElement(MDXContent, { components: stubComponents }),
+    );
+
+    return {
+      html,
+      metadata: page.metadata,
+    };
+  } catch (error) {
+    console.error(`Failed to render MDX for ${href}:`, error);
+    const errorHtml = `<div style="color: red; padding: 1rem; background: #ffebee; border-radius: 8px;">
+      <strong>Failed to render MDX content.</strong>
+      <p>${error instanceof Error ? error.message : "Unknown error"}</p>
+    </div>`;
+    return {
+      html: errorHtml,
+      metadata: page.metadata,
+    };
+  }
 }
 
 export function extractAllPaths(
