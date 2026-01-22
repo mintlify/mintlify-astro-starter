@@ -73,8 +73,8 @@ interface MdxPageResponse {
 }
 
 export async function getMdxPage(href: string): Promise<MdxPageResponse> {
-  const strippedHref = href.startsWith("/") ? href.slice(1) : href;
-  const url = `${BASE_URL}api/external/v1/headless/${PROJECT_ID}/content/${encodeURIComponent(strippedHref)}`;
+  const strippedHref = href.startsWith("/") ? href.slice(1) : href; // paths have leading slash
+  const url = `${BASE_URL}/v1/headless/${PROJECT_ID}/content/${strippedHref}`;
   console.log("Fetching MDX page from URL:", url);
 
   const response = await fetch(url, {
