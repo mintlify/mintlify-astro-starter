@@ -47,10 +47,12 @@ interface NavigationResponse {
 
 const API_KEY = import.meta.env.MINTLIFY_API_KEY;
 const PROJECT_ID = import.meta.env.MINTLIFY_PROJECT_ID;
-const BASE_URL = import.meta.env.MINTLIFY_API_BASE_URL ?? "https://api.mintlify.com";
+const BASE_URL = import.meta.env.MINTLIFY_API_BASE_URL;
 
-if (!API_KEY || !PROJECT_ID) {
-  throw new Error("Missing required environment variables: MINTLIFY_API_KEY and MINTLIFY_PROJECT_ID must be set");
+if (!API_KEY || !PROJECT_ID || !BASE_URL) {
+  throw new Error(
+    "Missing required environment variables: MINTLIFY_API_KEY, MINTLIFY_PROJECT_ID, and MINTLIFY_API_BASE_URL must be set",
+  );
 }
 
 export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfig> {
