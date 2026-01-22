@@ -10,8 +10,12 @@ export async function getStaticPaths() {
   return await Promise.all(allPages.map(async (page) => {
     const slug = hrefToSlug(page.href);
     const renderedMdx = await getRenderedMdxPage(page.href);
+    
+    const isIndexPage = slug.length === 1 && slug[0] === 'index';
+    const slugParam = (isIndexPage || slug.length === 0) ? undefined : slug.join('/');
+    
     return {
-      params: { slug: slug.length > 0 ? slug.join('/') : undefined },
+      params: { slug: slugParam },
       props: { page, allPages, renderedMdx },
     };
   }));
