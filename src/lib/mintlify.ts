@@ -1,5 +1,3 @@
-// Mintlify API client for fetching decorated navigation
-
 interface DecoratedPage {
   title: string;
   href: string;
@@ -43,43 +41,43 @@ interface NavigationResponse {
 
 const API_KEY = import.meta.env.MINTLIFY_API_KEY;
 const PROJECT_ID = import.meta.env.MINTLIFY_PROJECT_ID;
-const BASE_URL = import.meta.env.MINTLIFY_BASE_URL || 'http://localhost:5000/';
+const BASE_URL = import.meta.env.MINTLIFY_BASE_URL || "http://localhost:5000/";
 
 export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfig> {
-  const url = `${BASE_URL}api/external/v1/project/${PROJECT_ID}/navigation`;
+  const url = `${BASE_URL}api/external/v1/headless/${PROJECT_ID}/navigation`;
 
   const response = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${API_KEY}`,
+      Authorization: `Bearer ${API_KEY}`,
     },
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch navigation: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch navigation: ${response.status} ${response.statusText}`,
+    );
   }
 
   const data: NavigationResponse = await response.json();
   return data.docsDecoratedNav;
 }
 
-// Recursively extract all page paths from the decorated navigation
-export function extractAllPaths(nav: DecoratedNavigationConfig): DecoratedPage[] {
+export function extractAllPaths(
+  nav: DecoratedNavigationConfig,
+): DecoratedPage[] {
   const pages: DecoratedPage[] = [];
 
-  // Handle direct pages array
   if (nav.pages) {
     for (const entry of nav.pages) {
-      if ('href' in entry && 'title' in entry && !('group' in entry)) {
+      if ("href" in entry && "title" in entry && !("group" in entry)) {
         pages.push(entry as DecoratedPage);
-      } else if ('group' in entry) {
-        // It's a group, recurse into it
+      } else if ("group" in entry) {
         const groupPages = extractAllPathsFromGroup(entry as DecoratedGroup);
         pages.push(...groupPages);
       }
     }
   }
 
-  // Handle groups array
   if (nav.groups) {
     for (const group of nav.groups) {
       const groupPages = extractAllPathsFromGroup(group);
@@ -87,8 +85,14 @@ export function extractAllPaths(nav: DecoratedNavigationConfig): DecoratedPage[]
     }
   }
 
-  // Handle divisions (tabs, versions, products, languages, dropdowns, anchors)
-  const divisions = ['tabs', 'versions', 'products', 'languages', 'dropdowns', 'anchors'] as const;
+  const divisions = [
+    "tabs",
+    "versions",
+    "products",
+    "languages",
+    "dropdowns",
+    "anchors",
+  ] as const;
   for (const division of divisions) {
     const items = nav[division];
     if (items && Array.isArray(items)) {
@@ -105,17 +109,14 @@ export function extractAllPaths(nav: DecoratedNavigationConfig): DecoratedPage[]
 function extractAllPathsFromGroup(group: DecoratedGroup): DecoratedPage[] {
   const pages: DecoratedPage[] = [];
 
-  // Add root page if it exists
   if (group.root) {
     pages.push(group.root);
   }
 
-  // Process pages in the group
   for (const entry of group.pages) {
-    if ('href' in entry && 'title' in entry && !('group' in entry)) {
+    if ("href" in entry && "title" in entry && !("group" in entry)) {
       pages.push(entry as DecoratedPage);
-    } else if ('group' in entry) {
-      // Nested group
+    } else if ("group" in entry) {
       const nestedPages = extractAllPathsFromGroup(entry as DecoratedGroup);
       pages.push(...nestedPages);
     }
@@ -124,14 +125,12 @@ function extractAllPathsFromGroup(group: DecoratedGroup): DecoratedPage[] {
   return pages;
 }
 
-// Convert href to slug array for Astro's [...slug] route
 export function hrefToSlug(href: string): string[] {
-  // Remove leading slash and split
-  const cleaned = href.replace(/^\//, '');
-  if (cleaned === '') {
+  const cleaned = href.replace(/^\//, "");
+  if (cleaned === "") {
     return [];
   }
-  return cleaned.split('/');
+  return cleaned.split("/");
 }
 
 export type { DecoratedPage, DecoratedGroup, DecoratedNavigationConfig };
