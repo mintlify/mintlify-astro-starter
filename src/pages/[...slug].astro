@@ -1,22 +1,23 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getDecoratedNavigation, getRenderedMdxPage, extractAllPaths, hrefToSlug, type DecoratedPage, type RenderedMdxPage } from '../lib/mintlify';
+import type { Favicons } from '../types/mintlify';
 
 export async function getStaticPaths() {
-  const nav = await getDecoratedNavigation();
+  const { nav, favicons } = await getDecoratedNavigation();
   const MAX_PAGES_FOR_TESTING = 50; // This is a testing limit just to reduce the number of requests to the Mintlify API.
   const allPages = extractAllPaths(nav).slice(0, MAX_PAGES_FOR_TESTING);
 
   return await Promise.all(allPages.map(async (page) => {
     const slug = hrefToSlug(page.href);
     const renderedMdx = await getRenderedMdxPage(page.href);
-    
+
     const isIndexPage = slug.length === 1 && slug[0] === 'index';
     const slugParam = (isIndexPage || slug.length === 0) ? undefined : slug.join('/');
-    
+
     return {
       params: { slug: slugParam },
-      props: { page, allPages, renderedMdx },
+      props: { page, allPages, renderedMdx, favicons },
     };
   }));
 }
@@ -25,12 +26,13 @@ interface Props {
   page: DecoratedPage;
   allPages: DecoratedPage[];
   renderedMdx: RenderedMdxPage;
+  favicons?: Favicons;
 }
 
-const { page, allPages, renderedMdx } = Astro.props;
+const { page, allPages, renderedMdx, favicons } = Astro.props;
 ---
 
-<Layout title={page.title} description={page.description}>
+<Layout title={page.title} description={page.description} favicons={favicons}>
   <div class="container">
     <aside class="sidebar">
       <nav>

@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import * as jsxRuntime from "react/jsx-runtime";
 import { stubComponents } from "../components/mdx/stub-components";
+import type { Favicons } from "../types/mintlify";
 
 interface DecoratedPage {
   title: string;
@@ -43,6 +44,7 @@ interface DecoratedNavigationConfig {
 
 interface NavigationResponse {
   docsDecoratedNav: DecoratedNavigationConfig;
+  favicons?: Favicons;
 }
 
 const API_KEY = import.meta.env.MINTLIFY_API_KEY;
@@ -55,7 +57,10 @@ if (!API_KEY || !PROJECT_ID || !BASE_URL) {
   );
 }
 
-export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfig> {
+export async function getDecoratedNavigation(): Promise<{
+  nav: DecoratedNavigationConfig;
+  favicons?: Favicons;
+}> {
   const url = `${BASE_URL}/v1/headless/${PROJECT_ID}/navigation`;
 
   const response = await fetch(url, {
@@ -71,7 +76,10 @@ export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfi
   }
 
   const data: NavigationResponse = await response.json();
-  return data.docsDecoratedNav;
+  return {
+    nav: data.docsDecoratedNav,
+    favicons: data.favicons,
+  };
 }
 
 interface MdxPageResponse {
