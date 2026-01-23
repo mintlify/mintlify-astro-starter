@@ -38,7 +38,7 @@ const { page, allPages, renderedMdx } = Astro.props;
         <ul>
           {allPages.map((p) => (
             <li class={p.href === page.href ? 'active' : ''}>
-              <a href={p.href}>
+              <a href={p.href === '/index' ? '/' : p.href}>
                 {p.sidebarTitle || p.title}
               </a>
             </li>
