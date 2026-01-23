@@ -58,7 +58,7 @@ const { page, allPages, renderedMdx } = Astro.props;
           {page.deprecated && <p class="deprecated">This page is deprecated</p>}
         </div>
 
-        <div class="mdx-content" set:html={renderedMdx.html} />
+        <div class="mdx-content" set:html={renderedMdx.html.replace(/<img /g, '<img loading="lazy" ')} />
       </article>
     </main>
   </div>
