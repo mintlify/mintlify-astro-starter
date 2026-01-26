@@ -88,9 +88,10 @@ export async function fetchAndWritePage({
   }
 
   const frontmatter = buildFrontmatter(page);
-  // Mintlify strips imports and injects React hooks via MDX scope at runtime so we don't have them :/ this is a workaround to get them back.
-  // This is a hack and we should find a better solution.
-  const reactImports = `import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer, useLayoutEffect, useImperativeHandle, useDebugValue, useDeferredValue, useTransition, useId, useSyncExternalStore, useInsertionEffect } from 'react';\n\n`;
+
+  // Mintlify strips React hook imports from MDX content, expecting to inject them client-side.
+  // We need to add them back for Astro's MDX processing to work correctly.
+  const reactImports = `import { useState, useEffect, useRef, useCallback, useMemo, useContext, useReducer } from 'react';\n\n`;
 
   await writeFile(
     filePath,
