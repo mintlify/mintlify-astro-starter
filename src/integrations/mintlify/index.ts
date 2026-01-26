@@ -29,7 +29,7 @@ export function mintlify(): AstroIntegration {
         );
 
         const apiKey = env.MINTLIFY_API_KEY;
-        const apiHost = env.MINTLIFY_API_HOST;
+        const apiHost = env.MINTLIFY_API_BASE_URL;
         const projectId = env.MINTLIFY_PROJECT_ID;
 
         if (!projectId) {
