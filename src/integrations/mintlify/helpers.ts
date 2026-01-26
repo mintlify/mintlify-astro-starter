@@ -88,7 +88,15 @@ export async function fetchAndWritePage({
   }
 
   const frontmatter = buildFrontmatter(page);
-  await writeFile(filePath, frontmatter + contentData.content, "utf-8");
+  // Mintlify strips imports and injects React hooks via MDX scope at runtime so we don't have them :/ this is a workaround to get them back.
+  // This is a hack and we should find a better solution.
+  const reactImports = `import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer, useLayoutEffect, useImperativeHandle, useDebugValue, useDeferredValue, useTransition, useId, useSyncExternalStore, useInsertionEffect } from 'react';\n\n`;
+
+  await writeFile(
+    filePath,
+    frontmatter + reactImports + contentData.content,
+    "utf-8",
+  );
 }
 
 export function extractAllPathsFromGroup(
