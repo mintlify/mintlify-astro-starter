@@ -1,8 +1,8 @@
-// @ts-check
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
+import mdx from "@astrojs/mdx";
+import { mintlify } from "./src/integrations/mintlify";
 
-// https://astro.build/config
 export default defineConfig({
-  integrations: [react()], // only needed for stub-components.tsx can be removed when we move to oss components
+  integrations: [mintlify(), react(), mdx()],
 });
