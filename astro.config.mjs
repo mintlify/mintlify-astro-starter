@@ -4,5 +4,11 @@ import mdx from "@astrojs/mdx";
 import { mintlify } from "./src/integrations/mintlify";
 
 export default defineConfig({
-  integrations: [mintlify(), react(), mdx()],
+  integrations: [
+    mintlify(),
+    react(),
+    mdx({
+      jsx: true,
+    }),
+  ],
 });
