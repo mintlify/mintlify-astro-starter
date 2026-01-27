@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import * as jsxRuntime from "react/jsx-runtime";
 import { stubComponents } from "../components/mdx/stub-components";
+import { createMintlifyClient } from "./mintlify-client";
 
 interface DecoratedPage {
   title: string;
@@ -41,41 +42,29 @@ interface DecoratedNavigationConfig {
   global?: unknown;
 }
 
-interface NavigationResponse {
-  docsDecoratedNav: DecoratedNavigationConfig;
-}
-
 const API_KEY = import.meta.env.MINTLIFY_API_KEY;
 const PROJECT_ID = import.meta.env.MINTLIFY_PROJECT_ID;
 const BASE_URL = import.meta.env.MINTLIFY_API_BASE_URL;
 
-if (!API_KEY || !PROJECT_ID || !BASE_URL) {
+if (!API_KEY || !PROJECT_ID) {
   throw new Error(
-    "Missing required environment variables: MINTLIFY_API_KEY, MINTLIFY_PROJECT_ID, and MINTLIFY_API_BASE_URL must be set",
+    "Missing required environment variables: MINTLIFY_API_KEY and MINTLIFY_PROJECT_ID must be set",
   );
 }
 
+const client = createMintlifyClient({
+  apiKey: API_KEY,
+  projectId: PROJECT_ID,
+  baseUrl: BASE_URL,
+});
+
 export async function getDecoratedNavigation(): Promise<DecoratedNavigationConfig> {
-  const url = `${BASE_URL}/v1/headless/${PROJECT_ID}/navigation`;
-
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch navigation: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const data: NavigationResponse = await response.json();
-  return data.docsDecoratedNav;
+  const response = await client.getNavigation();
+  return response.docsDecoratedNav;
 }
 
-interface MdxPageResponse {
-  content: string;
+export interface RenderedMdxPage {
+  html: string;
   metadata?: {
     title?: string;
     description?: string;
@@ -84,30 +73,8 @@ interface MdxPageResponse {
   };
 }
 
-export interface RenderedMdxPage {
-  html: string;
-  metadata?: MdxPageResponse["metadata"];
-}
-
-export async function getMdxPage(href: string): Promise<MdxPageResponse> {
-  const strippedHref = href.startsWith("/") ? href.slice(1) : href; // paths have leading slash
-  const url = `${BASE_URL}/v1/headless/${PROJECT_ID}/content/${strippedHref}`;
-
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch MDX page: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const data: MdxPageResponse = await response.json();
-
-  return data;
+export async function getMdxPage(href: string) {
+  return await client.getPageContent(href);
 }
 
 export async function getRenderedMdxPage(
