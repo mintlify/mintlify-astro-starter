@@ -2,7 +2,7 @@
 import { getCollection, render } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { stubComponents } from "../components/mdx/stub-components";
-import { favicons } from "../generated/favicons";
+import favicons from "../generated/favicons.json";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
