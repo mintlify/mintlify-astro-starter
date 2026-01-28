@@ -1,12 +1,13 @@
 import type { AstroIntegration } from "astro";
-import { mkdir, rm } from "node:fs/promises";
-import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadEnv } from "vite";
 
-import type { NavigationResponse } from "./types";
-import { extractAllPaths, fetchAndWritePage } from "./helpers";
+import { validateEnv } from "./utils/validate-env";
+import { clearContentDirectory } from "./utils/clear-content-directory";
+import { extractAllPaths } from "./utils/navigation";
+import { fetchNavigation } from "./utils/fetch-navigation";
+import { fetchPageContent } from "./utils/fetch-page-content";
+import { writePageContent } from "./utils/write-page-content";
 
 export type { DecoratedPage, DecoratedNavigationConfig } from "./types";
 
@@ -17,66 +18,19 @@ export function mintlify(): AstroIntegration {
   return {
     name: "@mintlify/astro",
     hooks: {
-      "astro:config:setup": async ({
-        config: astroConfig,
-        command,
-        logger,
-      }) => {
-        const env = loadEnv(
-          command === "dev" ? "development" : "production",
-          fileURLToPath(astroConfig.root),
-          "",
-        );
+      "astro:config:setup": async ({ config: astroConfig, logger }) => {
+        const { apiKey, apiHost, projectId } = validateEnv(astroConfig);
 
-        const apiKey = env.MINTLIFY_API_KEY;
-        const apiHost = env.MINTLIFY_API_BASE_URL;
-        const projectId = env.MINTLIFY_PROJECT_ID;
+        const srcDir = fileURLToPath(astroConfig.srcDir);
+        const contentDir = join(srcDir, "content", "docs");
+        const componentsDir = join(srcDir, "content", "extracted");
 
-        if (!projectId) {
-          throw new Error(
-            "[@mintlify/astro]: Missing MINTLIFY_PROJECT_ID environment variable.",
-          );
-        }
+        await Promise.all([
+          clearContentDirectory(contentDir),
+          clearContentDirectory(componentsDir),
+        ]);
 
-        if (!apiKey) {
-          throw new Error(
-            "[@mintlify/astro]: Missing MINTLIFY_API_KEY environment variable.",
-          );
-        }
-
-        const contentDir = join(
-          fileURLToPath(astroConfig.srcDir),
-          "content",
-          "docs",
-        );
-
-        if (existsSync(contentDir)) {
-          await rm(contentDir, { recursive: true });
-        }
-        await mkdir(contentDir, { recursive: true });
-
-        const navUrl = `${apiHost}/v1/headless/${projectId}/navigation`;
-        const navResponse = await fetch(navUrl, {
-          headers: { Authorization: `Bearer ${apiKey}` },
-        });
-
-        if (!navResponse.ok) {
-          if (navResponse.status === 401) {
-            throw new Error(
-              "[@mintlify/astro]: Invalid API key. Check your MINTLIFY_API_KEY.",
-            );
-          }
-          if (navResponse.status === 404) {
-            throw new Error(
-              `[@mintlify/astro]: Project not found: "${projectId}". Check your projectId.`,
-            );
-          }
-          throw new Error(
-            `[@mintlify/astro]: Failed to fetch navigation (${navResponse.status}): ${navResponse.statusText}`,
-          );
-        }
-
-        const navData: NavigationResponse = await navResponse.json();
+        const navData = await fetchNavigation(apiHost, projectId, apiKey);
         const allPages = extractAllPaths(navData.docsDecoratedNav);
         const pagesToSync = allPages.slice(0, MAX_PAGES);
 
@@ -87,18 +41,27 @@ export function mintlify(): AstroIntegration {
         for (let i = 0; i < pagesToSync.length; i += BATCH_SIZE) {
           const batch = pagesToSync.slice(i, i + BATCH_SIZE);
           await Promise.all(
-            batch.map((page) =>
-              fetchAndWritePage({
-                page,
+            batch.map(async (page) => {
+              const result = await fetchPageContent(
+                page.href,
                 apiHost,
                 projectId,
                 apiKey,
+              );
+
+              if (!result) {
+                logger.warn(`Failed to fetch content for ${page.href}`);
+                return;
+              }
+
+              await writePageContent({
+                page,
+                content: result.content,
+                slug: result.slug,
                 contentDir,
-                onError: (href, status) => {
-                  logger.warn(`Failed to fetch content for ${href}: ${status}`);
-                },
-              }),
-            ),
+                componentsDir,
+              });
+            }),
           );
         }
 

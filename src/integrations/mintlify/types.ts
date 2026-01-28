@@ -41,4 +41,3 @@ export interface MdxPageResponse {
     href?: string;
   };
 }
-
