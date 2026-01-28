@@ -7,7 +7,7 @@ dist/
 # generated content (fetched from Mintlify API)
 src/content/docs/
 src/content/extracted/
-public/favicons/
+src/generated/
 
 # dependencies
 node_modules/

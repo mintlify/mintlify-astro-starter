@@ -3,14 +3,19 @@ import { mkdir, writeFile } from "node:fs/promises";
 import type { Favicons } from "../types";
 
 export async function writeFaviconsManifest(
-  publicDir: string,
-  favicons: Favicons | null,
+  srcDir: string,
+  favicons: Favicons,
 ): Promise<void> {
-  if (!favicons) return;
+  const generatedDir = join(srcDir, "generated");
+  await mkdir(generatedDir, { recursive: true });
 
-  const faviconDir = join(publicDir, "favicons");
-  await mkdir(faviconDir, { recursive: true });
+  const faviconValue = favicons;
 
-  const manifestPath = join(faviconDir, "manifest.json");
-  await writeFile(manifestPath, JSON.stringify(favicons, null, 2), "utf-8");
+  const content = `import type { Favicons } from "../types/mintlify";
+
+export const favicons: Favicons = ${JSON.stringify(faviconValue, null, 2)};
+`;
+
+  const filePath = join(generatedDir, "favicons.ts");
+  await writeFile(filePath, content, "utf-8");
 }

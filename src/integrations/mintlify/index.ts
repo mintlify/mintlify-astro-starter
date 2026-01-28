@@ -8,8 +8,6 @@ import { extractAllPaths } from "./utils/navigation";
 import { fetchNavigation } from "./utils/fetch-navigation";
 import { fetchPageContent } from "./utils/fetch-page-content";
 import { writePageContent } from "./utils/write-page-content";
-import { downloadFavicons } from "./utils/download-favicons";
-import { cacheFavicons, loadCachedFavicons } from "./utils/cache-favicons";
 import { writeFaviconsManifest } from "./utils/write-favicons-manifest";
 
 export type {
@@ -29,12 +27,8 @@ export function mintlify(): AstroIntegration {
         const { apiKey, apiHost, projectId } = validateEnv(astroConfig);
 
         const srcDir = fileURLToPath(astroConfig.srcDir);
-        const publicDir = fileURLToPath(astroConfig.publicDir);
         const contentDir = join(srcDir, "content", "docs");
         const componentsDir = join(srcDir, "content", "extracted");
-        const cacheDir = join(fileURLToPath(astroConfig.cacheDir), "mintlify");
-
-        let faviconsData = await loadCachedFavicons(cacheDir);
 
         await Promise.all([
           clearContentDirectory(contentDir),
@@ -44,19 +38,7 @@ export function mintlify(): AstroIntegration {
         const navData = await fetchNavigation(apiHost, projectId, apiKey);
         const allPages = extractAllPaths(navData.docsDecoratedNav);
 
-        if (faviconsData === undefined) {
-          faviconsData = await downloadFavicons(
-            navData.favicons || null,
-            publicDir,
-            logger,
-          );
-          await cacheFavicons(cacheDir, faviconsData);
-          logger.info("Downloaded and cached favicons");
-        } else {
-          logger.info("Using cached favicons");
-        }
-
-        await writeFaviconsManifest(publicDir, faviconsData);
+        await writeFaviconsManifest(srcDir, navData.favicons);
 
         const pagesToSync = allPages.slice(0, MAX_PAGES);
 

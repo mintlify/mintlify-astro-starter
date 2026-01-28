@@ -1,33 +1,22 @@
 ---
 import { getCollection, render } from "astro:content";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import Layout from "../layouts/Layout.astro";
 import { stubComponents } from "../components/mdx/stub-components";
-import type { Favicons } from "../types/mintlify";
+import { favicons } from "../generated/favicons";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
-
-  let favicons: Favicons | undefined = undefined;
-  try {
-    const manifestPath = join(process.cwd(), "public", "favicons", "manifest.json");
-    const manifestData = await readFile(manifestPath, "utf-8");
-    favicons = JSON.parse(manifestData);
-  } catch (error) {
-    console.warn("Failed to load favicons:", error);
-  }
 
   return docs.map((doc) => {
     const slug = doc.id === "index" ? undefined : doc.id;
     return {
       params: { slug },
-      props: { doc, allDocs: docs, favicons },
+      props: { doc, allDocs: docs },
     };
   });
 }
 
-const { doc, allDocs, favicons } = Astro.props;
+const { doc, allDocs } = Astro.props;
 const { Content } = await render(doc);
 ---
 
