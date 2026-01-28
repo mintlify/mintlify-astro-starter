@@ -6,7 +6,7 @@ dist/
 
 # generated content (fetched from Mintlify API)
 src/content/docs/
-src/content/extracted/
+src/content/components/
 
 # dependencies
 node_modules/

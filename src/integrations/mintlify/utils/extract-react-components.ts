@@ -253,13 +253,7 @@ export async function extractReactComponents(
   const processor = remark()
     .use(remarkFrontmatter)
     .use(remarkMdx)
-    .use(remarkStringify, {
-      bullet: "-",
-      emphasis: "*",
-      strong: "*",
-      fence: "`",
-      fences: true,
-    });
+    .use(remarkStringify);
 
   return processor.stringify(tree);
 }
