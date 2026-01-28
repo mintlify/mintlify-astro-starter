@@ -30,6 +30,7 @@ export interface DecoratedNavigationConfig {
 
 export interface NavigationResponse {
   docsDecoratedNav: DecoratedNavigationConfig;
+  favicons: Favicons;
 }
 
 export interface MdxPageResponse {
@@ -40,4 +41,17 @@ export interface MdxPageResponse {
     icon?: string;
     href?: string;
   };
+}
+
+export interface FaviconIcon {
+  rel: string;
+  sizes?: string;
+  type: string;
+  href: string;
+  media?: string;
+}
+
+export interface Favicons {
+  icons: FaviconIcon[];
+  browserconfig?: string;
 }

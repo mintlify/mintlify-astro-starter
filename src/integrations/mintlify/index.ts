@@ -8,8 +8,13 @@ import { extractAllPaths } from "./utils/navigation";
 import { fetchNavigation } from "./utils/fetch-navigation";
 import { fetchPageContent } from "./utils/fetch-page-content";
 import { writePageContent } from "./utils/write-page-content";
+import { writeFaviconsManifest } from "./utils/write-favicons-manifest";
 
-export type { DecoratedPage, DecoratedNavigationConfig } from "./types";
+export type {
+  DecoratedPage,
+  DecoratedNavigationConfig,
+  Favicons,
+} from "./types";
 
 const MAX_PAGES = 25; // for testing purposes to reduce API calls
 const BATCH_SIZE = 5;
@@ -32,6 +37,9 @@ export function mintlify(): AstroIntegration {
 
         const navData = await fetchNavigation(apiHost, projectId, apiKey);
         const allPages = extractAllPaths(navData.docsDecoratedNav);
+
+        await writeFaviconsManifest(srcDir, navData.favicons);
+
         const pagesToSync = allPages.slice(0, MAX_PAGES);
 
         logger.info(
