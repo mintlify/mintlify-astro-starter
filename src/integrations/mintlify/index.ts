@@ -28,7 +28,7 @@ export function mintlify(): AstroIntegration {
 
         const srcDir = fileURLToPath(astroConfig.srcDir);
         const contentDir = join(srcDir, "content", "docs");
-        const componentsDir = join(srcDir, "content", "extracted");
+        const componentsDir = join(srcDir, "content", "components");
 
         await Promise.all([
           clearContentDirectory(contentDir),
