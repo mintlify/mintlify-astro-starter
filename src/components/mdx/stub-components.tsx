@@ -1,4 +1,15 @@
 import type { ReactNode } from "react";
+import {
+  Callout,
+  Check,
+  Columns,
+  Frame,
+  Icon,
+  Info,
+  Note,
+  Tip,
+  Warning,
+} from "@mintlify/components";
 
 interface StubProps {
   children?: ReactNode;
@@ -20,56 +31,49 @@ const stub = (name: string) => {
   );
 };
 
-export const Card = stub("Card");
-export const CardGroup = stub("CardGroup");
-export const Tabs = stub("Tabs");
-export const Tab = stub("Tab");
-export const CodeGroup = stub("CodeGroup");
-export const Accordion = stub("Accordion");
-export const AccordionGroup = stub("AccordionGroup");
-export const Callout = stub("Callout");
-export const Note = stub("Note");
-export const Warning = stub("Warning");
-export const Info = stub("Info");
-export const Tip = stub("Tip");
-export const Check = stub("Check");
-export const Steps = stub("Steps");
-export const Step = stub("Step");
-export const Frame = stub("Frame");
-export const Icon = stub("Icon");
-export const Snippet = stub("Snippet");
-export const ResponseField = stub("ResponseField");
-export const ParamField = stub("ParamField");
-export const Expandable = stub("Expandable");
-export const Latex = stub("Latex");
-export const Columns = stub("Columns");
-export const Column = stub("Column");
-export const Tooltip = stub("Tooltip");
+const Tabs = stub("Tabs");
+const Tab = stub("Tab");
+const Steps = stub("Steps");
+const Step = stub("Step");
+const Accordion = stub("Accordion");
+const AccordionGroup = stub("AccordionGroup");
+const CodeGroup = stub("CodeGroup");
+const Expandable = stub("Expandable");
+const Tooltip = stub("Tooltip");
+const Card = stub("Card");
+const CardGroup = stub("CardGroup");
+const Column = stub("Column");
+const Snippet = stub("Snippet");
+const ResponseField = stub("ResponseField");
+const ParamField = stub("ParamField");
+const Latex = stub("Latex");
 
-export const stubComponents = {
-  Card,
-  CardGroup,
-  Tabs,
-  Tab,
-  CodeGroup,
-  Accordion,
-  AccordionGroup,
+export const components = {
+  // Static components
   Callout,
-  Note,
-  Warning,
-  Info,
-  Tip,
   Check,
-  Steps,
-  Step,
+  Columns,
   Frame,
   Icon,
-  Snippet,
-  ResponseField,
-  ParamField,
+  Info,
+  Note,
+  Tip,
+  Warning,
+  // Stubs
+  Accordion,
+  AccordionGroup,
+  Card,
+  CardGroup,
+  CodeGroup,
+  Column,
   Expandable,
   Latex,
-  Columns,
-  Column,
+  ParamField,
+  ResponseField,
+  Snippet,
+  Step,
+  Steps,
+  Tab,
+  Tabs,
   Tooltip,
 };
