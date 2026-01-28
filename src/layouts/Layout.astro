@@ -1,10 +1,13 @@
 ---
+import type { Favicons } from '../integrations/mintlify/types';
+
 interface Props {
 	title?: string;
 	description?: string;
+	favicons?: Favicons;
 }
 
-const { title = 'Mintlify Docs', description } = Astro.props;
+const { title = 'Mintlify Docs', description, favicons } = Astro.props;
 ---
 
 <!doctype html>
@@ -12,7 +15,15 @@ const { title = 'Mintlify Docs', description } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		{favicons?.icons && favicons.icons.map((icon) => (
+			<link
+				rel={icon.rel}
+				type={icon.type}
+				sizes={icon.sizes}
+				href={icon.href}
+				media={icon.media}
+			/>
+		))}
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		{description && <meta name="description" content={description} />}
