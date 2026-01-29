@@ -32,7 +32,6 @@ const MintlifyComponents = {
   Tooltip: Mintlify.Tooltip,
   Tree: Mintlify.Tree,
   Update: Mintlify.Update,
-  View: Mintlify.View,
   Warning: Mintlify.Warning,
 };
 
@@ -44,8 +43,12 @@ const placeholderComponents = {
   Latex: Wrapper,
   Loom: Wrapper,
   ParamField: Wrapper,
+  PreviewButton: Wrapper,
+  RequestExample: Wrapper,
+  ResponseExample: Wrapper,
   ResponseField: Wrapper,
   Snippet: Wrapper,
+  View: Wrapper, // Requires internal context provider, skipping for now
   Vimeo: Wrapper,
   YouTube: Wrapper,
 };
