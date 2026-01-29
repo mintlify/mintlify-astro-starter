@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { stubComponents } from "../components/mdx/stub-components";
+import { components } from "../components";
 import favicons from "../content/generated/favicons.json";
 
 export async function getStaticPaths() {
@@ -53,7 +53,7 @@ const { Content } = await render(doc);
         {doc.data.deprecated && <p class="deprecated">This page is deprecated</p>}
 
         <div class="mdx-content">
-          <Content components={stubComponents} />
+          <Content components={components} />
         </div>
       </article>
     </main>
