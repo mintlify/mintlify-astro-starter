@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import type { AstroIntegrationLogger } from "astro";
 
 import type { DecoratedPage } from "../types";
 import { extractReactComponents } from "./extract-react-components";
@@ -11,6 +12,7 @@ export interface WritePageContentOptions {
   slug: string;
   contentDir: string;
   componentsDir: string;
+  logger?: AstroIntegrationLogger;
 }
 
 export async function writePageContent({
@@ -19,6 +21,7 @@ export async function writePageContent({
   slug,
   contentDir,
   componentsDir,
+  logger,
 }: WritePageContentOptions): Promise<void> {
   let filePath: string;
 
@@ -38,15 +41,16 @@ export async function writePageContent({
   const frontmatter = buildFrontmatter(page);
   const initialContent = frontmatter + content;
 
-  // Extract React components with hooks to separate .jsx files
-  // This is necessary because Astro compiles MDX with its own JSX transform,
+  // Extract all non-static React components to separate .jsx files
+  // This is necessary because Astro compiles MDX with its own JSX runtime,
   // which is incompatible with React hooks. By extracting to .jsx files and
-  // re-importing with client:load, we ensure React's runtime handles these components.
+  // re-importing with client:load, we ensure React's JSX runtime handles these components.
   const finalContent = await extractReactComponents(
     initialContent,
     filePath,
     componentsDir,
     slug,
+    logger,
   );
 
   await writeFile(filePath, finalContent, "utf-8");

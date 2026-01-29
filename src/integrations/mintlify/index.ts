@@ -68,6 +68,7 @@ export function mintlify(): AstroIntegration {
                 slug: result.slug,
                 contentDir,
                 componentsDir,
+                logger,
               });
             }),
           );
