@@ -1,64 +1,60 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getDecoratedNavigation, getRenderedMdxPage, extractAllPaths, hrefToSlug, type DecoratedPage, type RenderedMdxPage } from '../lib/mintlify';
+import { getCollection, render } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { components } from "../components";
+import favicons from "../content/generated/favicons.json";
 
 export async function getStaticPaths() {
-  const nav = await getDecoratedNavigation();
-  const MAX_PAGES_FOR_TESTING = 50; // This is a testing limit just to reduce the number of requests to the Mintlify API.
-  const allPages = extractAllPaths(nav).slice(0, MAX_PAGES_FOR_TESTING);
+  const docs = await getCollection("docs");
 
-  return await Promise.all(allPages.map(async (page) => {
-    const slug = hrefToSlug(page.href);
-    const renderedMdx = await getRenderedMdxPage(page.href);
-    
-    const isIndexPage = slug.length === 1 && slug[0] === 'index';
-    const slugParam = (isIndexPage || slug.length === 0) ? undefined : slug.join('/');
-    
+  return docs.map((doc) => {
+    const slug = doc.id === "index" ? undefined : doc.id;
     return {
-      params: { slug: slugParam },
-      props: { page, allPages, renderedMdx },
+      params: { slug },
+      props: { doc, allDocs: docs },
     };
-  }));
+  });
 }
 
-interface Props {
-  page: DecoratedPage;
-  allPages: DecoratedPage[];
-  renderedMdx: RenderedMdxPage;
-}
-
-const { page, allPages, renderedMdx } = Astro.props;
+const { doc, allDocs } = Astro.props;
+const { Content } = await render(doc);
 ---
 
-<Layout title={page.title} description={page.description}>
+<Layout
+  title={doc.data.title || doc.id}
+  description={doc.data.description}
+  favicons={favicons}
+>
   <div class="container">
     <aside class="sidebar">
       <nav>
         <h3>Navigation</h3>
         <ul>
-          {allPages.map((p) => (
-            <li class={p.href === page.href ? 'active' : ''}>
-              <a href={p.href === '/index' ? '/' : p.href}>
-                {p.sidebarTitle || p.title}
-              </a>
-            </li>
-          ))}
+          {allDocs.map((d) => {
+            const href = d.id === "index" ? "/" : `/${d.id}`;
+            const isActive = d.id === doc.id;
+            return (
+              <li class={isActive ? "active" : ""}>
+                <a href={href}>
+                  {d.id}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </aside>
 
     <main class="content">
       <article>
-        <h1>{page.title}</h1>
-        {page.description && <p class="description">{page.description}</p>}
+        <h1>{doc.data.title || doc.id}</h1>
+        {doc.data.description && <p class="description">{doc.data.description}</p>}
 
-        <div class="meta">
-          <p><strong>Path:</strong> {page.href}</p>
-          {page.lastUpdatedDate && <p><strong>Last updated:</strong> {page.lastUpdatedDate}</p>}
-          {page.deprecated && <p class="deprecated">This page is deprecated</p>}
+        {doc.data.deprecated && <p class="deprecated">This page is deprecated</p>}
+
+        <div class="mdx-content">
+          <Content components={components} />
         </div>
-
-        <div class="mdx-content" set:html={renderedMdx.html} />
       </article>
     </main>
   </div>
