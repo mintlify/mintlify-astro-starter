@@ -11,9 +11,9 @@ An Astro starter kit for building custom documentation sites powered by Mintlify
    ```
 3. Create a `.env` file with your Mintlify credentials:
    ```
-   MINTLIFY_API_KEY=your_api_key
-   MINTLIFY_PROJECT_ID=your_project_id
+   MINTLIFY_ASSISTANT_API_KEY=your_api_key
    MINTLIFY_BASE_URL=https://api.mintlify.com/
+   MINTLIFY_SUBDOMAIN=your_subdomain
    ```
 4. Run the dev server:
    ```bash
