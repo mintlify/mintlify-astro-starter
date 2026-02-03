@@ -1,8 +1,4 @@
 import { compile } from "@mdx-js/mdx";
-import { remark } from "remark";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkMdx from "remark-mdx";
-import remarkStringify from "remark-stringify";
 import { visit, SKIP } from "unist-util-visit";
 import { walk } from "estree-walker";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -12,10 +8,19 @@ import type {
   MdxjsEsm,
   MdxJsxFlowElement,
   MdxJsxTextElement,
-  MdxJsxAttribute,
 } from "mdast-util-mdx";
 import type { Node as EstreeNode } from "estree";
 import type { AstroIntegrationLogger } from "astro";
+
+import {
+  getAST,
+  stringifyTree,
+  findExportedNodes,
+  getExportMapFromTree,
+  isMdxJsxAttribute,
+  createMdxJsxAttribute,
+  allowedComponents,
+} from "@mintlify/common";
 
 const COMPOUND_COMPONENTS = new Set([
   "Accordion",
@@ -64,12 +69,20 @@ interface ExtractedComponent {
 
 type JsxNode = MdxJsxFlowElement | MdxJsxTextElement;
 
+function isJsxNode(node: unknown): node is JsxNode {
+  const n = node as { type?: string };
+  return n?.type === "mdxJsxFlowElement" || n?.type === "mdxJsxTextElement";
+}
+
 function visitJsxNodes(
   tree: Root,
   visitor: (node: JsxNode, index?: number, parent?: any) => any,
 ) {
-  visit(tree, "mdxJsxFlowElement", visitor);
-  visit(tree, "mdxJsxTextElement", visitor);
+  visit(tree, (node, index, parent) => {
+    if (isJsxNode(node)) {
+      return visitor(node, index, parent);
+    }
+  });
 }
 
 interface CompoundContext {
@@ -99,36 +112,14 @@ function detectUsedHooks(estree: EstreeNode): string[] {
   return Array.from(usedHooks);
 }
 
-function getExportedComponentInfo(node: MdxjsEsm): {
-  names: string[];
-  usedHooks: string[];
-} {
-  const estree = node.data?.estree;
-  if (!estree) return { names: [], usedHooks: [] };
-
-  const names: string[] = [];
-
-  for (const statement of estree.body) {
-    if (
-      statement.type === "ExportNamedDeclaration" &&
-      statement.declaration?.type === "VariableDeclaration"
-    ) {
-      for (const declarator of statement.declaration.declarations) {
-        if (
-          declarator.id.type === "Identifier" &&
-          (declarator.init?.type === "ArrowFunctionExpression" ||
-            declarator.init?.type === "FunctionExpression")
-        ) {
-          names.push(declarator.id.name);
-        }
-      }
+function detectHooksInCode(code: string): string[] {
+  const hooks: string[] = [];
+  for (const hook of SUPPORTED_HOOKS) {
+    if (code.includes(hook)) {
+      hooks.push(hook);
     }
   }
-
-  return {
-    names,
-    usedHooks: names.length > 0 ? detectUsedHooks(estree) : [],
-  };
+  return hooks;
 }
 
 function createImportNode(name: string, path: string): MdxjsEsm {
@@ -138,46 +129,72 @@ function createImportNode(name: string, path: string): MdxjsEsm {
   } as MdxjsEsm;
 }
 
-function addClientDirective(node: MdxJsxFlowElement | MdxJsxTextElement): void {
+function addClientDirective(node: JsxNode): void {
   node.attributes ??= [];
 
   const hasClientDirective = node.attributes.some(
     (attr) =>
-      attr.type === "mdxJsxAttribute" &&
+      isMdxJsxAttribute(attr) &&
       typeof attr.name === "string" &&
       attr.name.startsWith("client:"),
   );
 
   if (!hasClientDirective) {
-    node.attributes.push({
-      type: "mdxJsxAttribute",
-      name: "client:load",
-      value: null,
-    } as MdxJsxAttribute);
+    node.attributes.push(createMdxJsxAttribute("client:load", null));
   }
 }
 
 function generateComponentFile(code: string, usedHooks: string[]): string {
-  if (usedHooks.length === 0) return code + "\n";
-  return `import { ${usedHooks.join(", ")} } from "react";\n\n${code}\n`;
+  const validComponents = allowedComponents.filter(
+    (c) => !c.includes(".") && !c.includes("-") && /^[A-Z]/.test(c),
+  );
+
+  const imports = [
+    `import * as Mintlify from "@mintlify/components";`,
+    `const { ${validComponents.join(", ")} } = Mintlify;`,
+  ];
+
+  if (usedHooks.length > 0) {
+    imports.unshift(`import { ${usedHooks.join(", ")} } from "react";`);
+  }
+
+  return imports.join("\n") + "\n\n" + code + "\n";
 }
 
 function findExportedComponents(tree: Root): {
   components: ExtractedComponent[];
   nodesToRemove: Set<MdxjsEsm>;
 } {
+  const exportedNames = findExportedNodes(
+    tree,
+    "ArrowFunctionExpression",
+    "FunctionExpression",
+  );
+
+  if (exportedNames.length === 0) {
+    return { components: [], nodesToRemove: new Set() };
+  }
+
+  const exportMap = getExportMapFromTree(tree);
+
   const components: ExtractedComponent[] = [];
   const nodesToRemove = new Set<MdxjsEsm>();
-  const seenCode = new Set<string>();
 
+  for (const name of exportedNames) {
+    const code = exportMap[name];
+    if (code) {
+      const usedHooks = detectHooksInCode(code);
+      components.push({ name, code, usedHooks });
+    }
+  }
+
+  // Find and mark nodes to remove
   visit(tree, "mdxjsEsm", (node: MdxjsEsm) => {
-    const { names, usedHooks } = getExportedComponentInfo(node);
-    if (names.length > 0 && !seenCode.has(node.value)) {
-      seenCode.add(node.value);
-      for (const name of names) {
-        components.push({ name, code: node.value, usedHooks });
+    for (const name of exportedNames) {
+      if (node.value?.includes(name)) {
+        nodesToRemove.add(node);
+        break;
       }
-      nodesToRemove.add(node);
     }
   });
 
@@ -205,7 +222,7 @@ function processCompoundNode(node: JsxNode, ctx: CompoundContext) {
   });
 
   ctx.nodeReplacements.set(node, wrapperName);
-  return SKIP; // skips the children of the compound component because we will replace them with the wrapper component
+  return SKIP;
 }
 
 function findCompoundComponents(
@@ -343,13 +360,7 @@ function createReplacementNode(
   return {
     type,
     name: wrapperName,
-    attributes: [
-      {
-        type: "mdxJsxAttribute",
-        name: "client:load",
-        value: null,
-      } as MdxJsxAttribute,
-    ],
+    attributes: [createMdxJsxAttribute("client:load", null)],
     children: [],
   } as JsxNode;
 }
@@ -386,17 +397,28 @@ function transformTreeWithCompounds(
   });
 }
 
+function addClientDirectivesToUserComponents(
+  tree: Root,
+  userComponents: Set<string>,
+): void {
+  if (userComponents.size === 0) return;
+
+  visitJsxNodes(tree, (node) => {
+    if (node.name && userComponents.has(node.name)) {
+      addClientDirective(node);
+    }
+  });
+}
+
 export async function extractReactComponents(
   mdxContent: string,
   mdxFilePath: string,
   componentsDir: string,
   pageSlug: string,
+  userComponents: Set<string>,
   logger?: AstroIntegrationLogger,
 ): Promise<string> {
-  const tree = remark()
-    .use(remarkFrontmatter)
-    .use(remarkMdx)
-    .parse(mdxContent) as Root;
+  const tree = getAST(mdxContent, mdxFilePath) as Root;
 
   const { components, nodesToRemove } = findExportedComponents(tree);
   const { compounds, nodeReplacements } = findCompoundComponents(
@@ -405,7 +427,11 @@ export async function extractReactComponents(
     logger,
   );
 
-  if (components.length === 0 && compounds.length === 0) {
+  if (
+    components.length === 0 &&
+    compounds.length === 0 &&
+    userComponents.size === 0
+  ) {
     return mdxContent;
   }
 
@@ -415,11 +441,16 @@ export async function extractReactComponents(
     .split(sep)
     .join(posix.sep);
 
+  // Handle exported components (export const Foo = () => ...)
   if (components.length > 0) {
     await writeComponentFiles(components, componentsDir, pageSlug);
     transformTree(tree, components, nodesToRemove, relativeComponentsDir);
   }
 
+  // Add client:load to user-imported React components
+  addClientDirectivesToUserComponents(tree, userComponents);
+
+  // Handle compound components (Tabs, Steps, Accordion, etc.)
   if (compounds.length > 0) {
     await writeCompoundComponentFiles(compounds, componentsDir, pageSlug);
     transformTreeWithCompounds(
@@ -430,9 +461,5 @@ export async function extractReactComponents(
     );
   }
 
-  return remark()
-    .use(remarkFrontmatter)
-    .use(remarkMdx)
-    .use(remarkStringify)
-    .stringify(tree);
+  return stringifyTree(tree);
 }

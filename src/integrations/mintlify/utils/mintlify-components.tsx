@@ -35,22 +35,31 @@ const MintlifyComponents = {
   Warning: Mintlify.Warning,
 };
 
-// these are components that are not yet implemented in @mintlify/components
-const placeholderComponents = {
+const placeholderComponents: Record<string, typeof Wrapper> = {
   AccordionGroup: Wrapper,
+  ApiPlayground: Wrapper,
   CardGroup: Wrapper,
   Column: Wrapper,
+  CustomCode: Wrapper,
+  CustomComponent: Wrapper,
+  DynamicCustomComponent: Wrapper,
+  Heading: Wrapper,
   Latex: Wrapper,
+  Link: Wrapper,
   Loom: Wrapper,
+  MDXContentController: Wrapper,
+  Param: Wrapper,
   ParamField: Wrapper,
   PreviewButton: Wrapper,
   RequestExample: Wrapper,
   ResponseExample: Wrapper,
   ResponseField: Wrapper,
   Snippet: Wrapper,
-  View: Wrapper, // Requires internal context provider, skipping for now
+  SnippetGroup: Wrapper,
+  View: Wrapper,
   Vimeo: Wrapper,
   YouTube: Wrapper,
+  ZoomImage: Wrapper,
 };
 
 export const components = {
