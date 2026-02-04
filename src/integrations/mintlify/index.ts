@@ -1,79 +1,92 @@
 import type { AstroIntegration } from "astro";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { validateEnv } from "./utils/validate-env";
+import { getAllPathsInDocsNav } from "@mintlify/common";
 import { clearContentDirectory } from "./utils/clear-content-directory";
-import { extractAllPaths } from "./utils/navigation";
-import { fetchNavigation } from "./utils/fetch-navigation";
-import { fetchPageContent } from "./utils/fetch-page-content";
+import { copyAssets } from "./utils/copy-assets";
+import { findUserComponents } from "./utils/find-user-components";
+import { loadAllSnippets } from "./utils/load-all-snippets";
+import { readDocsConfig } from "./utils/read-docs-config";
+import { readPageContent } from "./utils/read-page-content";
 import { writePageContent } from "./utils/write-page-content";
 import { writeFaviconsManifest } from "./utils/write-favicons-manifest";
 
-export type {
-  DecoratedPage,
-  DecoratedNavigationConfig,
-  Favicons,
-} from "./types";
+export type { DocsConfig, NavigationConfig, Favicons } from "./types";
 
-const MAX_PAGES = 25; // for testing purposes to reduce API calls
-const BATCH_SIZE = 5;
+export interface MintlifyOptions {
+  docsDir?: string;
+}
 
-export function mintlify(): AstroIntegration {
+export function mintlify(options?: MintlifyOptions): AstroIntegration {
   return {
     name: "@mintlify/astro",
     hooks: {
       "astro:config:setup": async ({ config: astroConfig, logger }) => {
-        const { apiKey, apiHost, projectId } = validateEnv(astroConfig);
-
+        const rootDir = fileURLToPath(astroConfig.root);
         const srcDir = fileURLToPath(astroConfig.srcDir);
+        const publicDir = fileURLToPath(astroConfig.publicDir);
         const contentDir = join(srcDir, "content", "docs");
         const componentsDir = join(srcDir, "content", "components");
+
+        const docsDir = resolve(rootDir, options?.docsDir ?? "./docs");
 
         await Promise.all([
           clearContentDirectory(contentDir),
           clearContentDirectory(componentsDir),
         ]);
 
-        const navData = await fetchNavigation(apiHost, projectId, apiKey);
-        const allPages = extractAllPaths(navData.docsDecoratedNav);
+        await copyAssets(docsDir, publicDir);
 
-        await writeFaviconsManifest(srcDir, navData.favicons);
+        const snippets = await loadAllSnippets(docsDir);
+        logger.info(`Loaded ${snippets.length} snippet files`);
 
-        const pagesToSync = allPages.slice(0, MAX_PAGES);
+        const userComponents = await findUserComponents(docsDir);
 
-        logger.info(
-          `Found ${allPages.length} pages, syncing ${pagesToSync.length}`,
-        );
+        const docsConfig = await readDocsConfig(docsDir);
+        const pagePaths = getAllPathsInDocsNav(docsConfig.navigation);
 
-        for (let i = 0; i < pagesToSync.length; i += BATCH_SIZE) {
-          const batch = pagesToSync.slice(i, i + BATCH_SIZE);
-          await Promise.all(
-            batch.map(async (page) => {
-              const result = await fetchPageContent(
-                page.href,
-                apiHost,
-                projectId,
-                apiKey,
-              );
-
-              if (!result) {
-                logger.warn(`Failed to fetch content for ${page.href}`);
-                return;
-              }
-
-              await writePageContent({
-                page,
-                content: result.content,
-                slug: result.slug,
-                contentDir,
-                componentsDir,
-              });
-            }),
-          );
+        if (docsConfig.favicon) {
+          const faviconHref =
+            typeof docsConfig.favicon === "string"
+              ? docsConfig.favicon
+              : docsConfig.favicon.light;
+          await writeFaviconsManifest(srcDir, {
+            icons: [
+              {
+                rel: "icon",
+                type: "image/svg+xml",
+                href: faviconHref,
+              },
+            ],
+          });
         }
 
-        logger.info(`Synced ${pagesToSync.length} pages`);
+        logger.info(`Found ${pagePaths.length} pages to sync`);
+
+        await Promise.all(
+          pagePaths.map(async (pagePath) => {
+            try {
+              const { content, slug } = await readPageContent(
+                pagePath,
+                docsDir,
+              );
+              await writePageContent({
+                content,
+                slug,
+                contentDir,
+                componentsDir,
+                userComponents,
+                snippets,
+                logger,
+              });
+            } catch (error) {
+              logger.warn(`Failed to read content for ${pagePath}: ${error}`);
+            }
+          }),
+        );
+
+        logger.info(`Synced ${pagePaths.length} pages`);
       },
     },
   };

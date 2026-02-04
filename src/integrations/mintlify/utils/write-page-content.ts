@@ -1,24 +1,29 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import type { AstroIntegrationLogger } from "astro";
 
-import type { DecoratedPage } from "../types";
 import { extractReactComponents } from "./extract-react-components";
-import { buildFrontmatter } from "./build-frontmatter";
+import { resolveSnippets } from "./resolve-snippets";
+import type { SnippetFile } from "./load-all-snippets";
 
 export interface WritePageContentOptions {
-  page: DecoratedPage;
   content: string;
   slug: string;
   contentDir: string;
   componentsDir: string;
+  userComponents: Set<string>;
+  snippets: SnippetFile[];
+  logger?: AstroIntegrationLogger;
 }
 
 export async function writePageContent({
-  page,
   content,
   slug,
   contentDir,
   componentsDir,
+  userComponents,
+  snippets,
+  logger,
 }: WritePageContentOptions): Promise<void> {
   let filePath: string;
 
@@ -35,18 +40,25 @@ export async function writePageContent({
     filePath = join(dirPath, fileName);
   }
 
-  const frontmatter = buildFrontmatter(page);
-  const initialContent = frontmatter + content;
+  // Resolve all snippet/MDX imports by inlining their content
+  // This happens before React component extraction since snippets may contain React components
+  const contentWithResolvedSnippets = await resolveSnippets(
+    content,
+    `/${slug}.mdx`,
+    snippets,
+  );
 
-  // Extract React components with hooks to separate .jsx files
-  // This is necessary because Astro compiles MDX with its own JSX transform,
+  // Extract compound React components to separate .jsx files
+  // This is necessary because Astro compiles MDX with its own JSX runtime,
   // which is incompatible with React hooks. By extracting to .jsx files and
-  // re-importing with client:load, we ensure React's runtime handles these components.
+  // re-importing with client:load, we ensure React's JSX runtime handles these components.
   const finalContent = await extractReactComponents(
-    initialContent,
+    contentWithResolvedSnippets,
     filePath,
     componentsDir,
     slug,
+    userComponents,
+    logger,
   );
 
   await writeFile(filePath, finalContent, "utf-8");
