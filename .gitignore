@@ -4,9 +4,8 @@ dist/
 # generated types
 .astro/
 
-# generated content
+# generated content (fetched from Mintlify API)
 src/content
-public/
 
 # dependencies
 node_modules/
