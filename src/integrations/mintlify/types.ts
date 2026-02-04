@@ -1,4 +1,3 @@
-// Re-export types from @mintlify/validation for docs.json
 export type { DocsConfig, NavigationConfig } from "@mintlify/validation";
 
 export interface FaviconIcon {

@@ -1,6 +1,5 @@
 import { compile } from "@mdx-js/mdx";
 import { visit, SKIP } from "unist-util-visit";
-import { walk } from "estree-walker";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, dirname, relative, posix, sep } from "node:path";
 import type { Root, RootContent } from "mdast";
@@ -9,7 +8,6 @@ import type {
   MdxJsxFlowElement,
   MdxJsxTextElement,
 } from "mdast-util-mdx";
-import type { Node as EstreeNode } from "estree";
 import type { AstroIntegrationLogger } from "astro";
 
 import {
@@ -52,11 +50,11 @@ const SUPPORTED_HOOKS = new Set([
   "useInsertionEffect",
 ]);
 
+// TODO: Change to "@mintlify/astro/mdx-provider" when we extract this to a separate package
 const MDX_COMPONENTS_PATH =
   "/src/integrations/mintlify/utils/mintlify-components.tsx";
 
-interface ExtractedCompound {
-  componentName: string;
+interface ExtractedCompoundComponent {
   wrapperName: string;
   mdxSource: string;
 }
@@ -86,41 +84,15 @@ function visitJsxNodes(
 }
 
 interface CompoundContext {
-  compounds: ExtractedCompound[];
+  compounds: ExtractedCompoundComponent[];
   nodeReplacements: Map<JsxNode, string>;
   counters: Map<string, number>;
   mdxContent: string;
   logger?: AstroIntegrationLogger;
 }
 
-function detectUsedHooks(estree: EstreeNode): string[] {
-  const usedHooks = new Set<string>();
-
-  walk(estree, {
-    enter(node) {
-      const callee = (node as any).callee;
-      if (
-        node.type === "CallExpression" &&
-        callee?.type === "Identifier" &&
-        SUPPORTED_HOOKS.has(callee.name)
-      ) {
-        usedHooks.add(callee.name);
-      }
-    },
-  });
-
-  return Array.from(usedHooks);
-}
-
-function detectHooksInCode(code: string): string[] {
-  const hooks: string[] = [];
-  for (const hook of SUPPORTED_HOOKS) {
-    if (code.includes(hook)) {
-      hooks.push(hook);
-    }
-  }
-  return hooks;
-}
+const detectHooksInCode = (code: string): string[] =>
+  [...SUPPORTED_HOOKS].filter((hook) => code.includes(hook));
 
 function createImportNode(name: string, path: string): MdxjsEsm {
   return {
@@ -176,27 +148,21 @@ function findExportedComponents(tree: Root): {
   }
 
   const exportMap = getExportMapFromTree(tree);
-
-  const components: ExtractedComponent[] = [];
   const nodesToRemove = new Set<MdxjsEsm>();
 
-  for (const name of exportedNames) {
-    const code = exportMap[name];
-    if (code) {
-      const usedHooks = detectHooksInCode(code);
-      components.push({ name, code, usedHooks });
-    }
-  }
-
-  // Find and mark nodes to remove
   visit(tree, "mdxjsEsm", (node: MdxjsEsm) => {
-    for (const name of exportedNames) {
-      if (node.value?.includes(name)) {
-        nodesToRemove.add(node);
-        break;
-      }
+    if (exportedNames.some((name) => node.value?.includes(name))) {
+      nodesToRemove.add(node);
     }
   });
+
+  const components = exportedNames
+    .filter((name) => exportMap[name])
+    .map((name) => ({
+      name,
+      code: exportMap[name],
+      usedHooks: detectHooksInCode(exportMap[name]),
+    }));
 
   return { components, nodesToRemove };
 }
@@ -213,7 +179,6 @@ function processCompoundNode(node: JsxNode, ctx: CompoundContext) {
   const wrapperName = `${node.name}_${count}`;
 
   ctx.compounds.push({
-    componentName: node.name,
     wrapperName,
     mdxSource: ctx.mdxContent.slice(
       node.position.start.offset,
@@ -230,7 +195,7 @@ function findCompoundComponents(
   mdxContent: string,
   logger?: AstroIntegrationLogger,
 ): {
-  compounds: ExtractedCompound[];
+  compounds: ExtractedCompoundComponent[];
   nodeReplacements: Map<JsxNode, string>;
 } {
   const ctx: CompoundContext = {
@@ -287,7 +252,7 @@ async function compileCompoundComponent(
 }
 
 async function writeCompoundComponentFiles(
-  compounds: ExtractedCompound[],
+  compounds: ExtractedCompoundComponent[],
   componentsDir: string,
   pageSlug: string,
 ): Promise<void> {
@@ -309,17 +274,9 @@ async function writeCompoundComponentFiles(
 }
 
 function getInsertIndex(tree: Root, skipEsm = false): number {
-  let index = 0;
-
-  for (const child of tree.children) {
-    if (child.type === "yaml" || (skipEsm && child.type === "mdxjsEsm")) {
-      index++;
-    } else {
-      break;
-    }
-  }
-
-  return index;
+  const skipTypes = skipEsm ? ["yaml", "mdxjsEsm"] : ["yaml"];
+  const index = tree.children.findIndex((c) => !skipTypes.includes(c.type));
+  return index === -1 ? tree.children.length : index;
 }
 
 function transformTree(
@@ -367,7 +324,7 @@ function createReplacementNode(
 
 function transformTreeWithCompounds(
   tree: Root,
-  compounds: ExtractedCompound[],
+  compounds: ExtractedCompoundComponent[],
   nodeReplacements: Map<JsxNode, string>,
   relativeComponentsDir: string,
 ): void {
@@ -441,16 +398,13 @@ export async function extractReactComponents(
     .split(sep)
     .join(posix.sep);
 
-  // Handle exported components (export const Foo = () => ...)
   if (components.length > 0) {
     await writeComponentFiles(components, componentsDir, pageSlug);
     transformTree(tree, components, nodesToRemove, relativeComponentsDir);
   }
 
-  // Add client:load to user-imported React components
   addClientDirectivesToUserComponents(tree, userComponents);
 
-  // Handle compound components (Tabs, Steps, Accordion, etc.)
   if (compounds.length > 0) {
     await writeCompoundComponentFiles(compounds, componentsDir, pageSlug);
     transformTreeWithCompounds(

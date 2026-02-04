@@ -1,5 +1,32 @@
 import type { ReactNode } from "react";
-import * as Mintlify from "@mintlify/components";
+import {
+  Accordion,
+  Badge,
+  Callout,
+  Card,
+  Check,
+  CodeBlock,
+  CodeGroup,
+  Color,
+  Columns,
+  Danger,
+  Expandable,
+  Frame,
+  Icon,
+  Info,
+  Mermaid,
+  Note,
+  Panel,
+  Property,
+  Steps,
+  Tabs,
+  Tile,
+  Tip,
+  Tooltip,
+  Tree,
+  Update,
+  Warning,
+} from "@mintlify/components";
 import type { MDXComponents } from "mdx/types";
 
 const Wrapper = ({ children }: { children?: ReactNode }) => (
@@ -7,32 +34,32 @@ const Wrapper = ({ children }: { children?: ReactNode }) => (
 );
 
 const MintlifyComponents = {
-  Accordion: Mintlify.Accordion,
-  Badge: Mintlify.Badge,
-  Callout: Mintlify.Callout,
-  Card: Mintlify.Card,
-  Check: Mintlify.Check,
-  CodeBlock: Mintlify.CodeBlock,
-  CodeGroup: Mintlify.CodeGroup,
-  Color: Mintlify.Color,
-  Columns: Mintlify.Columns,
-  Danger: Mintlify.Danger,
-  Expandable: Mintlify.Expandable,
-  Frame: Mintlify.Frame,
-  Icon: Mintlify.Icon,
-  Info: Mintlify.Info,
-  Mermaid: Mintlify.Mermaid,
-  Note: Mintlify.Note,
-  Panel: Mintlify.Panel,
-  Property: Mintlify.Property,
-  Steps: Mintlify.Steps,
-  Tabs: Mintlify.Tabs,
-  Tile: Mintlify.Tile,
-  Tip: Mintlify.Tip,
-  Tooltip: Mintlify.Tooltip,
-  Tree: Mintlify.Tree,
-  Update: Mintlify.Update,
-  Warning: Mintlify.Warning,
+  Accordion,
+  Badge,
+  Callout,
+  Card,
+  Check,
+  CodeBlock,
+  CodeGroup,
+  Color,
+  Columns,
+  Danger,
+  Expandable,
+  Frame,
+  Icon,
+  Info,
+  Mermaid,
+  Note,
+  Panel,
+  Property,
+  Steps,
+  Tabs,
+  Tile,
+  Tip,
+  Tooltip,
+  Tree,
+  Update,
+  Warning,
 };
 
 const placeholderComponents: Record<string, typeof Wrapper> = {
@@ -57,9 +84,6 @@ const placeholderComponents: Record<string, typeof Wrapper> = {
   Snippet: Wrapper,
   SnippetGroup: Wrapper,
   View: Wrapper,
-  Vimeo: Wrapper,
-  YouTube: Wrapper,
-  ZoomImage: Wrapper,
 };
 
 export const components = {
@@ -70,7 +94,7 @@ export const components = {
 export function useMDXComponents(): MDXComponents {
   return {
     ...components,
-    Step: Mintlify.Steps.Item,
-    Tab: Mintlify.Tabs.Item,
+    Step: Steps.Item,
+    Tab: Tabs.Item,
   };
 }

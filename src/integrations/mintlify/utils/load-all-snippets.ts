@@ -3,10 +3,10 @@ import { join, extname, relative } from "node:path";
 import {
   getAST,
   SNIPPET_EXTENSIONS,
-  buildImportMap,
   topologicalSort,
   extractImportSources,
   resolveImportPath,
+  DEFAULT_MINT_IGNORES,
 } from "@mintlify/common";
 import type { Root } from "mdast";
 
@@ -27,15 +27,13 @@ async function scanDirectory(
     const fullPath = join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      // Skip node_modules and hidden directories
-      if (entry.name.startsWith(".") || entry.name === "node_modules") {
+      if (DEFAULT_MINT_IGNORES.includes(entry.name)) {
         continue;
       }
       await scanDirectory(fullPath, rootDir, files);
     } else {
       const ext = extname(entry.name).toLowerCase();
       if (SNIPPET_EXTENSIONS.includes(ext)) {
-        // Get path relative to docs root, with leading slash
         const relativePath = "/" + relative(rootDir, fullPath);
         files.push({ path: fullPath, relativePath });
       }
@@ -48,21 +46,18 @@ async function scanDirectory(
 export async function loadAllSnippets(docsDir: string): Promise<SnippetFile[]> {
   const files = await scanDirectory(docsDir, docsDir);
   const snippets: SnippetFile[] = [];
-  const fileTreeMap = new Map<string, { tree: Root; content: string }>();
 
   for (const file of files) {
     try {
       const content = await readFile(file.path, "utf-8");
       const tree = getAST(content, file.relativePath) as Root;
 
-      fileTreeMap.set(file.relativePath.toLowerCase(), { tree, content });
       snippets.push({
         filename: file.relativePath,
         tree,
         content,
       });
     } catch (error) {
-      // Skip files that fail to parse
       console.warn(`Failed to parse ${file.relativePath}:`, error);
     }
   }
@@ -82,21 +77,16 @@ export async function loadAllSnippets(docsDir: string): Promise<SnippetFile[]> {
     }
   }
 
-  try {
-    const sortedPaths = topologicalSort(graph);
-    const sortedSnippets: SnippetFile[] = [];
-    for (const path of sortedPaths) {
-      const snippet = snippets.find(
-        (s) => s.filename.toLowerCase() === path.toLowerCase(),
-      );
-      if (snippet) {
-        sortedSnippets.push(snippet);
-      }
+  const sortedPaths = topologicalSort(graph);
+  const sortedSnippets: SnippetFile[] = [];
+  for (const path of sortedPaths) {
+    const snippet = snippets.find(
+      (s) => s.filename.toLowerCase() === path.toLowerCase(),
+    );
+    if (snippet) {
+      sortedSnippets.push(snippet);
     }
-
-    return sortedSnippets;
-  } catch {
-    // If topological sort fails (circular deps), return unsorted
-    return snippets;
   }
+
+  return sortedSnippets;
 }
