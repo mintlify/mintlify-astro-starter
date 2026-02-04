@@ -83,11 +83,14 @@ export default function AssistantBar() {
                   Ask me anything about this documentation
                 </div>
               ) : (
-                messages.map((msg) => {
+                messages.map((msg, index) => {
                   const text = msg.parts
                     .filter((p) => p.type === "text")
                     .map((p) => p.text)
                     .join("");
+
+                  const isLastMessage = index === messages.length - 1;
+                  const showLoading = isLastMessage && msg.role === "assistant" && isLoading && !text;
 
                   return (
                     <div
@@ -98,7 +101,17 @@ export default function AssistantBar() {
                           : "bg-gray-100 self-start"
                       }`}
                     >
-                      {msg.role === "assistant" ? (
+                      {showLoading ? (
+                        <div className="flex gap-1">
+                          {[0, 1, 2].map((i) => (
+                            <span
+                              key={i}
+                              className="w-1 h-1 bg-gray-400 rounded-full animate-bounce"
+                              style={{ animationDelay: `${i * 0.2}s` }}
+                            />
+                          ))}
+                        </div>
+                      ) : msg.role === "assistant" ? (
                         <ReactMarkdown>{text}</ReactMarkdown>
                       ) : (
                         text
@@ -106,20 +119,6 @@ export default function AssistantBar() {
                     </div>
                   );
                 })
-              )}
-
-              {isLoading && (
-                <div className="p-3 text-sm bg-gray-100 self-start rounded">
-                  <div className="flex gap-1">
-                    {[0, 1, 2].map((i) => (
-                      <span
-                        key={i}
-                        className="w-1 h-1 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: `${i * 0.2}s` }}
-                      />
-                    ))}
-                  </div>
-                </div>
               )}
             </div>
 
