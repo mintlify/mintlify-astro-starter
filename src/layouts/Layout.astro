@@ -1,6 +1,7 @@
 ---
 import type { Favicons } from '../integrations/mintlify/types';
-import '@mintlify/components/styles.css';
+import '../styles/global.css';
+import AssistantBar from '../components/AssistantBar';
 
 interface Props {
 	title?: string;
@@ -31,6 +32,7 @@ const { title = 'Mintlify Docs', description, favicons } = Astro.props;
 	</head>
 	<body>
 		<slot />
+		<AssistantBar client:load />
 	</body>
 </html>
 

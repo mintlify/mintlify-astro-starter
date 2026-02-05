@@ -9,15 +9,20 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@ai-sdk/react": "^3.0.70",
     "@astrojs/mdx": "^4.3.1",
     "@astrojs/react": "^4.4.2",
-    "@mdx-js/mdx": "^3.1.0",
+    "@mdx-js/mdx": "^3.1.1",
     "@mintlify/common": "^1.0.694",
     "@mintlify/components": "^1.0.1",
     "@mintlify/validation": "^0.1.574",
+    "@tailwindcss/vite": "^4.1.18",
+    "ai": "^6.0.68",
     "astro": "^5.16.12",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-markdown": "^10.1.0",
+    "tailwindcss": "^4.1.18",
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
