@@ -19,8 +19,6 @@ export const POST: APIRoute = async ({ request }) => {
     const subdomain = import.meta.env.MINTLIFY_SUBDOMAIN;
     const apiKey = import.meta.env.MINTLIFY_ASSISTANT_API_KEY;
 
-    console.log('Environment variables:', { baseUrl, subdomain, apiKey: apiKey ? 'SET' : 'NOT SET' });
-
     if (!baseUrl || !subdomain) {
       return new Response(
         JSON.stringify({ error: "Assistant configuration missing" }),
@@ -29,8 +27,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const endpoint = `${baseUrl}/api/discovery/v2/assistant/${subdomain}/message`;
-    console.log('Calling endpoint:', endpoint);
-
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
@@ -69,7 +65,7 @@ export const POST: APIRoute = async ({ request }) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Mintlify API error:', response.status, data);
+      console.error("Mintlify API error:", response.status, data);
       return new Response(
         JSON.stringify({
           error: data.error || "Failed to get response from assistant",

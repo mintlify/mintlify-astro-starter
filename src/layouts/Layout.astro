@@ -2,6 +2,7 @@
 import type { Favicons } from '../integrations/mintlify/types';
 import '../styles/global.css';
 import AssistantBar from '../components/AssistantBar';
+import { SearchBar } from '../components/SearchBar';
 
 interface Props {
 	title?: string;
@@ -16,31 +17,21 @@ const { title = 'Mintlify Docs', description, favicons } = Astro.props;
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		{favicons?.icons && favicons.icons.map((icon) => (
-			<link
-				rel={icon.rel}
-				type={icon.type}
-				sizes={icon.sizes}
-				href={icon.href}
-				media={icon.media}
-			/>
+			<link rel={icon.rel} type={icon.type} sizes={icon.sizes} href={icon.href} media={icon.media} />
 		))}
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		{description && <meta name="description" content={description} />}
 	</head>
 	<body>
-		<slot />
-		<AssistantBar client:load />
+		<header class="sticky top-0 border-b border-black p-4 flex gap-3">
+			<SearchBar client:load />
+			<AssistantBar inline={true} client:load />
+		</header>
+		<main>
+			<slot />
+		</main>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
