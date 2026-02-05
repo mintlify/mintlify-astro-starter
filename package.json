@@ -12,7 +12,6 @@
     "@ai-sdk/react": "^3.0.70",
     "@astrojs/mdx": "^4.3.1",
     "@astrojs/react": "^4.4.2",
-    "@astrojs/vercel": "^9.0.4",
     "@mdx-js/mdx": "^3.1.1",
     "@mintlify/common": "^1.0.694",
     "@mintlify/components": "^1.0.1",

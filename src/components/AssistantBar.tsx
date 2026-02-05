@@ -3,29 +3,25 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import ReactMarkdown from "react-markdown";
 
+const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
+const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
+
 export default function AssistantBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const threadIdRef = useRef<string | undefined>(undefined);
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
-      api: "/api/assistant",
-      body: () => ({
+      api: `https://api.mintlify.com/discovery/v2/assistant/${SUBDOMAIN}/message`,
+      headers: {
+        ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
+      },
+      body: {
         fp: "anonymous",
         retrievalPageSize: 5,
         context: [],
-        threadId: threadIdRef.current,
-      }),
-      fetch: async (url, options) => {
-        const response = await fetch(url, options);
-        const newThreadId = response.headers.get("x-thread-id");
-        if (newThreadId) {
-          threadIdRef.current = newThreadId;
-        }
-        return response;
       },
     }),
   });
