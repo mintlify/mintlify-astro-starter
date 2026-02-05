@@ -44,7 +44,7 @@ export function SearchBar() {
 
     try {
       const response = await fetch(
-        `https://api.mintlify.com/api/discovery/v1/search/${SUBDOMAIN}`,
+        `https://api.mintlify.com/discovery/v1/search/${SUBDOMAIN}`,
         {
           method: "POST",
           headers: {
