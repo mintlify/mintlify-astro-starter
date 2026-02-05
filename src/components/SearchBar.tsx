@@ -85,7 +85,7 @@ export function SearchBar() {
   };
 
   return (
-    <div ref={searchRef} className="relative w-full">
+    <div ref={searchRef} className="relative w-full max-w-md">
       <form onSubmit={handleSearch} className="flex">
         <input
           type="text"
