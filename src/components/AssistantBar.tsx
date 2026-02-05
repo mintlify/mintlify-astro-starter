@@ -50,7 +50,7 @@ export default function AssistantBar() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 flex items-center gap-2 px-4 py-3 bg-white border border-black text-sm z-[1000] cursor-pointer hover:bg-gray-50"
+        className={`flex items-center gap-2 px-3 py-2 bg-white border border-black text-sm cursor-pointer hover:bg-gray-50 transition-colors rounded}`}
       >
         Ask AI
       </button>
@@ -63,17 +63,22 @@ export default function AssistantBar() {
           />
 
           <div className="fixed top-0 right-0 bottom-0 w-[450px] max-w-[90vw] bg-white flex flex-col border-l border-black z-[2001]">
+            {/* Header */}
             <div className="flex justify-between items-center p-4 border-b border-black font-medium">
               <span>AI Assistant</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-xl p-1 hover:bg-gray-100 rounded"
+                className="text-xl p-1 hover:bg-gray-100 rounded transition-colors"
+                aria-label="Close"
               >
                 ✕
               </button>
             </div>
 
-            <div ref={messagesRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+            <div
+              ref={messagesRef}
+              className="flex-1 overflow-y-auto p-4 flex flex-col gap-3"
+            >
               {messages.length === 0 ? (
                 <div className="text-center text-gray-500 p-8 m-auto">
                   Ask me anything about this documentation
@@ -86,7 +91,11 @@ export default function AssistantBar() {
                     .join("");
 
                   const isLastMessage = index === messages.length - 1;
-                  const showLoading = isLastMessage && msg.role === "assistant" && isLoading && !text;
+                  const showLoading =
+                    isLastMessage &&
+                    msg.role === "assistant" &&
+                    isLoading &&
+                    !text;
 
                   return (
                     <div
@@ -118,7 +127,10 @@ export default function AssistantBar() {
               )}
             </div>
 
-            <form onSubmit={handleSubmit} className="relative p-4 border-t border-black">
+            <form
+              onSubmit={handleSubmit}
+              className="relative p-4 border-t border-black"
+            >
               <textarea
                 ref={inputRef}
                 value={input}
@@ -145,8 +157,18 @@ export default function AssistantBar() {
                 {isLoading ? (
                   <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 15l7-7 7 7"
+                    />
                   </svg>
                 )}
               </button>
