@@ -16,19 +16,18 @@
     "@mintlify/common": "^1.0.694",
     "@mintlify/components": "^1.0.1",
     "@mintlify/validation": "^0.1.574",
+    "@tailwindcss/vite": "^4.1.18",
     "ai": "^6.0.68",
     "astro": "^5.16.12",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^10.1.0",
+    "tailwindcss": "^4.1.18",
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
-    "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^22.15.0",
     "@types/react": "^19.2.9",
-    "@types/react-dom": "^19.2.3",
-    "postcss-import": "^16.1.1",
-    "tailwindcss": "^3.4.19"
+    "@types/react-dom": "^19.2.3"
   }
 }

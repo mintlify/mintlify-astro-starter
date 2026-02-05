@@ -1,17 +1,1 @@
-@layer base, components, mintlify, utilities;
-
-@layer base {
-  @tailwind base;
-}
-
-@layer components {
-  @tailwind components;
-}
-
-@layer mintlify {
-  @import "@mintlify/components/styles.css";
-}
-
-@layer utilities {
-  @tailwind utilities;
-}
+@import "@mintlify/components/styles.css";
