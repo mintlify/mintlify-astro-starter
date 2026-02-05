@@ -47,12 +47,17 @@ const { Content } = await render(doc);
 
     <main class="content">
       <article>
-        <h1>{doc.data.title || doc.id}</h1>
-        {doc.data.description && <p class="description">{doc.data.description}</p>}
-
-        {doc.data.deprecated && <p class="deprecated">This page is deprecated</p>}
-
-        <div class="mdx-content">
+        <header class="page-header mb-8 pb-6 border-b border-slate-200">
+          <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3">
+            {doc.data.title || doc.id}
+          </h1>
+          {doc.data.description && (
+            <p class="text-lg leading-relaxed max-w-2xl">
+              {doc.data.description}
+            </p>
+          )}
+        </header>
+        <div class="mdx-content prose">
           <Content components={components} />
         </div>
       </article>
