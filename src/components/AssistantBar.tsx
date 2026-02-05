@@ -59,7 +59,7 @@ export default function AssistantBar() {
         <>
           <div
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/50 z-[2000]"
+            className="fixed inset-0 bg-black/50"
           />
 
           <div className="fixed top-0 right-0 bottom-0 w-[450px] max-w-[90vw] bg-white flex flex-col border-l border-black z-[2001]">

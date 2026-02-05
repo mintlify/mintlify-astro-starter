@@ -11,7 +11,6 @@ export default defineConfig({
     react(),
     mdx(),
   ],
-
   vite: {
     plugins: [tailwindcss()],
   },
