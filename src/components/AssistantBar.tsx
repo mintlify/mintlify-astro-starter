@@ -3,11 +3,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import ReactMarkdown from "react-markdown";
 
-interface AssistantBarProps {
-  inline?: boolean;
-}
-
-export default function AssistantBar({ inline = false }: AssistantBarProps) {
+export default function AssistantBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const threadIdRef = useRef<string | undefined>(undefined);
@@ -58,9 +54,7 @@ export default function AssistantBar({ inline = false }: AssistantBarProps) {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-3 py-2 bg-white border border-black text-sm cursor-pointer hover:bg-gray-50 transition-colors rounded ${
-          inline ? "relative" : "fixed bottom-6 right-6 z-[1000]"
-        }`}
+        className="flex items-center gap-2 px-3 py-2 bg-white border border-black text-sm cursor-pointer hover:bg-gray-50 transition-colors rounded"
       >
         Ask AI
       </button>

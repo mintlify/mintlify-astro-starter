@@ -28,7 +28,7 @@ const { title = 'Mintlify Docs', description, favicons } = Astro.props;
 	<body>
 		<header class="sticky top-0 border-b border-black p-4 flex gap-3">
 			<SearchBar client:load />
-			<AssistantBar inline={true} client:load />
+			<AssistantBar client:load />
 		</header>
 		<main>
 			<slot />
