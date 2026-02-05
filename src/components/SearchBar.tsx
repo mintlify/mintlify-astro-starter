@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { navigate } from "astro:transitions/client";
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
 const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
@@ -8,6 +9,14 @@ interface SearchResult {
   content: string;
   metadata?: Record<string, any>;
 }
+
+const normalizePath = (path: string): string => {
+  let normalized = path.startsWith("/") ? path : `/${path}`;
+  if (normalized.endsWith("/index")) {
+    normalized = normalized.slice(0, -5) + "/";
+  }
+  return normalized;
+};
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
@@ -106,22 +115,29 @@ export function SearchBar() {
 
           {results.length > 0 && (
             <div>
-              {results.map((result, index) => (
-                <a
-                  key={index}
-                  href={result.path}
-                  onClick={() => setIsOpen(false)}
-                  className="block p-4 border-b border-gray-200 last:border-0 hover:bg-gray-100 transition-colors no-underline text-inherit"
-                >
-                  <div className="font-semibold mb-1 text-sm">
-                    {result.path}
-                  </div>
-                  <div className="text-xs text-gray-600 leading-relaxed">
-                    {result.content.substring(0, 150)}
-                    {result.content.length > 150 ? "..." : ""}
-                  </div>
-                </a>
-              ))}
+              {results.map((result, index) => {
+                const absolutePath = normalizePath(result.path);
+                return (
+                  <a
+                    key={index}
+                    href={absolutePath}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsOpen(false);
+                      navigate(absolutePath);
+                    }}
+                    className="block p-4 border-b border-gray-200 last:border-0 hover:bg-gray-100 transition-colors no-underline text-inherit"
+                  >
+                    <div className="font-semibold mb-1 text-sm">
+                      {result.path}
+                    </div>
+                    <div className="text-xs text-gray-600 leading-relaxed">
+                      {result.content.substring(0, 150)}
+                      {result.content.length > 150 ? "..." : ""}
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           )}
         </div>
