@@ -20,7 +20,7 @@ export default function AssistantBar() {
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
-      api: `https://api.mintlify.com/discovery/v2/assistant/${SUBDOMAIN}/message`,
+      api: `https://api.mintlify.com/api/discovery/v2/assistant/${SUBDOMAIN}/message`,
       headers: {
         ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
       },

@@ -1,8 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import type { SearchResult } from "../lib/mintlify";
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
-const API_KEY = import.meta.env.PUBLIC_MINTLIFY_API_KEY;
+const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
+
+interface SearchResult {
+  path: string;
+  content: string;
+  metadata?: Record<string, any>;
+}
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
@@ -39,7 +44,7 @@ export function SearchBar() {
 
     try {
       const response = await fetch(
-        `https://api.mintlify.com/discovery/v1/search/${SUBDOMAIN}`,
+        `https://api.mintlify.com/api/discovery/v1/search/${SUBDOMAIN}`,
         {
           method: "POST",
           headers: {
@@ -53,7 +58,7 @@ export function SearchBar() {
               language: "en", // TODO: make dynamic based on user preference
             },
           }),
-        }
+        },
       );
 
       if (!response.ok) {
