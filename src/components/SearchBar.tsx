@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import type { SearchResult } from "../lib/mintlify";
 
+const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
+const API_KEY = import.meta.env.PUBLIC_MINTLIFY_API_KEY;
+
 export function SearchBar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -35,27 +38,30 @@ export function SearchBar() {
     setIsOpen(true);
 
     try {
-      const response = await fetch("/api/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query,
-          pageSize: 10,
-          filter: {
-            language: "en",
+      const response = await fetch(
+        `https://api.mintlify.com/discovery/v1/search/${SUBDOMAIN}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
           },
-        }),
-      });
+          body: JSON.stringify({
+            query,
+            pageSize: 10,
+            filter: {
+              language: "en", // TODO: make dynamic based on user preference
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Search failed");
+        throw new Error("Search failed");
       }
 
       const data = await response.json();
-      setResults(data.results);
+      setResults(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
       setResults([]);
