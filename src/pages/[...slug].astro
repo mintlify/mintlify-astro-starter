@@ -1,8 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { components } from '../integrations/mintlify/utils/mintlify-components';
 import favicons from '../content/generated/favicons.json';
 import docsConfig from '../../docs/docs.json';
@@ -11,7 +11,8 @@ import {
   decorateNavigation,
   unwrapNav,
   findGroupForPath,
-  getTabsFromNav, getFooterPages,
+  getTabsFromNav,
+  getFooterPages,
 } from '../lib/navigation';
 
 export async function getStaticPaths() {

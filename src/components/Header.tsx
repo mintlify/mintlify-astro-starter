@@ -1,5 +1,5 @@
-import type { TabInfo } from "../lib/navigation";
-import { cn } from "../lib/cn";
+import type { TabInfo } from '../lib/navigation';
+import { cn } from "@mintlify/components";
 
 interface HeaderProps {
   logo?: string;
@@ -8,7 +8,12 @@ interface HeaderProps {
   primaryColor?: string;
 }
 
-export default function Header({ logo, name, tabs, primaryColor }: HeaderProps) {
+export default function Header({
+  logo,
+  name,
+  tabs,
+  primaryColor,
+}: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-white">
       <nav className="h-16 border-b border-gray-200/60">
@@ -27,12 +32,14 @@ export default function Header({ logo, name, tabs, primaryColor }: HeaderProps) 
                 key={tab.name}
                 href={tab.href}
                 className={cn(
-                  "relative py-3 text-sm leading-5 no-underline whitespace-nowrap border-b-2 -mb-px transition-colors duration-150",
+                  'relative py-3 text-sm leading-5 no-underline whitespace-nowrap border-b-2 -mb-px transition-colors duration-150',
                   tab.isActive
-                    ? "text-gray-900 font-semibold"
-                    : "text-gray-400 font-medium border-transparent hover:text-gray-500"
+                    ? 'text-gray-900 font-semibold'
+                    : 'text-gray-400 font-medium border-transparent hover:text-gray-500',
                 )}
-                style={tab.isActive ? { borderBottomColor: primaryColor } : undefined}
+                style={
+                  tab.isActive ? { borderBottomColor: primaryColor } : undefined
+                }
               >
                 {tab.name}
               </a>
