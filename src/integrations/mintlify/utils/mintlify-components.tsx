@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 import {
   Accordion,
   Badge,
@@ -26,8 +26,8 @@ import {
   Tree,
   Update,
   Warning,
-} from "@mintlify/components";
-import type { MDXComponents } from "mdx/types";
+} from '@mintlify/components';
+import type { MDXComponents } from 'mdx/types';
 
 const Wrapper = ({ children }: { children?: ReactNode }) => (
   <div>{children}</div>

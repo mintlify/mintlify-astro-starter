@@ -1,5 +1,5 @@
-import { cp, stat } from "node:fs/promises";
-import { join } from "node:path";
+import { cp, stat } from 'node:fs/promises';
+import { join } from 'node:path';
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -37,19 +37,19 @@ export async function copyAssets(
   publicDir: string,
 ): Promise<void> {
   await copyDirectoryIfExists(
-    join(docsDir, "images"),
-    join(publicDir, "images"),
+    join(docsDir, 'images'),
+    join(publicDir, 'images'),
   );
 
-  await copyDirectoryIfExists(join(docsDir, "logo"), join(publicDir, "logo"));
+  await copyDirectoryIfExists(join(docsDir, 'logo'), join(publicDir, 'logo'));
 
   await copyFileIfExists(
-    join(docsDir, "favicon.svg"),
-    join(publicDir, "favicon.svg"),
+    join(docsDir, 'favicon.svg'),
+    join(publicDir, 'favicon.svg'),
   );
 
   await copyFileIfExists(
-    join(docsDir, "favicon.ico"),
-    join(publicDir, "favicon.ico"),
+    join(docsDir, 'favicon.ico'),
+    join(publicDir, 'favicon.ico'),
   );
 }

@@ -1,14 +1,14 @@
-import { compile } from "@mdx-js/mdx";
-import { visit, SKIP } from "unist-util-visit";
-import { mkdir, writeFile } from "node:fs/promises";
-import { join, dirname, relative, posix, sep } from "node:path";
-import type { Root, RootContent } from "mdast";
+import { compile } from '@mdx-js/mdx';
+import { visit, SKIP } from 'unist-util-visit';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join, dirname, relative, posix, sep } from 'node:path';
+import type { Root, RootContent } from 'mdast';
 import type {
   MdxjsEsm,
   MdxJsxFlowElement,
   MdxJsxTextElement,
-} from "mdast-util-mdx";
-import type { AstroIntegrationLogger } from "astro";
+} from 'mdast-util-mdx';
+import type { AstroIntegrationLogger } from 'astro';
 
 import {
   getAST,
@@ -18,41 +18,41 @@ import {
   isMdxJsxAttribute,
   createMdxJsxAttribute,
   allowedComponents,
-} from "@mintlify/common";
+} from '@mintlify/common';
 
 const COMPOUND_COMPONENTS = new Set([
-  "Accordion",
-  "AccordionGroup",
-  "Card",
-  "CardGroup",
-  "CodeGroup",
-  "Expandable",
-  "Steps",
-  "Tabs",
-  "Tooltip",
+  'Accordion',
+  'AccordionGroup',
+  'Card',
+  'CardGroup',
+  'CodeGroup',
+  'Expandable',
+  'Steps',
+  'Tabs',
+  'Tooltip',
 ]);
 
 const SUPPORTED_HOOKS = new Set([
-  "useState",
-  "useEffect",
-  "useRef",
-  "useCallback",
-  "useMemo",
-  "useReducer",
-  "useContext",
-  "useLayoutEffect",
-  "useImperativeHandle",
-  "useDebugValue",
-  "useDeferredValue",
-  "useTransition",
-  "useId",
-  "useSyncExternalStore",
-  "useInsertionEffect",
+  'useState',
+  'useEffect',
+  'useRef',
+  'useCallback',
+  'useMemo',
+  'useReducer',
+  'useContext',
+  'useLayoutEffect',
+  'useImperativeHandle',
+  'useDebugValue',
+  'useDeferredValue',
+  'useTransition',
+  'useId',
+  'useSyncExternalStore',
+  'useInsertionEffect',
 ]);
 
 // TODO: Change to "@mintlify/astro/mdx-provider" when we extract this to a separate package
 const MDX_COMPONENTS_PATH =
-  "/src/integrations/mintlify/utils/mintlify-components.tsx";
+  '/src/integrations/mintlify/utils/mintlify-components.tsx';
 
 interface ExtractedCompoundComponent {
   wrapperName: string;
@@ -69,7 +69,7 @@ type JsxNode = MdxJsxFlowElement | MdxJsxTextElement;
 
 function isJsxNode(node: unknown): node is JsxNode {
   const n = node as { type?: string };
-  return n?.type === "mdxJsxFlowElement" || n?.type === "mdxJsxTextElement";
+  return n?.type === 'mdxJsxFlowElement' || n?.type === 'mdxJsxTextElement';
 }
 
 function visitJsxNodes(
@@ -96,7 +96,7 @@ const detectHooksInCode = (code: string): string[] =>
 
 function createImportNode(name: string, path: string): MdxjsEsm {
   return {
-    type: "mdxjsEsm",
+    type: 'mdxjsEsm',
     value: `import { ${name} } from "${path}";`,
   } as MdxjsEsm;
 }
@@ -107,30 +107,30 @@ function addClientDirective(node: JsxNode): void {
   const hasClientDirective = node.attributes.some(
     (attr) =>
       isMdxJsxAttribute(attr) &&
-      typeof attr.name === "string" &&
-      attr.name.startsWith("client:"),
+      typeof attr.name === 'string' &&
+      attr.name.startsWith('client:'),
   );
 
   if (!hasClientDirective) {
-    node.attributes.push(createMdxJsxAttribute("client:load", null));
+    node.attributes.push(createMdxJsxAttribute('client:load', null));
   }
 }
 
 function generateComponentFile(code: string, usedHooks: string[]): string {
   const validComponents = allowedComponents.filter(
-    (c) => !c.includes(".") && !c.includes("-") && /^[A-Z]/.test(c),
+    (c) => !c.includes('.') && !c.includes('-') && /^[A-Z]/.test(c),
   );
 
   const imports = [
     `import * as Mintlify from "@mintlify/components";`,
-    `const { ${validComponents.join(", ")} } = Mintlify;`,
+    `const { ${validComponents.join(', ')} } = Mintlify;`,
   ];
 
   if (usedHooks.length > 0) {
-    imports.unshift(`import { ${usedHooks.join(", ")} } from "react";`);
+    imports.unshift(`import { ${usedHooks.join(', ')} } from "react";`);
   }
 
-  return imports.join("\n") + "\n\n" + code + "\n";
+  return imports.join('\n') + '\n\n' + code + '\n';
 }
 
 function findExportedComponents(tree: Root): {
@@ -139,8 +139,8 @@ function findExportedComponents(tree: Root): {
 } {
   const exportedNames = findExportedNodes(
     tree,
-    "ArrowFunctionExpression",
-    "FunctionExpression",
+    'ArrowFunctionExpression',
+    'FunctionExpression',
   );
 
   if (exportedNames.length === 0) {
@@ -150,7 +150,7 @@ function findExportedComponents(tree: Root): {
   const exportMap = getExportMapFromTree(tree);
   const nodesToRemove = new Set<MdxjsEsm>();
 
-  visit(tree, "mdxjsEsm", (node: MdxjsEsm) => {
+  visit(tree, 'mdxjsEsm', (node: MdxjsEsm) => {
     if (exportedNames.some((name) => node.value?.includes(name))) {
       nodesToRemove.add(node);
     }
@@ -224,7 +224,7 @@ async function writeComponentFiles(
       writeFile(
         join(pageComponentsDir, `${name}.jsx`),
         generateComponentFile(code, usedHooks),
-        "utf-8",
+        'utf-8',
       ),
     ),
   );
@@ -236,7 +236,7 @@ async function compileCompoundComponent(
 ): Promise<string> {
   const compiled = await compile(mdxSource, {
     jsx: true,
-    outputFormat: "program",
+    outputFormat: 'program',
     development: false,
     providerImportSource: MDX_COMPONENTS_PATH,
   });
@@ -246,7 +246,7 @@ async function compileCompoundComponent(
       /export default function MDXContent/g,
       `export function ${wrapperName}`,
     )
-    .replace(/export \{ MDXContent as default \};?/g, "");
+    .replace(/export \{ MDXContent as default \};?/g, '');
 
   return compiledStr;
 }
@@ -267,14 +267,14 @@ async function writeCompoundComponentFiles(
       await writeFile(
         join(pageComponentsDir, `${wrapperName}.jsx`),
         code,
-        "utf-8",
+        'utf-8',
       );
     }),
   );
 }
 
 function getInsertIndex(tree: Root, skipEsm = false): number {
-  const skipTypes = skipEsm ? ["yaml", "mdxjsEsm"] : ["yaml"];
+  const skipTypes = skipEsm ? ['yaml', 'mdxjsEsm'] : ['yaml'];
   const index = tree.children.findIndex((c) => !skipTypes.includes(c.type));
   return index === -1 ? tree.children.length : index;
 }
@@ -311,13 +311,13 @@ function transformTree(
 }
 
 function createReplacementNode(
-  type: "mdxJsxFlowElement" | "mdxJsxTextElement",
+  type: 'mdxJsxFlowElement' | 'mdxJsxTextElement',
   wrapperName: string,
 ): JsxNode {
   return {
     type,
     name: wrapperName,
-    attributes: [createMdxJsxAttribute("client:load", null)],
+    attributes: [createMdxJsxAttribute('client:load', null)],
     children: [],
   } as JsxNode;
 }

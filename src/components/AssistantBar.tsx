@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from "react";
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import ReactMarkdown from "react-markdown";
+import { useState, useEffect, useRef } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import ReactMarkdown from 'react-markdown';
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
 const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
 
 export default function AssistantBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -19,7 +19,7 @@ export default function AssistantBar() {
         ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
       },
       body: {
-        fp: "anonymous",
+        fp: 'anonymous',
         retrievalPageSize: 5,
         context: [],
       },
@@ -38,13 +38,13 @@ export default function AssistantBar() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || status !== "ready") return;
+    if (!input.trim() || status !== 'ready') return;
     sendMessage({ text: input });
-    setInput("");
+    setInput('');
     setTimeout(() => inputRef.current?.focus(), 0);
   };
 
-  const isLoading = status === "streaming" || status === "submitted";
+  const isLoading = status === 'streaming' || status === 'submitted';
 
   return (
     <>
@@ -73,7 +73,10 @@ export default function AssistantBar() {
               </button>
             </div>
 
-            <div ref={messagesRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+            <div
+              ref={messagesRef}
+              className="flex-1 overflow-y-auto p-4 flex flex-col gap-3"
+            >
               {messages.length === 0 ? (
                 <div className="text-center text-gray-500 p-8 m-auto">
                   Ask me anything about this documentation
@@ -81,20 +84,24 @@ export default function AssistantBar() {
               ) : (
                 messages.map((msg, index) => {
                   const text = msg.parts
-                    .filter((p) => p.type === "text")
+                    .filter((p) => p.type === 'text')
                     .map((p) => p.text)
-                    .join("");
+                    .join('');
 
                   const isLastMessage = index === messages.length - 1;
-                  const showLoading = isLastMessage && msg.role === "assistant" && isLoading && !text;
+                  const showLoading =
+                    isLastMessage &&
+                    msg.role === 'assistant' &&
+                    isLoading &&
+                    !text;
 
                   return (
                     <div
                       key={msg.id}
                       className={`p-3 text-sm max-w-[85%] whitespace-pre-wrap break-words rounded ${
-                        msg.role === "user"
-                          ? "bg-black text-white self-end"
-                          : "bg-gray-100 self-start"
+                        msg.role === 'user'
+                          ? 'bg-black text-white self-end'
+                          : 'bg-gray-100 self-start'
                       }`}
                     >
                       {showLoading ? (
@@ -107,7 +114,7 @@ export default function AssistantBar() {
                             />
                           ))}
                         </div>
-                      ) : msg.role === "assistant" ? (
+                      ) : msg.role === 'assistant' ? (
                         <ReactMarkdown>{text}</ReactMarkdown>
                       ) : (
                         text
@@ -118,13 +125,16 @@ export default function AssistantBar() {
               )}
             </div>
 
-            <form onSubmit={handleSubmit} className="relative p-4 border-t border-black">
+            <form
+              onSubmit={handleSubmit}
+              className="relative p-4 border-t border-black"
+            >
               <textarea
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
+                  if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleSubmit(e);
                   }
@@ -135,18 +145,28 @@ export default function AssistantBar() {
               />
               <button
                 type="submit"
-                disabled={!input.trim() || status !== "ready"}
+                disabled={!input.trim() || status !== 'ready'}
                 className={`absolute right-7 bottom-7 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center ${
-                  !input.trim() || status !== "ready"
-                    ? "cursor-not-allowed opacity-30"
-                    : "cursor-pointer hover:bg-gray-800"
+                  !input.trim() || status !== 'ready'
+                    ? 'cursor-not-allowed opacity-30'
+                    : 'cursor-pointer hover:bg-gray-800'
                 }`}
               >
                 {isLoading ? (
                   <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 15l7-7 7 7"
+                    />
                   </svg>
                 )}
               </button>

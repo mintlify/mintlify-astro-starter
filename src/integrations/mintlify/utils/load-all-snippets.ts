@@ -1,5 +1,5 @@
-import { readdir, readFile } from "node:fs/promises";
-import { join, extname, relative } from "node:path";
+import { readdir, readFile } from 'node:fs/promises';
+import { join, extname, relative } from 'node:path';
 import {
   getAST,
   SNIPPET_EXTENSIONS,
@@ -7,8 +7,8 @@ import {
   extractImportSources,
   resolveImportPath,
   DEFAULT_MINT_IGNORES,
-} from "@mintlify/common";
-import type { Root } from "mdast";
+} from '@mintlify/common';
+import type { Root } from 'mdast';
 
 export interface SnippetFile {
   filename: string;
@@ -34,7 +34,7 @@ async function scanDirectory(
     } else {
       const ext = extname(entry.name).toLowerCase();
       if (SNIPPET_EXTENSIONS.includes(ext)) {
-        const relativePath = "/" + relative(rootDir, fullPath);
+        const relativePath = '/' + relative(rootDir, fullPath);
         files.push({ path: fullPath, relativePath });
       }
     }
@@ -49,7 +49,7 @@ export async function loadAllSnippets(docsDir: string): Promise<SnippetFile[]> {
 
   for (const file of files) {
     try {
-      const content = await readFile(file.path, "utf-8");
+      const content = await readFile(file.path, 'utf-8');
       const tree = getAST(content, file.relativePath) as Root;
 
       snippets.push({
