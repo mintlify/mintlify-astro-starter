@@ -1,10 +1,10 @@
-import { readdir, readFile } from "node:fs/promises";
-import { join, extname, relative } from "node:path";
+import { readdir, readFile } from 'node:fs/promises';
+import { join, extname, relative } from 'node:path';
 import {
   getAST,
   findExportedNodes,
   DEFAULT_MINT_IGNORES,
-} from "@mintlify/common";
+} from '@mintlify/common';
 
 export async function findUserComponents(
   docsDir: string,
@@ -23,7 +23,7 @@ export async function findUserComponents(
         }
       } else {
         const ext = extname(entry.name).toLowerCase();
-        if (ext === ".jsx" || ext === ".tsx") {
+        if (ext === '.jsx' || ext === '.tsx') {
           const fileComponents = await extractComponentNames(fullPath, docsDir);
           fileComponents.forEach((name) => components.add(name));
         }
@@ -39,16 +39,16 @@ async function extractComponentNames(
   filePath: string,
   docsDir: string,
 ): Promise<string[]> {
-  const content = await readFile(filePath, "utf-8").catch(() => null);
+  const content = await readFile(filePath, 'utf-8').catch(() => null);
   if (!content) return [];
 
   try {
-    const relativePath = "/" + relative(docsDir, filePath);
+    const relativePath = '/' + relative(docsDir, filePath);
     const tree = getAST(content, relativePath);
     const exportedNames = findExportedNodes(
       tree,
-      "ArrowFunctionExpression",
-      "FunctionExpression",
+      'ArrowFunctionExpression',
+      'FunctionExpression',
     );
     return exportedNames.filter((name) => /^[A-Z]/.test(name));
   } catch {

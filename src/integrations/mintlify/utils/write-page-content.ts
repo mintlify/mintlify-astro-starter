@@ -1,10 +1,10 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import type { AstroIntegrationLogger } from "astro";
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { AstroIntegrationLogger } from 'astro';
 
-import { extractReactComponents } from "./extract-react-components";
-import { resolveSnippets } from "./resolve-snippets";
-import type { SnippetFile } from "./load-all-snippets";
+import { extractReactComponents } from './extract-react-components';
+import { resolveSnippets } from './resolve-snippets';
+import type { SnippetFile } from './load-all-snippets';
 
 export interface WritePageContentOptions {
   content: string;
@@ -27,11 +27,11 @@ export async function writePageContent({
 }: WritePageContentOptions): Promise<void> {
   let filePath: string;
 
-  if (slug === "index") {
-    filePath = join(contentDir, "index.mdx");
+  if (slug === 'index') {
+    filePath = join(contentDir, 'index.mdx');
   } else {
-    const parts = slug.split("/");
-    const fileName = parts.pop() + ".mdx";
+    const parts = slug.split('/');
+    const fileName = parts.pop() + '.mdx';
     const dirPath = join(contentDir, ...parts);
 
     if (parts.length > 0) {
@@ -61,5 +61,5 @@ export async function writePageContent({
     logger,
   );
 
-  await writeFile(filePath, finalContent, "utf-8");
+  await writeFile(filePath, finalContent, 'utf-8');
 }
