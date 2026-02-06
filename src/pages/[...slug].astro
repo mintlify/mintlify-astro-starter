@@ -40,7 +40,7 @@ const tabs = getTabsFromNav(decoratedNav, currentPath);
   favicons={favicons}
 >
   <div style={`--sidebar-primary: ${docsConfig.colors?.primary}`}>
-    <header class="sticky top-0 z-50 bg-white">
+    <header class="sticky top-0 z-50 bg-white" transition:animate="none">
       <nav class="h-16 border-b border-gray-200/60">
         <div class="h-full flex items-center w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
           <a href="/" class="flex items-center gap-2.5">
@@ -72,10 +72,12 @@ const tabs = getTabsFromNav(decoratedNav, currentPath);
     </header>
 
     <div class="flex min-h-[calc(100vh-7.5rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
-      <Sidebar
-        navigation={decoratedNav}
-        currentPath={currentPath}
-      />
+      <div transition:animate="none">
+        <Sidebar
+          navigation={decoratedNav}
+          currentPath={currentPath}
+        />
+      </div>
 
       <main class="flex-1 min-w-0 py-10 px-8 lg:px-12">
         <article class="max-w-3xl mx-auto">
