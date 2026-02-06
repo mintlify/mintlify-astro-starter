@@ -1,6 +1,6 @@
 import type { NavEntry, NavNode, NavPage, NavGroup } from '../lib/navigation';
 import { isNavPage, isNavGroup, unwrapNav } from '../lib/navigation';
-import { cn } from '../lib/cn';
+import { cn } from '@mintlify/components';
 
 interface SidebarProps {
   navigation: NavNode;

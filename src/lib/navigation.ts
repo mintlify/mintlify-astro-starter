@@ -161,6 +161,17 @@ function findFirstPage(entries: NavEntry[]): NavPage | undefined {
   return undefined;
 }
 
+export function getFooterPages(entries: NavEntry[], currentPath: string) {
+  const pages = (function flatten(e: NavEntry[]): NavPage[] {
+    return e.flatMap((x) => (isNavGroup(x) ? flatten(x.pages) : [x]));
+  })(entries);
+  const idx = pages.findIndex((p) => p.href === currentPath);
+  return {
+    prev: idx > 0 ? pages[idx - 1] : null,
+    next: idx < pages.length - 1 ? pages[idx + 1] : null,
+  };
+}
+
 export function findGroupForPath(
   entries: NavEntry[],
   path: string,
