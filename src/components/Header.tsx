@@ -1,5 +1,5 @@
 import type { TabInfo } from '../lib/navigation';
-import { cn } from "@mintlify/components";
+import { cn } from '@mintlify/components';
 
 interface HeaderProps {
   logo?: string;
