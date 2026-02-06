@@ -1,4 +1,4 @@
-export type { DocsConfig, NavigationConfig } from "@mintlify/validation";
+export type { DocsConfig, NavigationConfig } from '@mintlify/validation';
 
 export interface FaviconIcon {
   rel: string;
