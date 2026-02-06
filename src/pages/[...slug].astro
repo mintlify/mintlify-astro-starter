@@ -50,7 +50,7 @@ const tabs = getTabsFromNav(decoratedNav, currentPath);
         <div
           class="h-full flex items-center w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8"
         >
-          <a href="/" class="flex items-center gap-2.5">
+          <a href="/" class="flex items-center gap-2.5" transition:persist>
             <img src={docsConfig.logo?.light} alt={docsConfig.name} />
           </a>
         </div>

@@ -48,4 +48,10 @@ const { title = 'Mintlify Docs', description, favicons } = Astro.props;
     width: 100%;
     height: 100%;
   }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+  }
 </style>
