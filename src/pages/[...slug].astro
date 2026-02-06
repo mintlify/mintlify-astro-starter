@@ -5,7 +5,7 @@ import { components } from "../integrations/mintlify/utils/mintlify-components";
 import favicons from "../content/generated/favicons.json";
 import docsConfig from "../../docs/docs.json";
 import Sidebar from "../components/Sidebar";
-import { decorateNavigation } from "../lib/navigation";
+import { decorateNavigation, unwrapNav, findGroupForPath } from "../lib/navigation";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
@@ -29,6 +29,8 @@ const titleMap = Object.fromEntries(
 const decoratedNav = decorateNavigation(docsConfig.navigation, titleMap);
 
 const currentPath = doc.id === "index" ? "/" : `/${doc.id}`;
+const sidebarEntries = unwrapNav(decoratedNav, currentPath);
+const groupName = findGroupForPath(sidebarEntries, currentPath);
 ---
 
 <Layout
@@ -44,7 +46,12 @@ const currentPath = doc.id === "index" ? "/" : `/${doc.id}`;
 
     <main class="flex-1 min-w-0 max-w-208 mx-auto px-12 py-10">
       <article>
-        <header class="mb-8 pb-6 border-b border-slate-200">
+        <header class="mb-8 pb-6">
+          {groupName && (
+            <p class="text-sm font-semibold mb-2" style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}>
+              {groupName}
+            </p>
+          )}
           <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3">
             {doc.data.title || doc.id}
           </h1>

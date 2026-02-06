@@ -143,3 +143,20 @@ function findFirstPage(entries: NavEntry[]): NavPage | undefined {
   }
   return undefined;
 }
+
+export function findGroupForPath(entries: NavEntry[], path: string): string | null {
+  for (const entry of entries) {
+    if (isNavGroup(entry)) {
+      for (const page of entry.pages) {
+        if (isNavPage(page) && page.href === path) {
+          return entry.group;
+        }
+        if (isNavGroup(page)) {
+          const nested = findGroupForPath([page], path);
+          if (nested) return nested;
+        }
+      }
+    }
+  }
+  return null;
+}
