@@ -81,11 +81,13 @@ export default function AssistantBar() {
           <>
             <div
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 z-50"
+              className="fixed inset-0 bg-black/50 z-[99998]"
+              style={{ zIndex: 99998 }}
             />
 
             <div
-              className="fixed top-0 right-0 bottom-0 w-[450px] max-w-[90vw] bg-white flex flex-col border-l border-black z-50"
+              className="fixed top-0 right-0 bottom-0 w-[450px] max-w-[90vw] bg-white flex flex-col border-l border-black"
+              style={{ zIndex: 99999 }}
             >
               {/* Header */}
               <div className="flex justify-between items-center p-4 border-b border-black font-medium">
