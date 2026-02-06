@@ -5,6 +5,8 @@
 
 @import "@mintlify/components/styles.css" layer(components);
 
+@plugin "@tailwindcss/typography";
+
 /* Force light mode */
 @media (prefers-color-scheme: dark) {
   :root {

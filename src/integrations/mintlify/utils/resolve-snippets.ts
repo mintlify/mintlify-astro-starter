@@ -3,9 +3,9 @@ import {
   findAndRemoveImports,
   resolveAllImports,
   stringifyTree,
-} from "@mintlify/common";
-import type { Root } from "mdast";
-import type { SnippetFile } from "./load-all-snippets";
+} from '@mintlify/common';
+import type { Root } from 'mdast';
+import type { SnippetFile } from './load-all-snippets';
 
 export async function resolveSnippets(
   content: string,

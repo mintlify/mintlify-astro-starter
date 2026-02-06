@@ -1,18 +1,18 @@
-import type { AstroIntegration } from "astro";
-import { join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import type { AstroIntegration } from 'astro';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { getAllPathsInDocsNav } from "@mintlify/common";
-import { clearContentDirectory } from "./utils/clear-content-directory";
-import { copyAssets } from "./utils/copy-assets";
-import { findUserComponents } from "./utils/find-user-components";
-import { loadAllSnippets } from "./utils/load-all-snippets";
-import { readDocsConfig } from "./utils/read-docs-config";
-import { readPageContent } from "./utils/read-page-content";
-import { writePageContent } from "./utils/write-page-content";
-import { writeFaviconsManifest } from "./utils/write-favicons-manifest";
+import { getAllPathsInDocsNav } from '@mintlify/common';
+import { clearContentDirectory } from './utils/clear-content-directory';
+import { copyAssets } from './utils/copy-assets';
+import { findUserComponents } from './utils/find-user-components';
+import { loadAllSnippets } from './utils/load-all-snippets';
+import { readDocsConfig } from './utils/read-docs-config';
+import { readPageContent } from './utils/read-page-content';
+import { writePageContent } from './utils/write-page-content';
+import { writeFaviconsManifest } from './utils/write-favicons-manifest';
 
-export type { DocsConfig, NavigationConfig, Favicons } from "./types";
+export type { DocsConfig, NavigationConfig, Favicons } from './types';
 
 export interface MintlifyOptions {
   docsDir?: string;
@@ -20,16 +20,16 @@ export interface MintlifyOptions {
 
 export function mintlify(options?: MintlifyOptions): AstroIntegration {
   return {
-    name: "@mintlify/astro",
+    name: '@mintlify/astro',
     hooks: {
-      "astro:config:setup": async ({ config: astroConfig, logger }) => {
+      'astro:config:setup': async ({ config: astroConfig, logger }) => {
         const rootDir = fileURLToPath(astroConfig.root);
         const srcDir = fileURLToPath(astroConfig.srcDir);
         const publicDir = fileURLToPath(astroConfig.publicDir);
-        const contentDir = join(srcDir, "content", "docs");
-        const componentsDir = join(srcDir, "content", "components");
+        const contentDir = join(srcDir, 'content', 'docs');
+        const componentsDir = join(srcDir, 'content', 'components');
 
-        const docsDir = resolve(rootDir, options?.docsDir ?? "./docs");
+        const docsDir = resolve(rootDir, options?.docsDir ?? './docs');
 
         await Promise.all([
           clearContentDirectory(contentDir),
@@ -48,14 +48,14 @@ export function mintlify(options?: MintlifyOptions): AstroIntegration {
 
         if (docsConfig.favicon) {
           const faviconHref =
-            typeof docsConfig.favicon === "string"
+            typeof docsConfig.favicon === 'string'
               ? docsConfig.favicon
               : docsConfig.favicon.light;
           await writeFaviconsManifest(srcDir, {
             icons: [
               {
-                rel: "icon",
-                type: "image/svg+xml",
+                rel: 'icon',
+                type: 'image/svg+xml',
                 href: faviconHref,
               },
             ],
