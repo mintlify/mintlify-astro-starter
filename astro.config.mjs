@@ -12,6 +12,10 @@ export default defineConfig({
     mdx(),
   ],
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss({
+        base: './src/styles/global.css',
+      })
+    ],
   },
 });

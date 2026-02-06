@@ -5,6 +5,8 @@ import { components } from "../integrations/mintlify/utils/mintlify-components";
 import favicons from "../content/generated/favicons.json";
 import docsConfig from "../../docs/docs.json";
 import Sidebar from "../components/Sidebar";
+import { SearchBar } from "../components/SearchBar";
+import AssistantBar from "../components/AssistantBar";
 import { decorateNavigation, unwrapNav, findGroupForPath, getTabsFromNav } from "../lib/navigation";
 
 export async function getStaticPaths() {
@@ -42,10 +44,14 @@ const tabs = getTabsFromNav(decoratedNav, currentPath);
   <div style={`--sidebar-primary: ${docsConfig.colors?.primary}`}>
     <header class="sticky top-0 z-50 bg-white">
       <nav class="h-16 border-b border-gray-200/60">
-        <div class="h-full flex items-center w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
-          <a href="/" class="flex items-center gap-2.5">
+        <div class="h-full flex items-center justify-center w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 gap-4">
+          <a href="/" class="flex items-center gap-2.5 absolute left-4 sm:left-6 lg:left-8">
             <img src={docsConfig.logo?.light} alt={docsConfig.name} />
           </a>
+          <div class="flex items-center gap-3">
+            <SearchBar client:load />
+            <AssistantBar client:load />
+          </div>
         </div>
       </nav>
 
