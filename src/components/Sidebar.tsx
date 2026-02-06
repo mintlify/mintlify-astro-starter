@@ -1,9 +1,8 @@
-import type { NavEntry, NavNode, NavPage, NavGroup, TabInfo } from "../lib/navigation";
+import type { NavEntry, NavNode, NavPage, NavGroup } from "../lib/navigation";
 import {
   isNavPage,
   isNavGroup,
   unwrapNav,
-  getTabsFromNav,
 } from "../lib/navigation";
 import { cn } from "../lib/cn";
 
@@ -13,37 +12,13 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ navigation, currentPath }: SidebarProps) {
-  const tabs = getTabsFromNav(navigation, currentPath);
   const entries = unwrapNav(navigation, currentPath);
 
   return (
-    <div className="sticky top-0 h-screen w-64 shrink-0 flex flex-col border-r border-gray-100 bg-white z-10">
-      {tabs && tabs.length > 0 && <TabBar tabs={tabs} />}
-
-      <nav className="flex-1 overflow-y-auto pt-4 pb-8">
+    <div className="sticky top-30 h-[calc(100vh-7.5rem)] w-[18rem] shrink-0 flex flex-col bg-white z-10">
+      <nav className="flex-1 overflow-y-auto pt-4 pb-8 pr-8">
         <SidebarEntries entries={entries} currentPath={currentPath} />
       </nav>
-    </div>
-  );
-}
-
-function TabBar({ tabs }: { tabs: TabInfo[] }) {
-  return (
-    <div className="flex gap-5 px-4 shrink-0 border-b border-gray-100">
-      {tabs.map((tab) => (
-        <a
-          key={tab.name}
-          href={tab.href}
-          className={cn(
-            "relative py-3.5 text-sm leading-5 no-underline whitespace-nowrap border-b-2 -mb-px transition-colors duration-150",
-            tab.isActive
-              ? "text-gray-900 font-semibold border-(--sidebar-primary)"
-              : "text-gray-400 font-medium border-transparent hover:text-gray-500"
-          )}
-        >
-          {tab.name}
-        </a>
-      ))}
     </div>
   );
 }
