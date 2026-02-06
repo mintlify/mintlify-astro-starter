@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import ReactMarkdown from "react-markdown";
+import { cn } from "@mintlify/components";
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
 const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
@@ -56,9 +57,21 @@ export default function AssistantBar() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-white border border-black text-sm cursor-pointer hover:bg-gray-50 transition-colors rounded"
+        type="button"
+        className={cn(
+          "flex items-center gap-2 px-3 py-2 text-left text-sm",
+          "bg-white dark:bg-gray-900",
+          "border border-gray-200 dark:border-gray-700",
+          "rounded-xl",
+          "hover:bg-gray-50 dark:hover:bg-gray-800",
+          "focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600",
+          "transition-colors",
+        )}
+        aria-label="Toggle AI Assistant"
       >
-        Ask AI
+        <span className="text-gray-500 dark:text-gray-400 whitespace-nowrap">
+          Ask AI
+        </span>
       </button>
 
       {isOpen &&

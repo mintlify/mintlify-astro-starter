@@ -1,16 +1,17 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import {
+  SearchButton,
+  SearchProvider,
+  type SearchResult,
+} from "@mintlify/components";
 import { navigate } from "astro:transitions/client";
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
 const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
 
-interface SearchResult {
-  path: string;
-  content: string;
-  metadata?: Record<string, any>;
-}
+const normalizePath = (path: string | undefined): string => {
+  if (!path) return "/";
 
-const normalizePath = (path: string): string => {
   let normalized = path.startsWith("/") ? path : `/${path}`;
   if (normalized.endsWith("/index")) {
     normalized = normalized.slice(0, -5) + "/";
@@ -19,37 +20,21 @@ const normalizePath = (path: string): string => {
 };
 
 export function SearchBar() {
-  const [query, setQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    setMounted(true);
   }, []);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSearch = async (query: string) => {
     if (!query.trim()) {
+      setResults([]);
       return;
     }
 
-    setLoading(true);
-    setError(null);
-    setIsOpen(true);
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -75,73 +60,64 @@ export function SearchBar() {
       }
 
       const data = await response.json();
-      setResults(data);
+
+      const transformedResults: SearchResult[] = data.map(
+        (item: any, index: number) => {
+          // Create breadcrumb array from path and capitalize first letter of each segment
+          const pathSegments = item.path
+            ? item.path
+                .split("/")
+                .map(
+                  (segment: string) =>
+                    segment.charAt(0).toUpperCase() + segment.slice(1),
+                )
+            : [];
+
+          return {
+            id: item.path || `result-${index}`,
+            header:
+              item.metadata?.title ||
+              pathSegments[pathSegments.length - 1] ||
+              "Untitled",
+            content: item.metadata?.description || item.content || "",
+            link: normalizePath(item.path),
+            metadata: {
+              ...item.metadata,
+              breadcrumbs: pathSegments,
+            },
+          };
+        },
+      );
+
+      setResults(transformedResults);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Search error:", err);
       setResults([]);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
+  const handleSelectResult = (result: SearchResult) => {
+    navigate(result.link);
+  };
+
+  if (!mounted) {
+    return <SearchButton className="min-w-84 rounded-xl" />;
+  }
+
   return (
-    <div ref={searchRef} className="relative w-full max-w-md">
-      <form onSubmit={handleSearch} className="flex">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => results.length > 0 && setIsOpen(true)}
-          placeholder="Search documentation..."
-          disabled={loading}
-          className="flex-1 px-4 py-3 border border-black border-r-0 text-sm outline-none focus:ring-2 focus:ring-black/20 disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-        <button
-          type="submit"
-          disabled={loading || !query.trim()}
-          className="px-6 py-3 bg-black text-white border border-black text-sm font-medium whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-800 transition-colors"
-        >
-          {loading ? "Searching..." : "Search"}
-        </button>
-      </form>
-
-      {isOpen && (error || results.length > 0) && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-black max-h-96 overflow-y-auto z-[1000] shadow-lg">
-          {error && (
-            <div className="p-4 text-red-600 text-sm border-b border-gray-200">
-              Error: {error}
-            </div>
-          )}
-
-          {results.length > 0 && (
-            <div>
-              {results.map((result, index) => {
-                const absolutePath = normalizePath(result.path);
-                return (
-                  <a
-                    key={index}
-                    href={absolutePath}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsOpen(false);
-                      navigate(absolutePath);
-                    }}
-                    className="block p-4 border-b border-gray-200 last:border-0 hover:bg-gray-100 transition-colors no-underline text-inherit"
-                  >
-                    <div className="font-semibold mb-1 text-sm">
-                      {result.path}
-                    </div>
-                    <div className="text-xs text-gray-600 leading-relaxed">
-                      {result.content.substring(0, 150)}
-                      {result.content.length > 150 ? "..." : ""}
-                    </div>
-                  </a>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+    <SearchProvider
+      searchProps={{
+        onSearch: handleSearch,
+        results,
+        isLoading,
+        onSelectResult: handleSelectResult,
+        placeholder: "Search...",
+        position: "top",
+      }}
+    >
+      <SearchButton className="min-w-84 rounded-xl" />
+    </SearchProvider>
   );
 }
