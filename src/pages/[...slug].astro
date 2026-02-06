@@ -3,6 +3,9 @@ import { getCollection, render } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { components } from "../integrations/mintlify/utils/mintlify-components";
 import favicons from "../content/generated/favicons.json";
+import docsConfig from "../../docs/docs.json";
+import Sidebar from "../components/Sidebar";
+import { decorateNavigation } from "../lib/navigation";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
@@ -18,6 +21,14 @@ export async function getStaticPaths() {
 
 const { doc, allDocs } = Astro.props;
 const { Content } = await render(doc);
+
+const titleMap = Object.fromEntries(
+  allDocs.map((doc) => [doc.id, doc.data.title || doc.id])
+);
+
+const decoratedNav = decorateNavigation(docsConfig.navigation, titleMap);
+
+const currentPath = doc.id === "index" ? "/" : `/${doc.id}`;
 ---
 
 <Layout
@@ -25,29 +36,15 @@ const { Content } = await render(doc);
   description={doc.data.description}
   favicons={favicons}
 >
-  <div class="container">
-    <aside class="sidebar">
-      <nav>
-        <h3>Navigation</h3>
-        <ul>
-          {allDocs.map((d) => {
-            const href = d.id === "index" ? "/" : `/${d.id}`;
-            const isActive = d.id === doc.id;
-            return (
-              <li class={isActive ? "active" : ""}>
-                <a href={href}>
-                  {d.id}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-    </aside>
+  <div class="flex min-h-screen" style={`--sidebar-primary: ${docsConfig.colors?.primary}`}>
+    <Sidebar
+      navigation={decoratedNav}
+      currentPath={currentPath}
+    />
 
-    <main class="content">
+    <main class="flex-1 min-w-0 max-w-208 mx-auto px-12 py-10">
       <article>
-        <header class="page-header mb-8 pb-6 border-b border-slate-200">
+        <header class="mb-8 pb-6 border-b border-slate-200">
           <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3">
             {doc.data.title || doc.id}
           </h1>
@@ -64,43 +61,3 @@ const { Content } = await render(doc);
     </main>
   </div>
 </Layout>
-
-<style>
-  .container {
-    display: flex;
-    min-height: 100vh;
-  }
-
-  .sidebar {
-    width: 250px;
-    padding: 1rem;
-    background: #f5f5f5;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-  }
-
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .sidebar a {
-    display: block;
-    padding: 0.5rem;
-    text-decoration: none;
-    color: #333;
-    border-radius: 4px;
-  }
-
-  .sidebar li.active a {
-    background: #0070f3;
-    color: white;
-  }
-
-  .content {
-    flex: 1;
-    padding: 2rem;
-    max-width: 800px;
-  }
-</style>
