@@ -5,7 +5,7 @@
 
 @import "@mintlify/components/styles.css" layer(components);
 
-/* Force light mode */
+/* Force light mode... TODO: support dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: light !important;

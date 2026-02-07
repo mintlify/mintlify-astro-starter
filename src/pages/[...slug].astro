@@ -1,19 +1,25 @@
 ---
-import { getCollection, render } from "astro:content";
-import Layout from "../layouts/Layout.astro";
-import { components } from "../integrations/mintlify/utils/mintlify-components";
-import favicons from "../content/generated/favicons.json";
-import docsConfig from "../../docs/docs.json";
-import Sidebar from "../components/Sidebar";
-import { SearchBar } from "../components/SearchBar";
-import AssistantBar from "../components/AssistantBar";
-import { decorateNavigation, unwrapNav, findGroupForPath, getTabsFromNav } from "../lib/navigation";
+import { getCollection, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer';
+import { components } from '../integrations/mintlify/utils/mintlify-components';
+import favicons from '../content/generated/favicons.json';
+import docsConfig from '../../docs/docs.json';
+import Sidebar from '../components/Sidebar';
+import {
+  decorateNavigation,
+  unwrapNav,
+  findGroupForPath,
+  getTabsFromNav,
+  getFooterPages,
+} from '../lib/navigation';
 
 export async function getStaticPaths() {
-  const docs = await getCollection("docs");
+  const docs = await getCollection('docs');
 
   return docs.map((doc) => {
-    const slug = doc.id === "index" ? undefined : doc.id;
+    const slug = doc.id === 'index' ? undefined : doc.id;
     return {
       params: { slug },
       props: { doc, allDocs: docs },
@@ -25,15 +31,16 @@ const { doc, allDocs } = Astro.props;
 const { Content } = await render(doc);
 
 const titleMap = Object.fromEntries(
-  allDocs.map((doc) => [doc.id, doc.data.title || doc.id])
+  allDocs.map((doc) => [doc.id, doc.data.title || doc.id]),
 );
 
 const decoratedNav = decorateNavigation(docsConfig.navigation, titleMap);
 
-const currentPath = doc.id === "index" ? "/" : `/${doc.id}`;
+const currentPath = doc.id === 'index' ? '/' : `/${doc.id}`;
 const sidebarEntries = unwrapNav(decoratedNav, currentPath);
 const groupName = findGroupForPath(sidebarEntries, currentPath);
 const tabs = getTabsFromNav(decoratedNav, currentPath);
+const { prev, next } = getFooterPages(sidebarEntries, currentPath);
 ---
 
 <Layout
@@ -42,71 +49,54 @@ const tabs = getTabsFromNav(decoratedNav, currentPath);
   favicons={favicons}
 >
   <div style={`--sidebar-primary: ${docsConfig.colors?.primary}`}>
-    <header class="sticky top-0 z-50 bg-white">
-      <nav class="h-16 border-b border-gray-200/60">
-        <div class="h-full flex items-center justify-center w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 gap-4">
-          <a href="/" class="flex items-center gap-2.5 absolute left-4 sm:left-6 lg:left-8">
-            <img src={docsConfig.logo?.light} alt={docsConfig.name} />
-          </a>
-          <div class="flex items-center gap-3">
-            <SearchBar client:load />
-            <AssistantBar client:load />
-          </div>
-        </div>
-      </nav>
+    <Header
+      logo={docsConfig.logo?.light}
+      name={docsConfig.name}
+      tabs={tabs}
+      primaryColor={docsConfig.colors?.primary}
+    />
 
-      {tabs && tabs.length > 0 && (
-        <div class="w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 border-b border-gray-100">
-          <div class="flex gap-5">
-            {tabs.map((tab) => (
-              <a
-                href={tab.href}
-                class:list={[
-                  "relative py-3 text-sm leading-5 no-underline whitespace-nowrap border-b-2 -mb-px transition-colors duration-150",
-                  tab.isActive
-                    ? "text-gray-900 font-semibold"
-                    : "text-gray-400 font-medium border-transparent hover:text-gray-500"
-                ]}
-                style={tab.isActive ? `border-bottom-color: ${docsConfig.colors?.primary}` : undefined}
-              >
-                {tab.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-    </header>
-
-    <div class="flex min-h-[calc(100vh-7.5rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
-      <Sidebar
-        navigation={decoratedNav}
-        currentPath={currentPath}
-      />
+    <div
+      class="flex min-h-[calc(100vh-7.5rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8"
+    >
+      <div transition:animate="none">
+        <Sidebar navigation={decoratedNav} currentPath={currentPath} />
+      </div>
 
       <main class="flex-1 min-w-0 py-10 px-8 lg:px-12">
         <article class="max-w-3xl mx-auto">
           <header class="mb-8 pb-6">
-            {groupName && (
-              <p class="text-sm font-semibold mb-2" style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}>
-                {groupName}
-              </p>
-            )}
-            <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3">
+            {
+              groupName && (
+                <p
+                  class="text-sm font-semibold mb-2"
+                  style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
+                >
+                  {groupName}
+                </p>
+              )
+            }
+            <h1
+              class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3"
+            >
               {doc.data.title || doc.id}
             </h1>
-            {doc.data.description && (
-              <p class="text-lg leading-relaxed max-w-2xl">
-                {doc.data.description}
-              </p>
-            )}
+            {
+              doc.data.description && (
+                <p class="text-lg leading-relaxed max-w-2xl">
+                  {doc.data.description}
+                </p>
+              )
+            }
           </header>
           <div class="mdx-content prose">
             <Content components={components} />
+            <Footer prev={prev} next={next} />
           </div>
         </article>
       </main>
 
-      <div class="w-[16rem] shrink-0 max-lg:hidden" />
+      <div class="w-[16rem] shrink-0 max-lg:hidden"></div>
     </div>
   </div>
 </Layout>

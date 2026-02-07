@@ -1,10 +1,6 @@
-import type { NavEntry, NavNode, NavPage, NavGroup } from "../lib/navigation";
-import {
-  isNavPage,
-  isNavGroup,
-  unwrapNav,
-} from "../lib/navigation";
-import { cn } from "../lib/cn";
+import type { NavEntry, NavNode, NavPage, NavGroup } from '../lib/navigation';
+import { isNavPage, isNavGroup, unwrapNav } from '../lib/navigation';
+import { cn } from '@mintlify/components';
 
 interface SidebarProps {
   navigation: NavNode;
@@ -57,24 +53,18 @@ function SidebarEntries({
   );
 }
 
-function SidebarLink({
-  page,
-  isActive,
-}: {
-  page: NavPage;
-  isActive: boolean;
-}) {
+function SidebarLink({ page, isActive }: { page: NavPage; isActive: boolean }) {
   return (
     <li>
       <a
         href={page.href}
         className={cn(
-          "flex items-center gap-2 py-1.5 px-4 text-sm leading-6 no-underline rounded-md mx-1.5 transition-colors duration-150",
+          'flex items-center gap-2 py-1.5 px-4 text-sm leading-6 no-underline rounded-md mx-1.5 transition-colors duration-150',
           isActive
-            ? "font-medium text-(--sidebar-primary) bg-(--sidebar-primary)/5"
-            : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+            ? 'font-medium text-(--sidebar-primary) bg-(--sidebar-primary)/5'
+            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50',
         )}
-        aria-current={isActive ? "page" : undefined}
+        aria-current={isActive ? 'page' : undefined}
       >
         <span className="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
           {page.title}
@@ -88,7 +78,7 @@ function SidebarLink({
 
         {page.api && (
           <span className="shrink-0 text-[10px] font-bold font-mono uppercase text-gray-500">
-            {page.api.split(" ")[0]}
+            {page.api.split(' ')[0]}
           </span>
         )}
 

@@ -16,7 +16,7 @@ export default function AssistantBar() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    setMounted(true); // Ensure component is mounted before rendering portal
+    setMounted(true);
   }, []);
 
   const { messages, sendMessage, status } = useChat({
@@ -77,19 +77,13 @@ export default function AssistantBar() {
       {isOpen &&
         mounted &&
         createPortal(
-          // Portal will bypass context from imported components
           <>
             <div
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 z-[99998]"
-              style={{ zIndex: 99998 }}
+              className="fixed inset-0 bg-black/50 z-50"
             />
 
-            <div
-              className="fixed top-0 right-0 bottom-0 w-[450px] max-w-[90vw] bg-white flex flex-col border-l border-black"
-              style={{ zIndex: 99999 }}
-            >
-              {/* Header */}
+            <div className="fixed top-0 right-0 bottom-0 w-[450px] max-w-[90vw] bg-white flex flex-col border-l border-black z-50">
               <div className="flex justify-between items-center p-4 border-b border-black font-medium">
                 <span>AI Assistant</span>
                 <button
@@ -201,7 +195,7 @@ export default function AssistantBar() {
               </form>
             </div>
           </>,
-          document.body,
+          document.body
         )}
     </>
   );
