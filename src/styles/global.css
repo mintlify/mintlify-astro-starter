@@ -1,3 +1,13 @@
 @import 'tailwindcss';
-@import '@mintlify/components/styles.css';
-@plugin "@tailwindcss/typography";
+
+/* Override dark mode custom variant before components load */
+@custom-variant dark (&:not(*));
+
+@import '@mintlify/components/styles.css' layer(components);
+
+/* Force light mode... TODO: support dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light !important;
+  }
+}
