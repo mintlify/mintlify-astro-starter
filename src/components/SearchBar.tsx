@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   SearchButton,
   SearchProvider,
   type SearchResult,
 } from '@mintlify/components';
 import { navigate } from 'astro:transitions/client';
+import { useDebouncedCallback } from 'use-debounce';
 import { type DecoratedNavigationPage } from '@mintlify/models';
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
@@ -35,7 +36,6 @@ export function SearchBar() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState<SearchResult[]>([]);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -47,12 +47,6 @@ export function SearchBar() {
     } catch (err) {
       console.error('Failed to load search history:', err);
     }
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
   }, []);
 
   const performSearch = useCallback(async (searchQuery: string) => {
@@ -119,13 +113,17 @@ export function SearchBar() {
     }
   }, []);
 
+  const debouncedSearch = useDebouncedCallback(
+    (searchQuery: string) => {
+      performSearch(searchQuery);
+    },
+    DEBOUNCE_DELAY_IN_MS,
+  );
+
   const handleSearch = useCallback(
     (searchQuery: string) => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-
       if (!searchQuery.trim()) {
+        debouncedSearch.cancel();
         setResults([]);
         setIsLoading(false);
         return;
@@ -133,12 +131,9 @@ export function SearchBar() {
 
       setResults([]);
       setIsLoading(true);
-
-      debounceTimerRef.current = setTimeout(() => {
-        performSearch(searchQuery);
-      }, DEBOUNCE_DELAY_IN_MS);
+      debouncedSearch(searchQuery);
     },
-    [performSearch],
+    [debouncedSearch],
   );
 
   const handleSelectResult = (result: SearchResult) => {

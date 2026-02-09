@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer';
 import { components } from '../integrations/mintlify/utils/mintlify-components';
 import favicons from '../content/generated/favicons.json';
@@ -54,7 +54,6 @@ const { prev, next } = getFooterPages(sidebarEntries, currentPath);
       name={docsConfig.name}
       tabs={tabs}
       primaryColor={docsConfig.colors?.primary}
-      client:load
     />
 
     <div
