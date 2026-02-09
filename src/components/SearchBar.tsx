@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   SearchButton,
   SearchProvider,
   type SearchResult,
 } from '@mintlify/components';
 import { navigate } from 'astro:transitions/client';
+import { type DecoratedNavigationPage } from '@mintlify/models';
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
 const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
@@ -16,18 +17,25 @@ const normalizePath = (path: string | undefined): string => {
   if (normalized.endsWith('index')) {
     normalized = normalized.replace('index', '');
   }
-  console.log('Normalized path:', normalized);
   return normalized;
 };
 
 const SEARCH_HISTORY_KEY = 'mintlify-search-history';
 const MAX_HISTORY_ITEMS = 5;
+const DEBOUNCE_DELAY_IN_MS = 100;
+
+export type ApiSearchResult = {
+  content: string;
+  path: string;
+  metadata: DecoratedNavigationPage;
+};
 
 export function SearchBar() {
   const [mounted, setMounted] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState<SearchResult[]>([]);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -39,14 +47,15 @@ export function SearchBar() {
     } catch (err) {
       console.error('Failed to load search history:', err);
     }
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, []);
 
-  const handleSearch = async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      return;
-    }
-
+  const performSearch = useCallback(async (searchQuery: string) => {
     setIsLoading(true);
 
     try {
@@ -73,10 +82,9 @@ export function SearchBar() {
       }
 
       const data = await response.json();
-      console.log('Raw search results:', data);
 
       const transformedResults: SearchResult[] = data.map(
-        (item: any, index: number) => {
+        (item: ApiSearchResult, index: number) => {
           const pathSegments = item.path
             ? item.path
                 .split('/')
@@ -109,7 +117,29 @@ export function SearchBar() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  const handleSearch = useCallback(
+    (searchQuery: string) => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      if (!searchQuery.trim()) {
+        setResults([]);
+        setIsLoading(false);
+        return;
+      }
+
+      setResults([]);
+      setIsLoading(true);
+
+      debounceTimerRef.current = setTimeout(() => {
+        performSearch(searchQuery);
+      }, DEBOUNCE_DELAY_IN_MS);
+    },
+    [performSearch],
+  );
 
   const handleSelectResult = (result: SearchResult) => {
     navigate(result.link);

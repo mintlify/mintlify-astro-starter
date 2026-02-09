@@ -27,7 +27,8 @@
     "react-dom": "^19.2.3",
     "react-markdown": "^10.1.0",
     "tailwindcss": "^4.1.18",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "use-debounce": "^10.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

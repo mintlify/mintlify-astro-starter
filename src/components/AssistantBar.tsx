@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import ReactMarkdown from "react-markdown";
-import { cn } from "@mintlify/components";
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import ReactMarkdown from 'react-markdown';
+import { cn } from '@mintlify/components';
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
 const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
 
 export default function AssistantBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [mounted, setMounted] = useState(false);
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -26,7 +26,7 @@ export default function AssistantBar() {
         ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
       },
       body: {
-        fp: "anonymous",
+        fp: 'anonymous',
         retrievalPageSize: 5,
         context: [],
       },
@@ -45,13 +45,13 @@ export default function AssistantBar() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || status !== "ready") return;
+    if (!input.trim() || status !== 'ready') return;
     sendMessage({ text: input });
-    setInput("");
+    setInput('');
     setTimeout(() => inputRef.current?.focus(), 0);
   };
 
-  const isLoading = status === "streaming" || status === "submitted";
+  const isLoading = status === 'streaming' || status === 'submitted';
 
   return (
     <>
@@ -59,19 +59,17 @@ export default function AssistantBar() {
         onClick={() => setIsOpen(!isOpen)}
         type="button"
         className={cn(
-          "flex items-center gap-2 px-3 py-2 text-left text-sm",
-          "bg-white dark:bg-gray-900",
-          "border border-gray-200 dark:border-gray-700",
-          "rounded-xl",
-          "hover:bg-gray-50 dark:hover:bg-gray-800",
-          "focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600",
-          "transition-colors"
+          'flex items-center gap-2 px-3 py-2 text-left text-sm',
+          'bg-white',
+          'border border-gray-200',
+          'rounded-xl',
+          'hover:bg-gray-50',
+          'focus:outline-none focus:ring-2 focus:ring-gray-400',
+          'transition-colors',
         )}
         aria-label="Toggle AI Assistant"
       >
-        <span className="text-gray-500 dark:text-gray-400 whitespace-nowrap">
-          Ask AI
-        </span>
+        <span className="text-gray-500">Ask AI</span>
       </button>
 
       {isOpen &&
@@ -106,14 +104,14 @@ export default function AssistantBar() {
                 ) : (
                   messages.map((msg, index) => {
                     const text = msg.parts
-                      .filter((p) => p.type === "text")
+                      .filter((p) => p.type === 'text')
                       .map((p) => p.text)
-                      .join("");
+                      .join('');
 
                     const isLastMessage = index === messages.length - 1;
                     const showLoading =
                       isLastMessage &&
-                      msg.role === "assistant" &&
+                      msg.role === 'assistant' &&
                       isLoading &&
                       !text;
 
@@ -121,9 +119,9 @@ export default function AssistantBar() {
                       <div
                         key={msg.id}
                         className={`p-3 text-sm max-w-[85%] whitespace-pre-wrap break-words rounded ${
-                          msg.role === "user"
-                            ? "bg-black text-white self-end"
-                            : "bg-gray-100 self-start"
+                          msg.role === 'user'
+                            ? 'bg-black text-white self-end'
+                            : 'bg-gray-100 self-start'
                         }`}
                       >
                         {showLoading ? (
@@ -136,7 +134,7 @@ export default function AssistantBar() {
                               />
                             ))}
                           </div>
-                        ) : msg.role === "assistant" ? (
+                        ) : msg.role === 'assistant' ? (
                           <ReactMarkdown>{text}</ReactMarkdown>
                         ) : (
                           text
@@ -156,7 +154,7 @@ export default function AssistantBar() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
                       handleSubmit(e);
                     }
@@ -167,11 +165,11 @@ export default function AssistantBar() {
                 />
                 <button
                   type="submit"
-                  disabled={!input.trim() || status !== "ready"}
+                  disabled={!input.trim() || status !== 'ready'}
                   className={`absolute right-7 bottom-7 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center ${
-                    !input.trim() || status !== "ready"
-                      ? "cursor-not-allowed opacity-30"
-                      : "cursor-pointer hover:bg-gray-800"
+                    !input.trim() || status !== 'ready'
+                      ? 'cursor-not-allowed opacity-30'
+                      : 'cursor-pointer hover:bg-gray-800'
                   }`}
                 >
                   {isLoading ? (
@@ -195,7 +193,7 @@ export default function AssistantBar() {
               </form>
             </div>
           </>,
-          document.body
+          document.body,
         )}
     </>
   );

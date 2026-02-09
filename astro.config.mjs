@@ -8,10 +8,6 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   integrations: [mintlify({ docsDir: './docs' }), react(), mdx()],
   vite: {
-    plugins: [
-      tailwindcss({
-        base: './src/styles/global.css',
-      })
-    ],
+    plugins: [tailwindcss()],
   },
 });
