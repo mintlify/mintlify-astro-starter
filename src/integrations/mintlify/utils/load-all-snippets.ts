@@ -9,6 +9,7 @@ import {
   DEFAULT_MINT_IGNORES,
 } from '@mintlify/common';
 import type { Root } from 'mdast';
+import { getLogger } from './logger';
 
 export interface SnippetFile {
   filename: string;
@@ -43,7 +44,9 @@ async function scanDirectory(
   return files;
 }
 
-export async function loadAllSnippets(docsDir: string): Promise<SnippetFile[]> {
+export async function loadAllSnippets(
+  docsDir: string,
+): Promise<SnippetFile[]> {
   const files = await scanDirectory(docsDir, docsDir);
   const snippets: SnippetFile[] = [];
 
@@ -58,7 +61,7 @@ export async function loadAllSnippets(docsDir: string): Promise<SnippetFile[]> {
         content,
       });
     } catch (error) {
-      console.warn(`Failed to parse ${file.relativePath}:`, error);
+      getLogger()?.warn(`Failed to parse ${file.relativePath}: ${error}`);
     }
   }
 

@@ -8,8 +8,6 @@ import type {
   MdxJsxFlowElement,
   MdxJsxTextElement,
 } from 'mdast-util-mdx';
-import type { AstroIntegrationLogger } from 'astro';
-
 import {
   getAST,
   stringifyTree,
@@ -19,6 +17,7 @@ import {
   createMdxJsxAttribute,
   allowedComponents,
 } from '@mintlify/common';
+import { getLogger } from './logger';
 
 const COMPOUND_COMPONENTS = new Set([
   'Accordion',
@@ -88,7 +87,6 @@ interface CompoundContext {
   nodeReplacements: Map<JsxNode, string>;
   counters: Map<string, number>;
   mdxContent: string;
-  logger?: AstroIntegrationLogger;
 }
 
 const detectHooksInCode = (code: string): string[] =>
@@ -170,7 +168,7 @@ function findExportedComponents(tree: Root): {
 function processCompoundNode(node: JsxNode, ctx: CompoundContext) {
   if (!node.name || !COMPOUND_COMPONENTS.has(node.name)) return;
   if (!node.position?.start?.offset || !node.position?.end?.offset) {
-    ctx.logger?.warn(`Skipping ${node.name}: missing position info`);
+    getLogger()?.warn(`Skipping ${node.name}: missing position info`);
     return;
   }
 
@@ -193,7 +191,6 @@ function processCompoundNode(node: JsxNode, ctx: CompoundContext) {
 function findCompoundComponents(
   tree: Root,
   mdxContent: string,
-  logger?: AstroIntegrationLogger,
 ): {
   compounds: ExtractedCompoundComponent[];
   nodeReplacements: Map<JsxNode, string>;
@@ -203,7 +200,6 @@ function findCompoundComponents(
     nodeReplacements: new Map(),
     counters: new Map(),
     mdxContent,
-    logger,
   };
 
   visitJsxNodes(tree, (node) => processCompoundNode(node, ctx));
@@ -373,7 +369,6 @@ export async function extractReactComponents(
   componentsDir: string,
   pageSlug: string,
   userComponents: Set<string>,
-  logger?: AstroIntegrationLogger,
 ): Promise<string> {
   const tree = getAST(mdxContent, mdxFilePath) as Root;
 
@@ -381,7 +376,6 @@ export async function extractReactComponents(
   const { compounds, nodeReplacements } = findCompoundComponents(
     tree,
     mdxContent,
-    logger,
   );
 
   if (
