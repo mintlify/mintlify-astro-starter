@@ -1,6 +1,5 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { AstroIntegrationLogger } from 'astro';
 
 import { extractReactComponents } from './extract-react-components';
 import { resolveSnippets } from './resolve-snippets';
@@ -13,7 +12,6 @@ export interface WritePageContentOptions {
   componentsDir: string;
   userComponents: Set<string>;
   snippets: SnippetFile[];
-  logger?: AstroIntegrationLogger;
 }
 
 export async function writePageContent({
@@ -23,7 +21,6 @@ export async function writePageContent({
   componentsDir,
   userComponents,
   snippets,
-  logger,
 }: WritePageContentOptions): Promise<void> {
   let filePath: string;
 
@@ -58,7 +55,6 @@ export async function writePageContent({
     componentsDir,
     slug,
     userComponents,
-    logger,
   );
 
   await writeFile(filePath, finalContent, 'utf-8');

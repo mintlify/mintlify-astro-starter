@@ -6,6 +6,7 @@ import {
 } from '@mintlify/common';
 import type { Root } from 'mdast';
 import type { SnippetFile } from './load-all-snippets';
+import { getLogger } from './logger';
 
 export async function resolveSnippets(
   content: string,
@@ -38,7 +39,7 @@ export async function resolveSnippets(
 
     return stringifyTree(resolvedTree);
   } catch (error) {
-    console.warn(`Failed to resolve snippets in ${filename}:`, error);
+    getLogger()?.warn(`Failed to resolve snippets in ${filename}: ${error}`);
     return content;
   }
 }

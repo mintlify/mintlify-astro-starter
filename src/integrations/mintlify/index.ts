@@ -7,6 +7,7 @@ import { clearContentDirectory } from './utils/clear-content-directory';
 import { copyAssets } from './utils/copy-assets';
 import { findUserComponents } from './utils/find-user-components';
 import { loadAllSnippets } from './utils/load-all-snippets';
+import { initLogger } from './utils/logger';
 import { readDocsConfig } from './utils/read-docs-config';
 import { readPageContent } from './utils/read-page-content';
 import { writePageContent } from './utils/write-page-content';
@@ -23,6 +24,8 @@ export function mintlify(options?: MintlifyOptions): AstroIntegration {
     name: '@mintlify/astro',
     hooks: {
       'astro:config:setup': async ({ config: astroConfig, logger }) => {
+        initLogger(logger);
+
         const rootDir = fileURLToPath(astroConfig.root);
         const srcDir = fileURLToPath(astroConfig.srcDir);
         const publicDir = fileURLToPath(astroConfig.publicDir);
@@ -78,7 +81,6 @@ export function mintlify(options?: MintlifyOptions): AstroIntegration {
                 componentsDir,
                 userComponents,
                 snippets,
-                logger,
               });
             } catch (error) {
               logger.warn(`Failed to read content for ${pagePath}: ${error}`);
