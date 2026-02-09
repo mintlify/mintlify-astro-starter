@@ -25,7 +25,7 @@ const SEARCH_HISTORY_KEY = 'mintlify-search-history';
 const MAX_HISTORY_ITEMS = 5;
 const DEBOUNCE_DELAY_IN_MS = 100;
 
-export type ApiSearchResult = {
+type ApiSearchResult = {
   content: string;
   path: string;
   metadata: DecoratedNavigationPage;
