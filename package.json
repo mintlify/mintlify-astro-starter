@@ -20,7 +20,6 @@
     "@mintlify/components": "^1.0.4",
     "@mintlify/models": "^0.0.260",
     "@mintlify/validation": "^0.1.574",
-    "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "ai": "^6.0.68",
     "astro": "^5.16.12",
