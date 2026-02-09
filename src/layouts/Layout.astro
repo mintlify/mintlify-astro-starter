@@ -2,7 +2,6 @@
 import { ClientRouter } from 'astro:transitions';
 import type { Favicons } from '../integrations/mintlify/types';
 import '../styles/global.css';
-import AssistantBar from '../components/AssistantBar';
 
 interface Props {
   title?: string;
@@ -37,7 +36,6 @@ const { title = 'Mintlify Docs', description, favicons } = Astro.props;
   </head>
   <body>
     <slot />
-    <AssistantBar client:load transition:persist />
   </body>
 </html>
 
