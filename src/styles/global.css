@@ -1,3 +1,2 @@
 @import 'tailwindcss';
 @import '@mintlify/components/styles.css';
-@plugin "@tailwindcss/typography";
