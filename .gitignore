@@ -5,7 +5,7 @@ dist/
 .astro/
 
 # generated content (fetched from Mintlify API)
-src/content
+.mintlify/
 
 # dependencies
 node_modules/
