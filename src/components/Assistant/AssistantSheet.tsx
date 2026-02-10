@@ -249,12 +249,6 @@ function AssistantSheetClient() {
   }, [handleClose]);
 
   useEffect(() => {
-    if (messagesRef.current && isOpen) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-    }
-  }, [messages, isOpen]);
-
-  useEffect(() => {
     if (isMobile && isOpen) {
       const scrollY = window.scrollY;
 
@@ -428,13 +422,14 @@ function AssistantSheetClient() {
 
           <div
             ref={messagesRef}
-            className="flex-1 overflow-y-auto overflow-x-hidden relative px-5 min-h-0"
+            className="flex flex-col-reverse flex-1 overflow-y-auto overflow-x-hidden relative px-5 min-h-0"
             style={
               isDragging
                 ? { overflow: 'hidden', touchAction: 'none' }
                 : undefined
             }
           >
+            <div className="flex-grow" />
             {messages.length > 0 ? (
               <AssistantHistoryList messages={messages} status={status} />
             ) : (
