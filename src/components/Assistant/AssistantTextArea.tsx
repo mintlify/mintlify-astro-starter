@@ -47,10 +47,10 @@ export function AssistantTextArea({
         rows={2}
         className={cn(
           'w-full py-3 pr-10 pl-3 rounded-xl resize-none outline-none text-sm',
-          'border border-gray-200 dark:border-gray-700',
-          'bg-white dark:bg-gray-900',
-          'text-gray-900 dark:text-white',
-          'placeholder:text-gray-400 placeholder:dark:text-white/50',
+          'border border-gray-200',
+          'bg-white',
+          'text-gray-900',
+          'placeholder:text-gray-400',
           'focus:ring-2 min-h-[48px] transition-shadow',
         )}
         style={
