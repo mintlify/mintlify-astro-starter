@@ -22,7 +22,9 @@ const { logo, name, tabs, primaryColor } = Astro.props;
             <img src={logo} alt={name} />
           </a>
         </div>
-        <div class="relative flex-1 flex items-center gap-3 z-20 justify-center">
+        <div
+          class="relative flex-1 flex items-center gap-3 z-20 justify-center"
+        >
           <div class="w-full max-w-sm">
             <SearchBar client:load />
           </div>
@@ -35,24 +37,30 @@ const { logo, name, tabs, primaryColor } = Astro.props;
     </div>
   </nav>
 
-  {tabs && tabs.length > 0 && (
-    <div class="w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 border-b border-gray-100">
-      <div class="flex gap-5">
-        {tabs.map((tab) => (
-          <a
-            href={tab.href}
-            class:list={[
-              'relative py-3 text-sm leading-5 no-underline whitespace-nowrap border-b-2 -mb-px transition-colors duration-150',
-              tab.isActive
-                ? 'text-gray-900 font-semibold'
-                : 'text-gray-400 font-medium border-transparent hover:text-gray-500',
-            ]}
-            style={tab.isActive ? `border-bottom-color: ${primaryColor}` : undefined}
-          >
-            {tab.name}
-          </a>
-        ))}
+  {
+    tabs && tabs.length > 0 && (
+      <div class="w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 border-b border-gray-100">
+        <div class="flex gap-5">
+          {tabs.map((tab) => (
+            <a
+              href={tab.href}
+              class:list={[
+                'relative py-3 text-sm leading-5 no-underline whitespace-nowrap border-b-2 -mb-px transition-colors duration-150',
+                tab.isActive
+                  ? 'text-gray-900 font-semibold'
+                  : 'text-gray-400 font-medium border-transparent hover:text-gray-500',
+              ]}
+              style={
+                tab.isActive
+                  ? `border-bottom-color: ${primaryColor}`
+                  : undefined
+              }
+            >
+              {tab.name}
+            </a>
+          ))}
+        </div>
       </div>
-    </div>
-  )}
+    )
+  }
 </header>

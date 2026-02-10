@@ -1,6 +1,8 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import type { Favicons } from '@mintlify/astro';
+import type { Favicons } from '../integrations/mintlify/types';
+import { AssistantSheet } from '../components/Assistant';
+import docsConfig from '../../docs/docs.json';
 import '../styles/global.css';
 
 interface Props {
@@ -10,6 +12,7 @@ interface Props {
 }
 
 const { title = 'Mintlify Docs', description, favicons } = Astro.props;
+const primaryColor = docsConfig.colors?.primary;
 ---
 
 <!doctype html>
@@ -34,8 +37,13 @@ const { title = 'Mintlify Docs', description, favicons } = Astro.props;
     {description && <meta name="description" content={description} />}
     <ClientRouter />
   </head>
-  <body>
-    <slot />
+  <body style={primaryColor ? `--primary: ${primaryColor}` : ''}>
+    <div class="flex">
+      <div class="flex-1 min-w-0">
+        <slot />
+      </div>
+      <AssistantSheet client:only="react" transition:persist />
+    </div>
   </body>
 </html>
 
