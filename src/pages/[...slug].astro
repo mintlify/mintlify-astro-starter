@@ -48,7 +48,7 @@ const { prev, next } = getFooterPages(sidebarEntries, currentPath);
   description={doc.data.description}
   favicons={favicons}
 >
-  <div style={`--sidebar-primary: ${docsConfig.colors?.primary}`}>
+  <div style={`--primary: ${docsConfig.colors?.primary}`}>
     <Header
       logo={docsConfig.logo?.light}
       name={docsConfig.name}
@@ -57,14 +57,14 @@ const { prev, next } = getFooterPages(sidebarEntries, currentPath);
     />
 
     <div
-      class="flex min-h-[calc(100vh-7.5rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8"
+      class="flex min-h-[calc(100vh-4rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8"
     >
       <div transition:animate="none">
         <Sidebar navigation={decoratedNav} currentPath={currentPath} />
       </div>
 
       <main class="flex-1 min-w-0 py-10 px-8 lg:px-12">
-        <article class="max-w-3xl mx-auto">
+        <article class="max-w-3xl">
           <header class="mb-8 pb-6">
             {
               groupName && (
@@ -95,8 +95,6 @@ const { prev, next } = getFooterPages(sidebarEntries, currentPath);
           </div>
         </article>
       </main>
-
-      <div class="w-[16rem] shrink-0 max-lg:hidden"></div>
     </div>
   </div>
 </Layout>
