@@ -4,9 +4,9 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer';
 import { components } from '@mintlify/astro/components';
-import favicons from '../content/generated/favicons.json';
 import docsConfig from '../../docs/docs.json';
 import Sidebar from '../components/Sidebar';
+import { getFaviconsFromDocsConfig } from '../lib/favicon';
 import {
   decorateNavigation,
   unwrapNav,
@@ -29,6 +29,7 @@ export async function getStaticPaths() {
 
 const { doc, allDocs } = Astro.props;
 const { Content } = await render(doc);
+const favicons = getFaviconsFromDocsConfig(docsConfig);
 
 const titleMap = Object.fromEntries(
   allDocs.map((doc) => [doc.id, doc.data.title || doc.id]),
