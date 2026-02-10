@@ -17,6 +17,21 @@ interface ChatResponseProps extends React.HTMLAttributes<HTMLDivElement> {
   hasError?: boolean;
 }
 
+const normalizePath = (path: string | undefined): string => {
+  if (!path) return '/';
+
+  let normalized = path.startsWith('/') ? path : `/${path}`;
+  if (normalized.endsWith('index')) {
+    normalized = normalized.replace('index', '');
+  }
+  return normalized;
+};
+
+const isLocalUrl = (url: string | undefined): boolean => {
+  if (!url) return false;
+  return !url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('//');
+};
+
 const CopyButtonClassName =
   'rounded-lg p-1.5 hover:bg-gray-100 cursor-pointer text-gray-500';
 
@@ -146,16 +161,19 @@ const ChatSuggestions = ({ markdownLinks }: { markdownLinks: string }) => {
 
   return (
     <div className="flex flex-col gap-3 not-prose">
-      {links.map((link, idx) => (
-        <a key={idx} href={link.path} className="block">
-          <span
-            className="flex items-center text-sm hover:brightness-75"
-            style={{ color: 'var(--primary)' }}
-          >
-            <span className="truncate font-medium">{link.label}</span>
-          </span>
-        </a>
-      ))}
+      {links.map((link, idx) => {
+        const href = isLocalUrl(link.path) ? normalizePath(link.path) : link.path;
+        return (
+          <a key={idx} href={href} className="block">
+            <span
+              className="flex items-center text-sm hover:brightness-75"
+              style={{ color: 'var(--primary)' }}
+            >
+              <span className="truncate font-medium">{link.label}</span>
+            </span>
+          </a>
+        );
+      })}
     </div>
   );
 };
@@ -194,17 +212,21 @@ const MarkdownContent = ({ text }: { text: string }) => {
               {children}
             </h6>
           ),
-          a: ({ href, children, ...props }) => (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-              {...props}
-            >
-              {children}
-            </a>
-          ),
+          a: ({ href, children, ...props }) => {
+            const isLocal = isLocalUrl(href);
+            const normalizedHref = isLocal ? normalizePath(href) : href;
+            return (
+              <a
+                href={normalizedHref}
+                target={isLocal ? undefined : '_blank'}
+                rel={isLocal ? undefined : 'noopener noreferrer'}
+                className="text-primary hover:underline"
+                {...props}
+              >
+                {children}
+              </a>
+            );
+          },
           p: ({ children }) => (
             <p className="whitespace-pre-line">{children}</p>
           ),
@@ -358,7 +380,7 @@ export const ChatResponse = React.forwardRef<HTMLDivElement, ChatResponseProps>(
                       {results.map((result: any, idx: number) => (
                         <a
                           key={idx}
-                          href={`/${result.path}`}
+                          href={normalizePath(result.path)}
                           className="block py-1"
                         >
                           <span
