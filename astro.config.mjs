@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
-import { mintlify } from './src/integrations/mintlify';
+import { mintlify } from '@mintlify/astro';
 
 import tailwindcss from '@tailwindcss/vite';
 
