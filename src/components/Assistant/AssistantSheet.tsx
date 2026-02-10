@@ -321,10 +321,7 @@ function AssistantSheetClient() {
     if (isMobile) {
       return 'fixed inset-0 z-[100]';
     }
-    return cn(
-      'sticky top-0 h-screen shrink-0 z-[22]',
-      'bg-white dark:bg-gray-900',
-    );
+    return cn('sticky top-0 h-screen shrink-0 z-[22]', 'bg-white');
   };
 
   const sheetContent = (
@@ -355,8 +352,8 @@ function AssistantSheetClient() {
         className={cn(
           'flex flex-col overflow-hidden shrink-0',
           isMobile
-            ? 'overscroll-contain bg-white dark:bg-gray-900 z-[10]'
-            : 'h-full bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800',
+            ? 'overscroll-contain bg-white z-[10]'
+            : 'h-full bg-white border-l border-gray-200',
           isMobile &&
             !isDragging &&
             'transition-transform duration-200 ease-out',
@@ -381,7 +378,7 @@ function AssistantSheetClient() {
       >
         {isMobile && (
           <div className="flex justify-center pt-3 touch-none">
-            <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+            <div className="w-10 h-1 rounded-full bg-gray-300" />
           </div>
         )}
         <div
@@ -392,41 +389,39 @@ function AssistantSheetClient() {
         >
           <div className="flex items-center justify-between pb-3 px-4">
             <div className="flex items-center gap-2">
-              <SparklesIcon className="size-5 text-primary dark:text-primary-light" />
-              <span className="font-medium text-gray-900 dark:text-gray-100">
-                Assistant
-              </span>
+              <SparklesIcon className="size-5 text-primary" />
+              <span className="font-medium text-gray-900">Assistant</span>
             </div>
 
             <div className="flex items-center gap-1">
               {!isMobile && (
                 <button
                   onClick={toggleMaximize}
-                  className="group hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-lg transition-colors"
+                  className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
                   aria-label={isMaximized ? 'Minimize' : 'Maximize'}
                 >
                   {isMaximized ? (
-                    <Minimize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300" />
+                    <Minimize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
                   ) : (
-                    <Maximize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300" />
+                    <Maximize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
                   )}
                 </button>
               )}
               {messages.length > 0 && (
                 <button
                   onClick={onClear}
-                  className="group hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-lg transition-colors"
+                  className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
                   aria-label="Clear chat"
                 >
-                  <TrashIcon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300" />
+                  <TrashIcon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
                 </button>
               )}
               <button
                 onClick={handleClose}
-                className="group hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-lg transition-colors"
+                className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
                 aria-label="Close"
               >
-                <XIcon className="size-4 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300" />
+                <XIcon className="size-4 text-gray-500 group-hover:text-gray-700" />
               </button>
             </div>
           </div>
@@ -447,7 +442,7 @@ function AssistantSheetClient() {
             )}
           </div>
 
-          <div className="px-4 pb-4 shrink-0 border-t border-gray-100 dark:border-gray-800 pt-4">
+          <div className="px-4 pb-4 shrink-0 border-t border-gray-100 pt-4">
             <AssistantTextArea
               value={input}
               onChange={setInput}

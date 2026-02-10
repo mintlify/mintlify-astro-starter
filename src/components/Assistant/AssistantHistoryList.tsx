@@ -22,12 +22,12 @@ function LoadingIndicator() {
   return (
     <div>
       <div className="flex justify-start">
-        <div className="self-start text-gray-800 dark:text-gray-200">
+        <div className="self-start text-gray-800">
           <div className="text-sm">
             <div className="flex gap-0.5 items-end h-3 py-2">
-              <span className="size-1 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-[dotBounce_1.4s_ease-in-out_infinite]" />
-              <span className="size-1 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-[dotBounce_1.4s_ease-in-out_0.2s_infinite]" />
-              <span className="size-1 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-[dotBounce_1.4s_ease-in-out_0.4s_infinite]" />
+              <span className="size-1 bg-zinc-400 rounded-full animate-[dotBounce_1.4s_ease-in-out_infinite]" />
+              <span className="size-1 bg-zinc-400 rounded-full animate-[dotBounce_1.4s_ease-in-out_0.2s_infinite]" />
+              <span className="size-1 bg-zinc-400 rounded-full animate-[dotBounce_1.4s_ease-in-out_0.4s_infinite]" />
             </div>
           </div>
         </div>

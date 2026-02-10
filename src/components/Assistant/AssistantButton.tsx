@@ -21,11 +21,11 @@ export function AssistantButton() {
     <button
       onClick={toggleAssistant}
       type="button"
-      className="flex items-center justify-center gap-1.5 pl-3 pr-3.5 h-9 rounded-xl shadow-sm bg-white dark:bg-gray-900 dark:brightness-[1.1] dark:ring-1 dark:hover:brightness-[1.25] ring-1 ring-gray-400/20 hover:ring-gray-600/25 dark:ring-gray-600/30 dark:hover:ring-gray-500/30 transition-all"
+      className="flex items-center justify-center gap-1.5 pl-3 pr-3.5 h-9 rounded-xl shadow-sm bg-white ring-1 ring-gray-400/20 hover:ring-gray-600/25 transition-all"
       aria-label="Toggle AI Assistant"
     >
-      <SparklesIcon className="size-4 shrink-0 text-gray-700 hover:text-gray-800 dark:text-gray-400 hover:dark:text-gray-200" />
-      <span className="text-sm text-gray-500 dark:text-white/50 whitespace-nowrap">
+      <SparklesIcon className="size-4 shrink-0 text-gray-700 hover:text-gray-800" />
+      <span className="text-sm text-gray-500 whitespace-nowrap">
         Ask AI
       </span>
     </button>

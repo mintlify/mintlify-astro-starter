@@ -24,7 +24,7 @@ export function AssistantMessage({ role, content }: AssistantMessageProps) {
   if (role === 'user') {
     return (
       <div className="flex flex-col items-end gap-1.5">
-        <div className="bg-gray-100 dark:bg-white/5 text-gray-800 dark:text-gray-200 px-3 py-2 self-end rounded-xl text-base lg:text-sm max-w-full break-words">
+        <div className="bg-gray-100 text-gray-800 px-3 py-2 self-end rounded-xl text-base lg:text-sm max-w-full break-words">
           {content}
         </div>
       </div>
@@ -34,8 +34,8 @@ export function AssistantMessage({ role, content }: AssistantMessageProps) {
   return (
     <div className="max-w-full min-w-0">
       <div className="flex justify-start max-w-full">
-        <div className="self-start text-gray-800 dark:text-gray-200 max-w-full min-w-0">
-          <div className="text-sm prose prose-sm dark:prose-invert max-w-none break-words [&_pre]:whitespace-pre-wrap [&_code]:break-words">
+        <div className="self-start text-gray-800 max-w-full min-w-0">
+          <div className="text-sm prose prose-sm max-w-none break-words [&_pre]:whitespace-pre-wrap [&_code]:break-words">
             <ReactMarkdown>{content}</ReactMarkdown>
           </div>
         </div>
@@ -47,7 +47,7 @@ export function AssistantMessage({ role, content }: AssistantMessageProps) {
               onClick={handleCopy}
               className={cn(
                 'rounded-lg p-1 text-gray-500',
-                'hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer',
+                'hover:bg-gray-100 cursor-pointer',
               )}
               aria-label="Copy response"
             >
