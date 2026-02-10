@@ -433,7 +433,7 @@ function AssistantSheetClient() {
 
           <div
             ref={messagesRef}
-            className="flex-1 overflow-y-auto relative px-5 min-h-0"
+            className="flex-1 overflow-y-auto overflow-x-hidden relative px-5 min-h-0"
             style={
               isDragging
                 ? { overflow: 'hidden', touchAction: 'none' }
