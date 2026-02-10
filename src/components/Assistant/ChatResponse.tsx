@@ -28,8 +28,7 @@ const CopyButton = ({ content }: { content: string }) => {
       await navigator.clipboard.writeText(content);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   return (
@@ -167,81 +166,93 @@ const MarkdownContent = ({ text }: { text: string }) => {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-        h1: ({ children }) => (
-          <h1 className="text-lg font-semibold text-gray-950">{children}</h1>
-        ),
-        h2: ({ children }) => (
-          <h2 className="text-base font-semibold text-gray-950">{children}</h2>
-        ),
-        h3: ({ children }) => (
-          <h3 className="text-base font-semibold text-gray-950">{children}</h3>
-        ),
-        h4: ({ children }) => (
-          <h4 className="text-base font-semibold text-gray-950">{children}</h4>
-        ),
-        h5: ({ children }) => (
-          <h5 className="text-base font-semibold text-gray-950">{children}</h5>
-        ),
-        h6: ({ children }) => (
-          <h6 className="text-base font-semibold text-gray-950">{children}</h6>
-        ),
-        a: ({ href, children, ...props }) => (
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline"
-            {...props}
-          >
-            {children}
-          </a>
-        ),
-        p: ({ children }) => <p className="whitespace-pre-line">{children}</p>,
-        pre: ({ children, ...props }) => {
-          if (
-            typeof children === 'object' &&
-            children !== null &&
-            'props' in children &&
-            typeof children.props === 'object' &&
-            children.props !== null &&
-            'className' in children.props &&
-            children.props.className === 'language-suggestions'
-          ) {
-            return children;
-          }
-
-          return (
-            <pre
+          h1: ({ children }) => (
+            <h1 className="text-lg font-semibold text-gray-950">{children}</h1>
+          ),
+          h2: ({ children }) => (
+            <h2 className="text-base font-semibold text-gray-950">
+              {children}
+            </h2>
+          ),
+          h3: ({ children }) => (
+            <h3 className="text-base font-semibold text-gray-950">
+              {children}
+            </h3>
+          ),
+          h4: ({ children }) => (
+            <h4 className="text-base font-semibold text-gray-950">
+              {children}
+            </h4>
+          ),
+          h5: ({ children }) => (
+            <h5 className="text-base font-semibold text-gray-950">
+              {children}
+            </h5>
+          ),
+          h6: ({ children }) => (
+            <h6 className="text-base font-semibold text-gray-950">
+              {children}
+            </h6>
+          ),
+          a: ({ href, children, ...props }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
               {...props}
-              className={cn(
-                'p-3 text-sm rounded-xl text-gray-950 bg-white border border-gray-200/70 overflow-x-auto',
-                props.className,
-              )}
             >
               {children}
-            </pre>
-          );
-        },
-        code: ({ inline, children, ...props }: any) => {
-          if (!inline && 'className' in props) {
-            const match = /language-(\w+)/.exec(props.className || '');
-            const language = match ? match[1] : undefined;
-            if (language === 'suggestions' && typeof children === 'string') {
-              return <ChatSuggestions markdownLinks={children} />;
+            </a>
+          ),
+          p: ({ children }) => (
+            <p className="whitespace-pre-line">{children}</p>
+          ),
+          pre: ({ children, ...props }) => {
+            if (
+              typeof children === 'object' &&
+              children !== null &&
+              'props' in children &&
+              typeof children.props === 'object' &&
+              children.props !== null &&
+              'className' in children.props &&
+              children.props.className === 'language-suggestions'
+            ) {
+              return children;
             }
-          }
 
-          return inline ? (
-            <code
-              className="px-1 py-0.5 rounded bg-gray-100 text-sm"
-              {...props}
-            >
-              {children}
-            </code>
-          ) : (
-            <code {...props}>{children}</code>
-          );
-        },
+            return (
+              <pre
+                {...props}
+                className={cn(
+                  'p-3 text-sm rounded-xl text-gray-950 bg-white border border-gray-200/70 overflow-x-auto',
+                  props.className,
+                )}
+              >
+                {children}
+              </pre>
+            );
+          },
+          code: ({ inline, children, ...props }: any) => {
+            if (!inline && 'className' in props) {
+              const match = /language-(\w+)/.exec(props.className || '');
+              const language = match ? match[1] : undefined;
+              if (language === 'suggestions' && typeof children === 'string') {
+                return <ChatSuggestions markdownLinks={children} />;
+              }
+            }
+
+            return inline ? (
+              <code
+                className="px-1 py-0.5 rounded bg-gray-100 text-sm"
+                {...props}
+              >
+                {children}
+              </code>
+            ) : (
+              <code {...props}>{children}</code>
+            );
+          },
         }}
       >
         {text}
@@ -338,7 +349,7 @@ export const ChatResponse = React.forwardRef<HTMLDivElement, ChatResponseProps>(
                 <div
                   key={`${toolCallId}-result`}
                   className={cn(
-                    'flex flex-col gap-6',
+                    'flex flex-col gap-3',
                     results.length === 0 && 'hidden',
                   )}
                 >
@@ -348,9 +359,16 @@ export const ChatResponse = React.forwardRef<HTMLDivElement, ChatResponseProps>(
                         <a
                           key={idx}
                           href={`/${result.path}`}
-                          className="text-sm text-gray-700 hover:text-gray-900 hover:underline py-1"
+                          className="block py-1"
                         >
-                          {result.metadata?.title || result.path}
+                          <span
+                            className="flex items-center text-sm font-normal hover:brightness-75 font-medium"
+                            style={{ color: 'var(--primary)' }}
+                          >
+                            <span className="truncate">
+                              {result.metadata?.title || result.path}
+                            </span>
+                          </span>
                         </a>
                       ))}
                     </div>
