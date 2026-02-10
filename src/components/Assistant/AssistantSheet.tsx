@@ -1,15 +1,11 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { cn } from '@mintlify/components';
+import { useAssistant } from '../../hooks/useAssistant';
 import { AssistantEmptyState } from './AssistantEmptyState';
 import { AssistantHistoryList } from './AssistantHistoryList';
 import { AssistantTextArea } from './AssistantTextArea';
 import { ASSISTANT_EVENTS } from './events';
-
-const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
-const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
 
 const SparklesIcon = ({ className }: { className?: string }) => (
   <svg
@@ -124,7 +120,6 @@ function AssistantSheetClient() {
   const sheetRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(CHAT_SHEET_MIN_WIDTH);
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState('');
   const [shouldFocus, setShouldFocus] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [dragY, setDragY] = useState(0);
@@ -136,19 +131,15 @@ function AssistantSheetClient() {
     isDismissGesture: boolean | null;
   }>({ startY: 0, startScrollTop: 0, isDismissGesture: null });
 
-  const { messages, sendMessage, status, setMessages } = useChat({
-    transport: new DefaultChatTransport({
-      api: `https://api.mintlify.com/discovery/v2/assistant/${SUBDOMAIN}/message`,
-      headers: {
-        ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
-      },
-      body: {
-        fp: 'anonymous',
-        retrievalPageSize: 5,
-        context: [],
-      },
-    }),
-  });
+  const {
+    input,
+    setInput,
+    messages,
+    status,
+    handleSubmit,
+    isLoading,
+    onClear,
+  } = useAssistant();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
@@ -228,6 +219,10 @@ function AssistantSheetClient() {
     resetTouchState();
   }, [resetTouchState]);
 
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   useEffect(() => {
     const handleToggle = () => {
       setIsOpen((prev) => {
@@ -242,10 +237,6 @@ function AssistantSheetClient() {
       setShouldFocus(true);
     };
 
-    const handleClose = () => {
-      setIsOpen(false);
-    };
-
     window.addEventListener(ASSISTANT_EVENTS.TOGGLE, handleToggle);
     window.addEventListener(ASSISTANT_EVENTS.OPEN, handleOpen);
     window.addEventListener(ASSISTANT_EVENTS.CLOSE, handleClose);
@@ -255,7 +246,7 @@ function AssistantSheetClient() {
       window.removeEventListener(ASSISTANT_EVENTS.OPEN, handleOpen);
       window.removeEventListener(ASSISTANT_EVENTS.CLOSE, handleClose);
     };
-  }, []);
+  }, [handleClose]);
 
   useEffect(() => {
     if (messagesRef.current && isOpen) {
@@ -315,19 +306,9 @@ function AssistantSheetClient() {
     handleTouchCancel,
   ]);
 
-  const handleSubmit = () => {
-    if (!input.trim() || status !== 'ready') return;
-    sendMessage({ text: input });
-    setInput('');
+  const handleSubmitAndFocus = () => {
+    handleSubmit();
     setShouldFocus(true);
-  };
-
-  const handleClear = () => {
-    setMessages([]);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
   };
 
   const isMaximized = width >= CHAT_SHEET_MAX_WIDTH;
@@ -335,8 +316,6 @@ function AssistantSheetClient() {
   const toggleMaximize = useCallback(() => {
     setWidth(isMaximized ? CHAT_SHEET_MIN_WIDTH : CHAT_SHEET_MAX_WIDTH);
   }, [isMaximized]);
-
-  const isLoading = status === 'streaming' || status === 'submitted';
 
   const getOuterClassName = () => {
     if (isMobile) {
@@ -435,7 +414,7 @@ function AssistantSheetClient() {
               )}
               {messages.length > 0 && (
                 <button
-                  onClick={handleClear}
+                  onClick={onClear}
                   className="group hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-lg transition-colors"
                   aria-label="Clear chat"
                 >
@@ -472,7 +451,7 @@ function AssistantSheetClient() {
             <AssistantTextArea
               value={input}
               onChange={setInput}
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmitAndFocus}
               isLoading={isLoading}
               disabled={!input.trim() || isLoading}
               shouldFocus={shouldFocus && isOpen}
