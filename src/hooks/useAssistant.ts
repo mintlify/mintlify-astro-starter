@@ -13,15 +13,11 @@ export const useAssistant = () => {
   const { threadId, setThreadId, threadKey, setThreadKey } = useMessagesStore();
 
   useEffect(() => {
-    const storedKey = sessionStorage.getItem('assistant-threadKey');
-    const storedId = sessionStorage.getItem('assistant-threadId');
-    if (storedKey && !threadKey) {
-      setThreadKey(storedKey);
-    }
-    if (storedId && !threadId) {
-      setThreadId(storedId);
-    }
-  }, [threadKey, setThreadKey, threadId, setThreadId]);
+    sessionStorage.removeItem('assistant-threadKey');
+    sessionStorage.removeItem('assistant-threadId');
+    setThreadId(undefined);
+    setThreadKey(undefined);
+  }, []);
 
   const { messages, sendMessage, status, setMessages, stop } = useChat({
     id: `assistant-${SUBDOMAIN}`,

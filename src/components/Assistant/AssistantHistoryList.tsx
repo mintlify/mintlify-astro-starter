@@ -1,22 +1,15 @@
 import { useMemo } from 'react';
-import { AssistantMessage } from './AssistantMessage';
-
-interface MessagePart {
-  type: string;
-  text?: string;
-  [key: string]: unknown;
-}
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  parts: MessagePart[];
-}
+import type { UIMessage } from '@ai-sdk/react';
+import { ChatItem } from './ChatItem';
 
 interface AssistantHistoryListProps {
-  messages: Message[];
+  messages: UIMessage[];
   status: 'ready' | 'streaming' | 'submitted' | 'error';
 }
+
+const hasVisibleParts = (parts: UIMessage['parts'] | undefined) =>
+  parts?.some((part) => part.type === 'text' || part.type === 'tool-search') ??
+  false;
 
 function LoadingIndicator() {
   return (
@@ -69,21 +62,16 @@ export function AssistantHistoryList({
 
   return (
     <div className="space-y-4">
-      {filteredMessages.map((msg) => {
-        const text = msg.parts
-          .filter((p) => p.type === 'text')
-          .map((p) => ('text' in p ? p.text : ''))
-          .join('');
-
-        if (msg.role === 'assistant' && !text.trim()) {
+      {filteredMessages.map((msg, index) => {
+        if (msg.role === 'assistant' && !hasVisibleParts(msg.parts)) {
           return null;
         }
 
         return (
-          <AssistantMessage
+          <ChatItem
             key={msg.id}
-            role={msg.role as 'user' | 'assistant'}
-            content={text}
+            message={msg}
+            isLast={index === filteredMessages.length - 1}
           />
         );
       })}
