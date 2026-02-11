@@ -227,14 +227,14 @@ function AssistantSheetClient() {
     const handleToggle = () => {
       setIsOpen((prev) => {
         const isOpening = !prev;
-        setShouldFocus(isOpening);
+        setShouldFocus(isOpening && !isMobile);
         return isOpening;
       });
     };
 
     const handleOpen = () => {
       setIsOpen(true);
-      setShouldFocus(true);
+      setShouldFocus(!isMobile);
     };
 
     window.addEventListener(ASSISTANT_EVENTS.TOGGLE, handleToggle);
@@ -359,7 +359,7 @@ function AssistantSheetClient() {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: '90vh',
+                height: '85vh',
                 borderTopLeftRadius: '16px',
                 borderTopRightRadius: '16px',
                 transform: isOpen
