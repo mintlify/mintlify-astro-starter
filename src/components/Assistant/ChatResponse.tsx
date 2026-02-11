@@ -51,9 +51,9 @@ const CopyButton = ({ content }: { content: string }) => {
       aria-label="Copy response"
     >
       {copied ? (
-        <Icon icon="check" iconLibrary="lucide" color="green" />
+        <Icon icon="check" iconLibrary="lucide" color="green" size={16} />
       ) : (
-        <Icon icon="copy" iconLibrary="lucide" color="dimgray" />
+        <Icon icon="copy" iconLibrary="lucide" color="dimgray" size={16} />
       )}
     </button>
   );
@@ -110,7 +110,7 @@ const SearchingContainer = ({
       >
         {!isSourcesOpen && (
           <span className="flex-shrink-0 group-hover:hidden">
-            <Icon icon="search" size={12} color="dimgray" />
+            <Icon icon="search" iconLibrary="lucide" size={12} color="dimgray" />
           </span>
         )}
         {hasResults && (

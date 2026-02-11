@@ -20,6 +20,7 @@ export default function Footer({ prev, next }: FooterProps) {
             icon="chevron-left"
             iconLibrary="lucide"
             color="currentColor"
+            size={16}
             className="shrink-0 transition-transform duration-150 group-hover:-translate-x-0.5"
           />
           {prev.title}
@@ -37,6 +38,7 @@ export default function Footer({ prev, next }: FooterProps) {
             icon="chevron-right"
             iconLibrary="lucide"
             color="currentColor"
+            size={16}
             className="shrink-0 transition-transform duration-150 group-hover:translate-x-0.5"
           />
         </a>

@@ -7,7 +7,6 @@ import { AssistantEmptyState } from './AssistantEmptyState';
 import { AssistantHistoryList } from './AssistantHistoryList';
 import { AssistantTextArea } from './AssistantTextArea';
 import { ASSISTANT_EVENTS } from './events';
-import { SparklesIcon } from './AssistantButton';
 
 const CHAT_SHEET_MIN_WIDTH = 368;
 const CHAT_SHEET_MAX_WIDTH = 576;
@@ -200,7 +199,7 @@ function AssistantSheetClient() {
         >
           <div className="flex items-center justify-between pb-3 px-4">
             <div className="flex items-center gap-2">
-              <SparklesIcon color="var(--primary)" size={20} />
+              <Icon icon="sparkles" iconLibrary="lucide" color="var(--primary)" size={20} />
               <span className="font-medium text-gray-900">Assistant</span>
             </div>
 

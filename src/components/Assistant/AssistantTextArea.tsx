@@ -90,7 +90,7 @@ export function AssistantTextArea({
         {isLoading ? (
           <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
         ) : (
-          <Icon icon="arrow-up" color="white" iconLibrary="lucide" />
+          <Icon icon="arrow-up" color="white" iconLibrary="lucide" size={16} />
         )}
       </button>
     </div>
