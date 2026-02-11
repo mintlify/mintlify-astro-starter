@@ -121,7 +121,9 @@ function AssistantSheetClient() {
   const [width, setWidth] = useState(CHAT_SHEET_MIN_WIDTH);
   const [isOpen, setIsOpen] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 1024 : false
+  );
   const [dragY, setDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
