@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { cn } from '@mintlify/components';
-import { ArrowUpIcon } from 'lucide-react';
+import { cn, Icon } from '@mintlify/components';
 
 interface AssistantTextAreaProps {
   value: string;
@@ -86,7 +85,7 @@ export function AssistantTextArea({
         {isLoading ? (
           <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
         ) : (
-          <ArrowUpIcon className="w-4 h-4 text-white" />
+          <Icon icon="arrow-up" color="white" iconLibrary="lucide" />
         )}
       </button>
     </div>

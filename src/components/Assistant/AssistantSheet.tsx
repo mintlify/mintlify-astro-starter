@@ -1,100 +1,12 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { cn } from '@mintlify/components';
+import { cn, Icon } from '@mintlify/components';
 import { useAssistant } from '../../hooks/useAssistant';
 import { AssistantEmptyState } from './AssistantEmptyState';
 import { AssistantHistoryList } from './AssistantHistoryList';
 import { AssistantTextArea } from './AssistantTextArea';
 import { ASSISTANT_EVENTS } from './events';
-
-const SparklesIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z" />
-  </svg>
-);
-
-const XIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
-  </svg>
-);
-
-const TrashIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 6h18" />
-    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-  </svg>
-);
-
-const Maximize2Icon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="15 3 21 3 21 9" />
-    <polyline points="9 21 3 21 3 15" />
-    <line x1="21" y1="3" x2="14" y2="10" />
-    <line x1="3" y1="21" x2="10" y2="14" />
-  </svg>
-);
-
-const Minimize2Icon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="4 14 10 14 10 20" />
-    <polyline points="20 10 14 10 14 4" />
-    <line x1="14" y1="10" x2="21" y2="3" />
-    <line x1="3" y1="21" x2="10" y2="14" />
-  </svg>
-);
+import { SparklesIcon } from './AssistantButton';
 
 const CHAT_SHEET_MIN_WIDTH = 368;
 const CHAT_SHEET_MAX_WIDTH = 576;
@@ -383,7 +295,7 @@ function AssistantSheetClient() {
         >
           <div className="flex items-center justify-between pb-3 px-4">
             <div className="flex items-center gap-2">
-              <SparklesIcon className="size-5 text-primary" />
+              <SparklesIcon color="var(--primary)" size={20} />
               <span className="font-medium text-gray-900">Assistant</span>
             </div>
 
@@ -391,31 +303,57 @@ function AssistantSheetClient() {
               {!isMobile && (
                 <button
                   onClick={toggleMaximize}
-                  className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
+                  className="group size-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
                   aria-label={isMaximized ? 'Minimize' : 'Maximize'}
                 >
-                  {isMaximized ? (
-                    <Minimize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-                  ) : (
-                    <Maximize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-                  )}
+                  <span className="flex items-center justify-center text-gray-500 group-hover:text-gray-700 transition-colors">
+                    {isMaximized ? (
+                      <Icon
+                        icon="minimize-2"
+                        iconLibrary="lucide"
+                        size={14}
+                        color="currentColor"
+                      />
+                    ) : (
+                      <Icon
+                        icon="maximize-2"
+                        iconLibrary="lucide"
+                        size={14}
+                        color="currentColor"
+                      />
+                    )}
+                  </span>
                 </button>
               )}
               {messages.length > 0 && (
                 <button
                   onClick={onClear}
-                  className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
+                  className="group size-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
                   aria-label="Clear chat"
                 >
-                  <TrashIcon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
+                  <span className="flex items-center justify-center text-gray-500 group-hover:text-gray-700 transition-colors">
+                    <Icon
+                      icon="trash"
+                      iconLibrary="lucide"
+                      size={14}
+                      color="currentColor"
+                    />
+                  </span>
                 </button>
               )}
               <button
                 onClick={handleClose}
-                className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
+                className="group size-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
                 aria-label="Close"
               >
-                <XIcon className="size-4 text-gray-500 group-hover:text-gray-700" />
+                <span className="flex items-center justify-center text-gray-500 group-hover:text-gray-700 transition-colors">
+                  <Icon
+                    icon="x"
+                    iconLibrary="lucide"
+                    size={16}
+                    color="currentColor"
+                  />
+                </span>
               </button>
             </div>
           </div>
