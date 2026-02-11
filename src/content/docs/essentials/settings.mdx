@@ -1,0 +1,143 @@
+---
+title: 'Global Settings'
+description: 'Mintlify gives you complete control over the look and feel of your documentation using the docs.json file'
+icon: 'gear'
+---
+
+import { Expandable_1 } from "../../components/essentials/settings/Expandable_1.jsx";
+
+import { Expandable_2 } from "../../components/essentials/settings/Expandable_2.jsx";
+
+import { Expandable_3 } from "../../components/essentials/settings/Expandable_3.jsx";
+
+import { Expandable_4 } from "../../components/essentials/settings/Expandable_4.jsx";
+
+import { Expandable_5 } from "../../components/essentials/settings/Expandable_5.jsx";
+
+import { Expandable_6 } from "../../components/essentials/settings/Expandable_6.jsx";
+
+import { Expandable_7 } from "../../components/essentials/settings/Expandable_7.jsx";
+
+import { Expandable_8 } from "../../components/essentials/settings/Expandable_8.jsx";
+
+import { Expandable_9 } from "../../components/essentials/settings/Expandable_9.jsx";
+
+import { CodeGroup_1 } from "../../components/essentials/settings/CodeGroup_1.jsx";
+
+import { Expandable_10 } from "../../components/essentials/settings/Expandable_10.jsx";
+
+import { Expandable_11 } from "../../components/essentials/settings/Expandable_11.jsx";
+
+import { Expandable_12 } from "../../components/essentials/settings/Expandable_12.jsx";
+
+Every Mintlify site needs a `docs.json` file with the core configuration settings. Learn more about the [properties](#properties) below.
+
+## Properties
+
+<ResponseField name="name" type="string" required>
+  Name of your project. Used for the global title.
+
+  Example: `mintlify`
+</ResponseField>
+
+<ResponseField name="navigation" type="Navigation[]" required>
+  An array of groups with all the pages within that group
+
+  <Expandable_1 client:load />
+</ResponseField>
+
+<ResponseField name="logo" type="string or object">
+  Path to logo image or object with path to "light" and "dark" mode logo images
+
+  <Expandable_2 client:load />
+</ResponseField>
+
+<ResponseField name="favicon" type="string">
+  Path to the favicon image
+</ResponseField>
+
+<ResponseField name="colors" type="Colors">
+  Hex color codes for your global theme
+
+  <Expandable_3 client:load />
+</ResponseField>
+
+<ResponseField name="topbarLinks" type="TopbarLink[]">
+  Array of `name`s and `url`s of links you want to include in the topbar
+
+  <Expandable_4 client:load />
+</ResponseField>
+
+<ResponseField name="topbarCtaButton" type="Call to Action">
+  <Expandable_5 client:load />
+</ResponseField>
+
+<ResponseField name="versions" type="string[]">
+  Array of version names. Only use this if you want to show different versions
+  of docs with a dropdown in the navigation bar.
+</ResponseField>
+
+<ResponseField name="anchors" type="Anchor[]">
+  An array of the anchors, includes the `icon`, `color`, and `url`.
+
+  <Expandable_6 client:load />
+</ResponseField>
+
+<ResponseField name="topAnchor" type="Object">
+  Override the default configurations for the top-most anchor.
+
+  <Expandable_7 client:load />
+</ResponseField>
+
+<ResponseField name="tabs" type="Tabs[]">
+  An array of navigational tabs.
+
+  <Expandable_8 client:load />
+</ResponseField>
+
+<ResponseField name="api" type="API">
+  Configuration for API settings. Learn more about API pages at [API Components](/api-playground/demo).
+
+  <Expandable_9 client:load />
+</ResponseField>
+
+<ResponseField name="openapi" type="string | string[]">
+  A string or an array of strings of URL(s) or relative path(s) pointing to your
+  OpenAPI file.
+
+  Examples:
+
+  <CodeGroup_1 client:load />
+</ResponseField>
+
+<ResponseField name="footerSocials" type="FooterSocials">
+  An object of social media accounts where the key:property pair represents the social media platform and the account url.
+
+  Example:
+
+  ```json
+  {
+    "x": "https://x.com/mintlify",
+    "website": "https://mintlify.com"
+  }
+  ```
+
+  <Expandable_10 client:load />
+</ResponseField>
+
+<ResponseField name="feedback" type="Feedback">
+  Configurations to enable feedback buttons
+
+  <Expandable_11 client:load />
+</ResponseField>
+
+<ResponseField name="modeToggle" type="ModeToggle">
+  Customize the dark mode toggle.
+
+  <Expandable_12 client:load />
+</ResponseField>
+
+<ResponseField name="backgroundImage" type="string">
+  A background image to be displayed behind every page. See example with
+  [Infisical](https://infisical.com/docs) and [FRPC](https://frpc.io).
+</ResponseField>
