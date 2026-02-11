@@ -25,9 +25,7 @@ export function AssistantButton() {
       aria-label="Toggle AI Assistant"
     >
       <SparklesIcon className="size-4 shrink-0 text-gray-700 hover:text-gray-800" />
-      <span className="text-sm text-gray-500 whitespace-nowrap">
-        Ask AI
-      </span>
+      <span className="text-sm text-gray-500 whitespace-nowrap">Ask AI</span>
     </button>
   );
 }

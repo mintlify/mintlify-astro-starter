@@ -16,11 +16,7 @@ export function ChatItem({ message, isLast, hasError }: ChatItemProps) {
 
   if (message.role === 'assistant') {
     return (
-      <ChatResponse
-        message={message}
-        isLast={isLast}
-        hasError={hasError}
-      />
+      <ChatResponse message={message} isLast={isLast} hasError={hasError} />
     );
   }
 

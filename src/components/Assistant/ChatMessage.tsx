@@ -19,7 +19,7 @@ export const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
           ref={ref}
           className={cn(
             'flex px-3 py-2 items-start gap-4 w-fit rounded-2xl bg-gray-100',
-            className
+            className,
           )}
           {...props}
         >
@@ -33,6 +33,6 @@ export const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 ChatMessage.displayName = 'ChatMessage';

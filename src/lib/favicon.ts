@@ -16,7 +16,7 @@ export function getFaviconsFromDocsConfig(
   const faviconHref =
     typeof faviconConfig === 'string'
       ? faviconConfig
-      : faviconConfig?.light ?? faviconConfig?.dark;
+      : (faviconConfig?.light ?? faviconConfig?.dark);
 
   if (!faviconHref) {
     return undefined;

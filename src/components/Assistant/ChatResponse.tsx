@@ -29,7 +29,11 @@ const normalizePath = (path: string | undefined): string => {
 
 const isLocalUrl = (url: string | undefined): boolean => {
   if (!url) return false;
-  return !url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('//');
+  return (
+    !url.startsWith('http://') &&
+    !url.startsWith('https://') &&
+    !url.startsWith('//')
+  );
 };
 
 const CopyButtonClassName =
@@ -162,7 +166,9 @@ const ChatSuggestions = ({ markdownLinks }: { markdownLinks: string }) => {
   return (
     <div className="flex flex-col gap-3 not-prose">
       {links.map((link, idx) => {
-        const href = isLocalUrl(link.path) ? normalizePath(link.path) : link.path;
+        const href = isLocalUrl(link.path)
+          ? normalizePath(link.path)
+          : link.path;
         return (
           <a key={idx} href={href} className="block">
             <span
