@@ -447,6 +447,7 @@ function AssistantSheetClient() {
               isLoading={isLoading}
               disabled={!input.trim() || isLoading}
               shouldFocus={shouldFocus && isOpen}
+              isMobile={isMobile}
             />
           </div>
         </div>

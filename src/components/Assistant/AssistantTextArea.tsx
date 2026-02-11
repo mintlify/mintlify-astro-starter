@@ -9,6 +9,7 @@ interface AssistantTextAreaProps {
   isLoading: boolean;
   disabled: boolean;
   shouldFocus?: boolean;
+  isMobile?: boolean;
 }
 
 export function AssistantTextArea({
@@ -18,6 +19,7 @@ export function AssistantTextArea({
   isLoading,
   disabled,
   shouldFocus,
+  isMobile = false,
 }: AssistantTextAreaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -46,7 +48,8 @@ export function AssistantTextArea({
         placeholder="Ask a question..."
         rows={2}
         className={cn(
-          'w-full py-3 pr-10 pl-3 rounded-xl resize-none outline-none text-base',
+          'w-full py-3 pr-10 pl-3 rounded-xl resize-none outline-none',
+          isMobile ? 'text-base' : 'text-sm',
           'border border-gray-200',
           'bg-white',
           'text-gray-900',
@@ -57,6 +60,8 @@ export function AssistantTextArea({
           {
             '--tw-ring-color':
               'color-mix(in srgb, var(--primary) 20%, transparent)',
+            resize: 'none',
+            fontSize: isMobile ? '16px' : undefined,
           } as React.CSSProperties
         }
         onFocus={(e) => {
