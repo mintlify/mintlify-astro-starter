@@ -1,5 +1,23 @@
+import { Icon } from '@mintlify/components';
 import { toggleAssistant } from './events';
-import { SparklesIcon } from './icons';
+
+export const SparklesIcon = ({
+  color = 'dimgrey',
+  size = 18,
+  className,
+}: {
+  color?: string;
+  size?: number;
+  className?: string;
+}) => (
+  <Icon
+    icon="sparkles"
+    iconLibrary="lucide"
+    color={color}
+    size={size}
+    className={className}
+  />
+);
 
 export function AssistantButton() {
   return (
