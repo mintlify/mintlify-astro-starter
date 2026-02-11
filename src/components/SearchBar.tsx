@@ -113,12 +113,9 @@ export function SearchBar() {
     }
   }, []);
 
-  const debouncedSearch = useDebouncedCallback(
-    (searchQuery: string) => {
-      performSearch(searchQuery);
-    },
-    DEBOUNCE_DELAY_IN_MS,
-  );
+  const debouncedSearch = useDebouncedCallback((searchQuery: string) => {
+    performSearch(searchQuery);
+  }, DEBOUNCE_DELAY_IN_MS);
 
   const handleSearch = useCallback(
     (searchQuery: string) => {
