@@ -2,104 +2,21 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@mintlify/components';
 import { useAssistant } from '../../hooks/useAssistant';
+import { useSwipeToDismiss } from '../../hooks/useSwipeToDismiss';
 import { AssistantEmptyState } from './AssistantEmptyState';
 import { AssistantHistoryList } from './AssistantHistoryList';
 import { AssistantTextArea } from './AssistantTextArea';
 import { ASSISTANT_EVENTS } from './events';
-
-const SparklesIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z" />
-  </svg>
-);
-
-const XIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
-  </svg>
-);
-
-const TrashIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 6h18" />
-    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-  </svg>
-);
-
-const Maximize2Icon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="15 3 21 3 21 9" />
-    <polyline points="9 21 3 21 3 15" />
-    <line x1="21" y1="3" x2="14" y2="10" />
-    <line x1="3" y1="21" x2="10" y2="14" />
-  </svg>
-);
-
-const Minimize2Icon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="4 14 10 14 10 20" />
-    <polyline points="20 10 14 10 14 4" />
-    <line x1="14" y1="10" x2="21" y2="3" />
-    <line x1="3" y1="21" x2="10" y2="14" />
-  </svg>
-);
+import {
+  SparklesIcon,
+  XIcon,
+  TrashIcon,
+  Maximize2Icon,
+  Minimize2Icon,
+} from './icons';
 
 const CHAT_SHEET_MIN_WIDTH = 368;
 const CHAT_SHEET_MAX_WIDTH = 576;
-const DRAG_THRESHOLD = 10;
-const DRAG_THRESHOLD_PX = 100;
 
 export function AssistantSheet() {
   const [isClient, setIsClient] = useState(false);
@@ -124,14 +41,6 @@ function AssistantSheetClient() {
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < 1024 : false,
   );
-  const [dragY, setDragY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const touchState = useRef<{
-    startY: number;
-    startScrollTop: number;
-    isDismissGesture: boolean | null;
-  }>({ startY: 0, startScrollTop: 0, isDismissGesture: null });
 
   const {
     input,
@@ -143,86 +52,22 @@ function AssistantSheetClient() {
     onClear,
   } = useAssistant();
 
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  const { dragY, isDragging } = useSwipeToDismiss({
+    enabled: isMobile,
+    sheetRef,
+    scrollRef: messagesRef,
+    onDismiss: handleClose,
+  });
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const handleTouchStart = useCallback((e: TouchEvent) => {
-    const touch = e.touches[0];
-    if (!touch) return;
-
-    setIsDragging(false);
-    setDragY(0);
-
-    const scrollContainer = messagesRef.current;
-
-    touchState.current = {
-      startY: touch.clientY,
-      startScrollTop: scrollContainer?.scrollTop ?? 0,
-      isDismissGesture: null,
-    };
-  }, []);
-
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    const touch = e.touches[0];
-    if (!touch) return;
-
-    const { startY, startScrollTop, isDismissGesture } = touchState.current;
-    const deltaY = touch.clientY - startY;
-
-    if (isDismissGesture === false) {
-      return;
-    }
-
-    if (isDismissGesture === true) {
-      e.preventDefault();
-      setDragY(Math.max(0, deltaY));
-      return;
-    }
-
-    if (Math.abs(deltaY) < DRAG_THRESHOLD) {
-      return;
-    }
-
-    const wasAtTop = startScrollTop <= 0;
-    const isMovingDown = deltaY > 0;
-
-    if (wasAtTop && isMovingDown) {
-      touchState.current.isDismissGesture = true;
-      setIsDragging(true);
-      e.preventDefault();
-      setDragY(deltaY);
-    } else {
-      touchState.current.isDismissGesture = false;
-    }
-  }, []);
-
-  const resetTouchState = useCallback(() => {
-    setIsDragging(false);
-    setDragY(0);
-    touchState.current = {
-      startY: 0,
-      startScrollTop: 0,
-      isDismissGesture: null,
-    };
-  }, []);
-
-  const handleTouchEnd = useCallback(() => {
-    if (touchState.current.isDismissGesture && dragY > DRAG_THRESHOLD_PX) {
-      setIsOpen(false);
-    }
-    resetTouchState();
-  }, [dragY, resetTouchState]);
-
-  const handleTouchCancel = useCallback(() => {
-    resetTouchState();
-  }, [resetTouchState]);
-
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
   }, []);
 
   useEffect(() => {
@@ -248,7 +93,7 @@ function AssistantSheetClient() {
       window.removeEventListener(ASSISTANT_EVENTS.OPEN, handleOpen);
       window.removeEventListener(ASSISTANT_EVENTS.CLOSE, handleClose);
     };
-  }, [handleClose]);
+  }, [handleClose, isMobile]);
 
   useEffect(() => {
     if (isMobile && isOpen) {
@@ -275,32 +120,6 @@ function AssistantSheetClient() {
       };
     }
   }, [isMobile, isOpen]);
-
-  useEffect(() => {
-    if (!isMobile || !sheetRef.current) return;
-
-    const element = sheetRef.current;
-
-    element.addEventListener('touchstart', handleTouchStart, {
-      passive: false,
-    });
-    element.addEventListener('touchmove', handleTouchMove, { passive: false });
-    element.addEventListener('touchend', handleTouchEnd);
-    element.addEventListener('touchcancel', handleTouchCancel);
-
-    return () => {
-      element.removeEventListener('touchstart', handleTouchStart);
-      element.removeEventListener('touchmove', handleTouchMove);
-      element.removeEventListener('touchend', handleTouchEnd);
-      element.removeEventListener('touchcancel', handleTouchCancel);
-    };
-  }, [
-    isMobile,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
-    handleTouchCancel,
-  ]);
 
   const handleSubmitAndFocus = () => {
     handleSubmit();

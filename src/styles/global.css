@@ -1,6 +1,21 @@
 @import 'tailwindcss';
 @import '@mintlify/components/styles.css' layer(components);
 
+@theme {
+  --animate-dot-bounce: dot-bounce 1.4s ease-in-out infinite;
+
+  @keyframes dot-bounce {
+    0%,
+    20%,
+    100% {
+      transform: translateY(0);
+    }
+    10% {
+      transform: translateY(2px);
+    }
+  }
+}
+
 /* Override dark mode custom variant before components load */
 @custom-variant dark (&:not(*));
 /* Force light mode... TODO: support dark mode */
