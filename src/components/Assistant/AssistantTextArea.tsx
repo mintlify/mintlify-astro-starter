@@ -46,7 +46,7 @@ export function AssistantTextArea({
         placeholder="Ask a question..."
         rows={2}
         className={cn(
-          'w-full py-3 pr-10 pl-3 rounded-xl resize-none outline-none text-sm',
+          'w-full py-3 pr-10 pl-3 rounded-xl resize-none outline-none text-base',
           'border border-gray-200',
           'bg-white',
           'text-gray-900',
