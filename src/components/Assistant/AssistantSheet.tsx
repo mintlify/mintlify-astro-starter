@@ -35,6 +35,7 @@ export function AssistantSheet() {
 function AssistantSheetClient() {
   const messagesRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const topBoundaryRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(CHAT_SHEET_MIN_WIDTH);
   const [isOpen, setIsOpen] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
@@ -57,9 +58,10 @@ function AssistantSheetClient() {
   }, []);
 
   const { dragY, isDragging } = useSwipeToDismiss({
-    enabled: isMobile,
+    enabled: isMobile && isOpen,
     sheetRef,
     scrollRef: messagesRef,
+    topBoundaryRef,
     onDismiss: handleClose,
   });
 
@@ -196,50 +198,50 @@ function AssistantSheetClient() {
             <div className="w-10 h-1 rounded-full bg-gray-300" />
           </div>
         )}
+        <div className="flex items-center justify-between pb-3 px-4">
+          <div className="flex items-center gap-2">
+            <SparklesIcon className="size-5 text-primary" />
+            <span className="font-medium text-gray-900">Assistant</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            {!isMobile && (
+              <button
+                onClick={toggleMaximize}
+                className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
+                aria-label={isMaximized ? 'Minimize' : 'Maximize'}
+              >
+                {isMaximized ? (
+                  <Minimize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
+                ) : (
+                  <Maximize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
+                )}
+              </button>
+            )}
+            {messages.length > 0 && (
+              <button
+                onClick={onClear}
+                className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
+                aria-label="Clear chat"
+              >
+                <TrashIcon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
+              </button>
+            )}
+            <button
+              onClick={handleClose}
+              className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
+              aria-label="Close"
+            >
+              <XIcon className="size-4 text-gray-500 group-hover:text-gray-700" />
+            </button>
+          </div>
+        </div>
         <div
           className={cn(
             'w-full flex flex-col flex-1 min-h-0',
             isMobile ? 'pt-0' : 'pt-3',
           )}
         >
-          <div className="flex items-center justify-between pb-3 px-4">
-            <div className="flex items-center gap-2">
-              <SparklesIcon className="size-5 text-primary" />
-              <span className="font-medium text-gray-900">Assistant</span>
-            </div>
-
-            <div className="flex items-center gap-1">
-              {!isMobile && (
-                <button
-                  onClick={toggleMaximize}
-                  className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
-                  aria-label={isMaximized ? 'Minimize' : 'Maximize'}
-                >
-                  {isMaximized ? (
-                    <Minimize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-                  ) : (
-                    <Maximize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-                  )}
-                </button>
-              )}
-              {messages.length > 0 && (
-                <button
-                  onClick={onClear}
-                  className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
-                  aria-label="Clear chat"
-                >
-                  <TrashIcon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-                </button>
-              )}
-              <button
-                onClick={handleClose}
-                className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
-                aria-label="Close"
-              >
-                <XIcon className="size-4 text-gray-500 group-hover:text-gray-700" />
-              </button>
-            </div>
-          </div>
 
           <div
             ref={messagesRef}
@@ -256,6 +258,7 @@ function AssistantSheetClient() {
             ) : (
               <AssistantEmptyState />
             )}
+            <div ref={topBoundaryRef} className="h-px w-full shrink-0" />
           </div>
 
           <div className="px-4 pb-4 shrink-0 border-t border-gray-100 pt-4">

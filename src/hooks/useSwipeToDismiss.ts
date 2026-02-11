@@ -7,6 +7,7 @@ interface UseSwipeToDismissOptions {
   enabled: boolean;
   sheetRef: React.RefObject<HTMLDivElement | null>;
   scrollRef: React.RefObject<HTMLDivElement | null>;
+  topBoundaryRef: React.RefObject<HTMLDivElement | null>;
   onDismiss: () => void;
 }
 
@@ -14,27 +15,24 @@ export function useSwipeToDismiss({
   enabled,
   sheetRef,
   scrollRef,
+  topBoundaryRef,
   onDismiss,
 }: UseSwipeToDismissOptions) {
   const [dragY, setDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
   const dragYRef = useRef(0);
-  const touchState = useRef<{
-    startY: number;
-    startScrollTop: number;
-    isDismissGesture: boolean | null;
-  }>({ startY: 0, startScrollTop: 0, isDismissGesture: null });
+  const isAtTop = useRef(false);
+  const wasAtTopOnTouchStart = useRef(false);
+  const pointerStartY = useRef(0);
+  const isDismissGesture = useRef(false);
 
   const resetTouchState = useCallback(() => {
     setIsDragging(false);
     setDragY(0);
     dragYRef.current = 0;
-    touchState.current = {
-      startY: 0,
-      startScrollTop: 0,
-      isDismissGesture: null,
-    };
+    isDismissGesture.current = false;
+    pointerStartY.current = 0;
   }, []);
 
   const handleTouchStart = useCallback(
@@ -45,28 +43,20 @@ export function useSwipeToDismiss({
       setIsDragging(false);
       setDragY(0);
       dragYRef.current = 0;
-
-      touchState.current = {
-        startY: touch.clientY,
-        startScrollTop: scrollRef.current?.scrollTop ?? 0,
-        isDismissGesture: null,
-      };
+      isDismissGesture.current = false;
+      wasAtTopOnTouchStart.current = isAtTop.current;
+      pointerStartY.current = touch.clientY;
     },
-    [scrollRef],
+    [],
   );
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     const touch = e.touches[0];
     if (!touch) return;
 
-    const { startY, startScrollTop, isDismissGesture } = touchState.current;
-    const deltaY = touch.clientY - startY;
+    const deltaY = touch.clientY - pointerStartY.current;
 
-    if (isDismissGesture === false) {
-      return;
-    }
-
-    if (isDismissGesture === true) {
+    if (isDismissGesture.current) {
       e.preventDefault();
       const clamped = Math.max(0, deltaY);
       dragYRef.current = clamped;
@@ -74,29 +64,19 @@ export function useSwipeToDismiss({
       return;
     }
 
-    if (Math.abs(deltaY) < DRAG_INTENT_THRESHOLD) {
+    if (deltaY <= DRAG_INTENT_THRESHOLD || !wasAtTopOnTouchStart.current) {
       return;
     }
 
-    const wasAtTop = startScrollTop <= 0;
-    const isMovingDown = deltaY > 0;
-
-    if (wasAtTop && isMovingDown) {
-      touchState.current.isDismissGesture = true;
-      setIsDragging(true);
-      e.preventDefault();
-      dragYRef.current = deltaY;
-      setDragY(deltaY);
-    } else {
-      touchState.current.isDismissGesture = false;
-    }
+    isDismissGesture.current = true;
+    setIsDragging(true);
+    e.preventDefault();
+    dragYRef.current = deltaY;
+    setDragY(deltaY);
   }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (
-      touchState.current.isDismissGesture &&
-      dragYRef.current > DRAG_DISMISS_THRESHOLD
-    ) {
+    if (isDismissGesture.current && dragYRef.current > DRAG_DISMISS_THRESHOLD) {
       onDismiss();
     }
     resetTouchState();
@@ -105,6 +85,27 @@ export function useSwipeToDismiss({
   const handleTouchCancel = useCallback(() => {
     resetTouchState();
   }, [resetTouchState]);
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const scrollContainer = scrollRef.current;
+    const sentinel = topBoundaryRef.current;
+    if (!scrollContainer || !sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isAtTop.current = entry?.isIntersecting ?? false;
+      },
+      {
+        root: scrollContainer,
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [enabled, scrollRef, topBoundaryRef]);
 
   useEffect(() => {
     if (!enabled || !sheetRef.current) return;
