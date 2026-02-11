@@ -1,19 +1,12 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { cn } from '@mintlify/components';
+import { cn, Icon } from '@mintlify/components';
 import { useAssistant } from '../../hooks/useAssistant';
 import { useSwipeToDismiss } from '../../hooks/useSwipeToDismiss';
 import { AssistantEmptyState } from './AssistantEmptyState';
 import { AssistantHistoryList } from './AssistantHistoryList';
 import { AssistantTextArea } from './AssistantTextArea';
 import { ASSISTANT_EVENTS } from './events';
-import {
-  SparklesIcon,
-  XIcon,
-  TrashIcon,
-  Maximize2Icon,
-  Minimize2Icon,
-} from './icons';
 
 const CHAT_SHEET_MIN_WIDTH = 368;
 const CHAT_SHEET_MAX_WIDTH = 576;
@@ -198,50 +191,76 @@ function AssistantSheetClient() {
             <div className="w-10 h-1 rounded-full bg-gray-300" />
           </div>
         )}
-        <div className="flex items-center justify-between pb-3 px-4">
-          <div className="flex items-center gap-2">
-            <SparklesIcon className="size-5 text-primary" />
-            <span className="font-medium text-gray-900">Assistant</span>
-          </div>
-
-          <div className="flex items-center gap-1">
-            {!isMobile && (
-              <button
-                onClick={toggleMaximize}
-                className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
-                aria-label={isMaximized ? 'Minimize' : 'Maximize'}
-              >
-                {isMaximized ? (
-                  <Minimize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-                ) : (
-                  <Maximize2Icon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-                )}
-              </button>
-            )}
-            {messages.length > 0 && (
-              <button
-                onClick={onClear}
-                className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
-                aria-label="Clear chat"
-              >
-                <TrashIcon className="size-4 sm:size-3.5 text-gray-500 group-hover:text-gray-700" />
-              </button>
-            )}
-            <button
-              onClick={handleClose}
-              className="group hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
-              aria-label="Close"
-            >
-              <XIcon className="size-4 text-gray-500 group-hover:text-gray-700" />
-            </button>
-          </div>
-        </div>
         <div
           className={cn(
             'w-full flex flex-col flex-1 min-h-0',
             isMobile ? 'pt-0' : 'pt-3',
           )}
         >
+          <div className="flex items-center justify-between pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <Icon icon="sparkles" iconLibrary="lucide" color="var(--primary)" size={20} />
+              <span className="font-medium text-gray-900">Assistant</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              {!isMobile && (
+                <button
+                  onClick={toggleMaximize}
+                  className="group size-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+                  aria-label={isMaximized ? 'Minimize' : 'Maximize'}
+                >
+                  <span className="flex items-center justify-center text-gray-500 group-hover:text-gray-700 transition-colors">
+                    {isMaximized ? (
+                      <Icon
+                        icon="minimize-2"
+                        iconLibrary="lucide"
+                        size={14}
+                        color="currentColor"
+                      />
+                    ) : (
+                      <Icon
+                        icon="maximize-2"
+                        iconLibrary="lucide"
+                        size={14}
+                        color="currentColor"
+                      />
+                    )}
+                  </span>
+                </button>
+              )}
+              {messages.length > 0 && (
+                <button
+                  onClick={onClear}
+                  className="group size-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+                  aria-label="Clear chat"
+                >
+                  <span className="flex items-center justify-center text-gray-500 group-hover:text-gray-700 transition-colors">
+                    <Icon
+                      icon="trash"
+                      iconLibrary="lucide"
+                      size={14}
+                      color="currentColor"
+                    />
+                  </span>
+                </button>
+              )}
+              <button
+                onClick={handleClose}
+                className="group size-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Close"
+              >
+                <span className="flex items-center justify-center text-gray-500 group-hover:text-gray-700 transition-colors">
+                  <Icon
+                    icon="x"
+                    iconLibrary="lucide"
+                    size={16}
+                    color="currentColor"
+                  />
+                </span>
+              </button>
+            </div>
+          </div>
 
           <div
             ref={messagesRef}

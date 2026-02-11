@@ -2,13 +2,7 @@ import * as React from 'react';
 import { useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import {
-  CopyIcon,
-  CheckIcon,
-  SearchIcon,
-  ChevronRightIcon,
-} from 'lucide-react';
-import { cn } from '@mintlify/components';
+import { cn, Icon } from '@mintlify/components';
 import type { UIMessage } from '@ai-sdk/react';
 
 interface ChatResponseProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -57,12 +51,9 @@ const CopyButton = ({ content }: { content: string }) => {
       aria-label="Copy response"
     >
       {copied ? (
-        <CheckIcon
-          className="size-4 sm:size-3.5"
-          style={{ color: 'var(--primary)' }}
-        />
+        <Icon icon="check" iconLibrary="lucide" color="green" size={16} />
       ) : (
-        <CopyIcon className="size-4 sm:size-3.5" />
+        <Icon icon="copy" iconLibrary="lucide" color="dimgray" size={16} />
       )}
     </button>
   );
@@ -117,24 +108,26 @@ const SearchingContainer = ({
           setIsSourcesOpen(!isSourcesOpen);
         }}
       >
-        <SearchIcon
-          className={cn(
-            'size-3 flex-shrink-0',
-            hasResults && 'block group-hover:hidden',
-            isSourcesOpen && 'hidden',
-          )}
-          absoluteStrokeWidth
-          strokeWidth={1.5}
-        />
-        <ChevronRightIcon
-          className={cn(
-            'size-3 hidden flex-shrink-0',
-            hasResults && 'group-hover:block',
-            isSourcesOpen && 'block rotate-90',
-          )}
-          absoluteStrokeWidth
-          strokeWidth={1.5}
-        />
+        {!isSourcesOpen && (
+          <span className="flex-shrink-0 group-hover:hidden">
+            <Icon icon="search" iconLibrary="lucide" size={12} color="dimgray" />
+          </span>
+        )}
+        {hasResults && (
+          <span
+            className={cn(
+              'flex-shrink-0',
+              isSourcesOpen ? 'rotate-90' : 'hidden group-hover:block',
+            )}
+          >
+            <Icon
+              icon="chevron-right"
+              iconLibrary="lucide"
+              color="dimgray"
+              size={15}
+            />
+          </span>
+        )}
         <span className="text-base sm:text-sm flex items-center gap-1.5">
           {!hasResults ? (
             <ShimmerText>{`Searching for ${query}`}</ShimmerText>
