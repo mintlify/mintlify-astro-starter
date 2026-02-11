@@ -3,6 +3,7 @@ import {
   SearchButton,
   SearchProvider,
   type SearchResult,
+  Icon,
 } from '@mintlify/components';
 import { navigate } from 'astro:transitions/client';
 import { useDebouncedCallback } from 'use-debounce';
@@ -96,6 +97,9 @@ export function SearchBar() {
               'Untitled',
             content: item.metadata?.description || item.content || '',
             link: normalizePath(item.path),
+            icon: (
+              <Icon icon="hash" iconLibrary="lucide" size={16} color="gray" />
+            ),
             metadata: {
               ...item.metadata,
               breadcrumbs: pathSegments,
@@ -150,7 +154,7 @@ export function SearchBar() {
   };
 
   if (!mounted) {
-    return <SearchButton className="w-full rounded-xl" />;
+    return <SearchButton />;
   }
 
   return (
@@ -163,7 +167,7 @@ export function SearchBar() {
         recentSearches,
       }}
     >
-      <SearchButton className="w-full rounded-xl" />
+      <SearchButton />
     </SearchProvider>
   );
 }

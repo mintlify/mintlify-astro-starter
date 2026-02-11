@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import '@mintlify/components/styles.css' layer(components);
+@import '@mintlify/components/styles.css';
 
 @theme {
   --animate-dot-bounce: dot-bounce 1.4s ease-in-out infinite;
