@@ -35,20 +35,17 @@ export function useSwipeToDismiss({
     pointerStartY.current = 0;
   }, []);
 
-  const handleTouchStart = useCallback(
-    (e: TouchEvent) => {
-      const touch = e.touches[0];
-      if (!touch) return;
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
 
-      setIsDragging(false);
-      setDragY(0);
-      dragYRef.current = 0;
-      isDismissGesture.current = false;
-      wasAtTopOnTouchStart.current = isAtTop.current;
-      pointerStartY.current = touch.clientY;
-    },
-    [],
-  );
+    setIsDragging(false);
+    setDragY(0);
+    dragYRef.current = 0;
+    isDismissGesture.current = false;
+    wasAtTopOnTouchStart.current = isAtTop.current;
+    pointerStartY.current = touch.clientY;
+  }, []);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     const touch = e.touches[0];
