@@ -36,32 +36,29 @@ export function Anchor({
           : 'text-gray-600 hover:text-gray-900',
       )}
     >
-      <div
-        style={
-          (isActive || hovering) && color
-            ? {
-                background: color,
-              }
-            : {}
-        }
+      <span
+        style={{
+          width: '24px',
+          height: '24px',
+          padding: '4px',
+          ...((isActive || hovering) && color ? { background: color } : {}),
+        }}
         className={cn(
-          'mr-4 rounded-md p-1',
-          !color && 'group-hover:bg-primary',
-          isActive
-            ? [color ? '' : 'bg-primary']
-            : 'text-gray-400 group-hover:brightness-100 group-hover:ring-0 ring-1 ring-gray-950/[0.07]',
+          'mr-4 rounded-md inline-flex items-center justify-center',
+          color
+            ? ''
+            : isActive
+              ? 'bg-primary'
+              : 'bg-gray-400 group-hover:bg-primary ring-1 ring-gray-950/[0.07]',
         )}
       >
         <Icon
           icon={icon}
-          className={cn(
-            'h-4 w-4 group-hover:fill-primary-dark group-hover:bg-white',
-            isActive ? 'bg-white' : 'bg-gray-400',
-          )}
-          overrideColor={true}
+          className={cn(isActive || hovering ? 'bg-white' : 'bg-gray-600')}
+          overrideColor
           size={16}
         />
-      </div>
+      </span>
       {name}
     </a>
   );
@@ -87,16 +84,22 @@ export function AnchorWithoutContainer({
           : 'text-gray-700 hover:text-gray-900',
       )}
     >
-      <Icon
-        icon={icon.toLowerCase()}
-        iconLibrary="lucide"
+      <span
+        style={{ width: '20px', height: '20px', padding: '2px' }}
         className={cn(
-          'h-4 w-4 group-hover:fill-primary-dark group-hover:bg-gray-900',
-          isActive ? 'bg-primary group-hover:bg-primary' : 'bg-gray-400',
+          'inline-flex items-center justify-center rounded',
+          isActive ? 'bg-primary' : 'bg-gray-400 group-hover:bg-gray-900',
         )}
-        overrideColor={true}
-        size={16}
-      />
+      >
+        <Icon
+          icon={icon.toLowerCase()}
+          className={cn(
+            isActive ? 'bg-white' : 'bg-gray-600 group-hover:bg-white',
+          )}
+          overrideColor
+          size={12}
+        />
+      </span>
       <span>{name}</span>
     </a>
   );
