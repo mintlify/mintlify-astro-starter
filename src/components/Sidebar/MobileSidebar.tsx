@@ -92,7 +92,7 @@ export function MobileSidebar({
 
       <div
         className={cn(
-          'fixed top-0 left-0 bottom-0 w-[22rem] bg-white z-[70] transition-transform duration-300 ease-in-out lg:hidden',
+          'fixed top-0 left-0 bottom-0 w-[20rem] bg-white z-[70] transition-transform duration-300 ease-in-out lg:hidden',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >

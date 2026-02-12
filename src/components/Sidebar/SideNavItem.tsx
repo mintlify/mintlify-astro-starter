@@ -49,13 +49,23 @@ export function SideNavItem({
           />
         )}
         {page.icon && (
-          <Icon
-            icon={page.icon}
-            iconLibrary="lucide"
-            className={cn('h-4 w-4', isActive ? 'bg-primary' : 'bg-gray-400')}
-            overrideColor={true}
-            size={16}
-          />
+          <span
+            style={{ width: '20px', height: '20px', padding: '2px' }}
+            className={cn(
+              'inline-flex items-center justify-center rounded',
+              isActive ? 'bg-primary' : 'bg-gray-400',
+            )}
+          >
+            <Icon
+              icon={page.icon}
+              iconLibrary="lucide"
+              className={cn(
+                isActive ? 'bg-white' : 'bg-gray-600 group-hover:bg-white',
+              )}
+              overrideColor
+              size={12}
+            />
+          </span>
         )}
         <div
           className={cn(
@@ -72,6 +82,11 @@ export function SideNavItem({
           >
             {title}
           </div>
+          {page.deprecated && (
+            <span className="flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-md bg-gray-100 text-gray-600">
+              Deprecated
+            </span>
+          )}
         </div>
       </a>
     </li>

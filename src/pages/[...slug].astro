@@ -72,51 +72,53 @@ const anchors = getAnchorsFromConfig(docsConfig);
       client:load
     />
 
-    <div
-      class="flex min-h-[calc(100vh-4rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 pt-[7.5rem] lg:pt-0"
-    >
-      <div transition:animate="none">
-        <Sidebar
-          navigation={decoratedNav}
-          currentPath={currentPath}
-          anchors={anchors}
-          primaryColor={docsConfig.colors?.primary}
-          client:load
-        />
-      </div>
+    <div class="w-full pt-[7.5rem] lg:pt-0">
+      <div
+        class="flex min-h-[calc(100vh-4rem)] max-w-8xl mx-auto px-4 sm:px-6 lg:px-12"
+      >
+        <div transition:animate="none">
+          <Sidebar
+            navigation={decoratedNav}
+            currentPath={currentPath}
+            anchors={anchors}
+            primaryColor={docsConfig.colors?.primary}
+            client:load
+          />
+        </div>
 
-      <main class="flex-1 min-w-0 py-10 px-8 lg:px-12">
-        <article class="max-w-3xl">
-          <header class="mb-8 pb-6">
-            {
-              groupName && (
-                <p
-                  class="text-sm font-semibold mb-2"
-                  style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
-                >
-                  {groupName}
-                </p>
-              )
-            }
-            <h1
-              class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3"
-            >
-              {doc.data.title || doc.id}
-            </h1>
-            {
-              doc.data.description && (
-                <p class="text-lg leading-relaxed max-w-2xl">
-                  {doc.data.description}
-                </p>
-              )
-            }
-          </header>
-          <div class="mdx-content prose">
-            <Content components={components} />
-            <Footer prev={prev} next={next} />
-          </div>
-        </article>
-      </main>
+        <main class="flex-1 min-w-0 py-10 px-8 lg:px-12">
+          <article class="max-w-3xl">
+            <header class="mb-8 pb-6">
+              {
+                groupName && (
+                  <p
+                    class="text-sm font-semibold mb-2"
+                    style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
+                  >
+                    {groupName}
+                  </p>
+                )
+              }
+              <h1
+                class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3"
+              >
+                {doc.data.title || doc.id}
+              </h1>
+              {
+                doc.data.description && (
+                  <p class="text-lg leading-relaxed max-w-2xl">
+                    {doc.data.description}
+                  </p>
+                )
+              }
+            </header>
+            <div class="mdx-content prose">
+              <Content components={components} />
+              <Footer prev={prev} next={next} />
+            </div>
+          </article>
+        </main>
+      </div>
     </div>
   </div>
 </Layout>

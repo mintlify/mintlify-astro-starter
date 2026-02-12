@@ -131,7 +131,7 @@ function AssistantSheetClient() {
     if (isMobile) {
       return 'fixed inset-0 z-[100]';
     }
-    return cn('sticky top-0 h-screen shrink-0 z-[22]', 'bg-white');
+    return cn('sticky top-0 h-screen shrink-0 z-[60]', 'bg-white');
   };
 
   const sheetContent = (
