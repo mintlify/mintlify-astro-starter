@@ -1,43 +1,72 @@
 import { cn, Icon } from '@mintlify/components';
 import type { NavPage } from '../../lib/navigation';
-import {
-  getSidebarStyleClassName,
-  getPaddingByLevel,
-  type SidebarItemStyle,
-  type ArrowPosition,
-} from './utils';
+import type { SidebarItemStyle } from './types';
 
 export interface SideNavItemProps {
   page: NavPage;
   currentPath: string;
-  level?: number;
   sidebarItemStyle?: SidebarItemStyle;
-  arrowPosition?: ArrowPosition;
 }
+
+const ACTIVE_TEXT = 'text-primary font-medium';
+
+const sidebarStyles: Record<
+  SidebarItemStyle,
+  { base?: string; active: string; inactive: string }
+> = {
+  container: {
+    base: 'rounded-xl w-full outline-offset-[-1px]',
+    active: `bg-primary/10 ${ACTIVE_TEXT}`,
+    inactive: 'hover:bg-gray-600/5 text-gray-700 hover:text-gray-900',
+  },
+  card: {
+    base: 'ml-4 border-l outline-offset-[-1px]',
+    active: `border-primary bg-primary/10 ${ACTIVE_TEXT}`,
+    inactive:
+      'border-gray-950/5 hover:bg-gray-600/5 text-gray-700 hover:text-gray-900',
+  },
+  border: {
+    base: 'ml-4 border-l py-2 lg:py-1.5 w-[calc(100%-1rem)]',
+    active: `border-primary ${ACTIVE_TEXT}`,
+    inactive:
+      'border-gray-950/5 hover:border-gray-950/20 text-gray-700 hover:text-gray-900',
+  },
+  undecorated: {
+    active: `border-primary ${ACTIVE_TEXT}`,
+    inactive:
+      'border-gray-950/5 hover:border-gray-950/20 text-gray-700 hover:text-gray-950',
+  },
+  arrow: {
+    active: `border-primary ${ACTIVE_TEXT}`,
+    inactive:
+      'border-gray-950/5 hover:border-gray-950/20 text-gray-700 hover:text-gray-950',
+  },
+  plain: {
+    active: ACTIVE_TEXT,
+    inactive: 'text-gray-950 hover:text-primary',
+  },
+};
 
 export function SideNavItem({
   page,
   currentPath,
-  level = 0,
   sidebarItemStyle = 'container',
-  arrowPosition = 'trailing',
 }: SideNavItemProps) {
   const isActive = page.href === currentPath;
   const title = page.title;
   const isOneWord = title.split(' ').length === 1;
+  const variant = sidebarStyles[sidebarItemStyle];
 
   return (
     <li className="relative scroll-m-4 first:scroll-m-20" data-title={title}>
       <a
         href={page.href}
-        className={getSidebarStyleClassName(
-          sidebarItemStyle,
-          isActive,
-          isOneWord,
+        className={cn(
+          'group flex items-center pl-4 pr-3 py-1.5 cursor-pointer gap-x-3 text-left',
+          isOneWord && 'wrap-break-word hyphens-auto',
+          variant.base,
+          isActive ? variant.active : variant.inactive,
         )}
-        style={{
-          paddingLeft: getPaddingByLevel(level, arrowPosition),
-        }}
         aria-current={isActive ? 'page' : undefined}
       >
         {sidebarItemStyle === 'arrow' && isActive && (
@@ -50,9 +79,8 @@ export function SideNavItem({
         )}
         {page.icon && (
           <span
-            style={{ width: '20px', height: '20px', padding: '2px' }}
             className={cn(
-              'inline-flex items-center justify-center rounded',
+              'w-5 h-5 p-0.5 inline-flex items-center justify-center rounded',
               isActive ? 'bg-primary' : 'bg-gray-400',
             )}
           >
@@ -67,27 +95,12 @@ export function SideNavItem({
             />
           </span>
         )}
-        <div
-          className={cn(
-            'flex-1 flex items-center space-x-2.5',
-            page.deprecated &&
-              'w-full max-w-full overflow-x-hidden justify-between',
-          )}
-        >
-          <div
-            className={cn(
-              page.deprecated &&
-                'min-w-0 max-w-full flex-1 whitespace-nowrap overflow-hidden text-ellipsis',
-            )}
-          >
-            {title}
-          </div>
-          {page.deprecated && (
-            <span className="flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-md bg-gray-100 text-gray-600">
-              Deprecated
-            </span>
-          )}
-        </div>
+        <span className="flex-1 truncate min-w-0">{title}</span>
+        {page.deprecated && (
+          <span className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-md bg-gray-100 text-gray-600">
+            Deprecated
+          </span>
+        )}
       </a>
     </li>
   );

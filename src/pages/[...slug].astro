@@ -58,7 +58,7 @@ const anchors = getAnchorsFromConfig(docsConfig);
       tabs={tabs}
       primaryColor={docsConfig.colors?.primary}
       pageTitle={doc.data.title || doc.id}
-      groupName={groupName || undefined}
+      groupName={groupName}
     />
 
     <MobileSidebar

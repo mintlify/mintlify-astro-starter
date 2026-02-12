@@ -2,11 +2,34 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   SearchButton,
   SearchProvider,
+  useSearch,
   type SearchResult,
 } from '@mintlify/components';
 import { navigate } from 'astro:transitions/client';
 import { useDebouncedCallback } from 'use-debounce';
 import { type DecoratedNavigationPage } from '@mintlify/models';
+
+const SEARCH_OPEN_EVENT = 'open-search';
+
+export function openSearch() {
+  window.dispatchEvent(new CustomEvent(SEARCH_OPEN_EVENT));
+}
+
+/**
+ * Listens for the global 'open-search' event and opens the search modal.
+ * Must be rendered inside a SearchProvider.
+ */
+function SearchEventListener() {
+  const search = useSearch();
+
+  useEffect(() => {
+    const handleOpen = () => search?.open();
+    window.addEventListener(SEARCH_OPEN_EVENT, handleOpen);
+    return () => window.removeEventListener(SEARCH_OPEN_EVENT, handleOpen);
+  }, [search]);
+
+  return null;
+}
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
 const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
@@ -164,6 +187,7 @@ export function SearchBar() {
       }}
     >
       <SearchButton className="w-full rounded-xl" />
+      <SearchEventListener />
     </SearchProvider>
   );
 }

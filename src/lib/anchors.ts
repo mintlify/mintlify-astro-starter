@@ -1,4 +1,4 @@
-import type { AnchorItem } from '../components/Sidebar/Anchors';
+import type { AnchorItem } from '../components/Sidebar/types';
 
 interface DocsConfigAnchor {
   anchor: string;
@@ -21,7 +21,7 @@ export function getAnchorsFromConfig(config: DocsConfig): AnchorItem[] {
   return anchors.map((anchor) => ({
     name: anchor.anchor,
     href: anchor.href,
-    icon: anchor.icon || 'book-open',
+    icon: anchor.icon,
     color: anchor.color,
   }));
 }

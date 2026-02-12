@@ -2,7 +2,7 @@
 import type { TabInfo } from '../lib/navigation';
 import { SearchBar } from './SearchBar';
 import AssistantBar from './AssistantBar';
-import { Icon } from '@mintlify/components';
+import { MobileActionButtons, MobileNavToggle } from './MobileHeaderActions';
 
 interface Props {
   logo?: string;
@@ -52,65 +52,17 @@ const usingTabs = tabs && tabs.length > 0;
                 <AssistantBar client:load />
               </div>
             </div>
-            <div class="flex-1 flex lg:hidden items-center justify-end gap-2">
-              <button
-                type="button"
-                class="text-gray-500 w-8 h-8 flex items-center justify-center hover:text-gray-600"
-                id="mobile-search-button"
-                aria-label="Search"
-              >
-                <Icon
-                  icon="search"
-                  iconLibrary="lucide"
-                  size={16}
-                  color="dimgray"
-                />
-              </button>
-              <button
-                type="button"
-                class="text-gray-500 w-8 h-8 flex items-center justify-center hover:text-gray-600"
-                id="mobile-assistant-button"
-                aria-label="AI Assistant"
-              >
-                <Icon
-                  icon="sparkles"
-                  iconLibrary="lucide"
-                  size={16}
-                  color="dimgray"
-                />
-              </button>
-            </div>
+            <MobileActionButtons client:load />
             <div class="flex-1 hidden lg:flex items-center justify-end"></div>
           </div>
         </div>
         {
           pageTitle && (
-            <button
-              type="button"
-              class="flex items-center h-14 py-4 px-5 lg:hidden focus:outline-0 w-full text-left"
-              id="mobile-nav-toggle"
-            >
-              <div class="text-gray-500 hover:text-gray-600">
-                <span class="sr-only">Navigation</span>
-                <Icon icon="menu" iconLibrary="lucide" size={20} />
-              </div>
-              <div class="ml-4 flex text-sm leading-6 whitespace-nowrap min-w-0 space-x-3 overflow-hidden">
-                {groupName && (
-                  <div class="flex items-center space-x-3 flex-shrink-0">
-                    <span>{groupName}</span>
-                    <Icon
-                      icon="chevron-right"
-                      iconLibrary="lucide"
-                      size={16}
-                      className="text-gray-400"
-                    />
-                  </div>
-                )}
-                <div class="font-semibold text-gray-900 truncate min-w-0 flex-1">
-                  {pageTitle}
-                </div>
-              </div>
-            </button>
+            <MobileNavToggle
+              pageTitle={pageTitle}
+              groupName={groupName}
+              client:load
+            />
           )
         }
       </div>
@@ -148,50 +100,4 @@ const usingTabs = tabs && tabs.length > 0;
     </div>
   </div>
 
-  <div class="hidden">
-    <div id="mobile-search-trigger">
-      <SearchBar client:load />
-    </div>
-    <div
-      id="mobile-assistant-trigger"
-      transition:persist="assistant-bar-mobile"
-    >
-      <AssistantBar client:load />
-    </div>
-  </div>
 </header>
-
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const toggleButton = document.getElementById('mobile-nav-toggle');
-    if (toggleButton) {
-      toggleButton.addEventListener('click', () => {
-        window.dispatchEvent(new CustomEvent('toggle-mobile-sidebar'));
-      });
-    }
-
-    const searchButton = document.getElementById('mobile-search-button');
-    if (searchButton) {
-      searchButton.addEventListener('click', () => {
-        const searchTrigger = document.querySelector(
-          '#mobile-search-trigger button',
-        );
-        if (searchTrigger instanceof HTMLElement) {
-          searchTrigger.click();
-        }
-      });
-    }
-
-    const assistantButton = document.getElementById('mobile-assistant-button');
-    if (assistantButton) {
-      assistantButton.addEventListener('click', () => {
-        const assistantTrigger = document.querySelector(
-          '#mobile-assistant-trigger button',
-        );
-        if (assistantTrigger instanceof HTMLElement) {
-          assistantTrigger.click();
-        }
-      });
-    }
-  });
-</script>
