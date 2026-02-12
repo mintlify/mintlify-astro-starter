@@ -97,6 +97,9 @@ export function SearchBar() {
               'Untitled',
             content: item.metadata?.description || item.content || '',
             link: normalizePath(item.path),
+            icon: (
+              <Icon icon="hash" iconLibrary="lucide" size={16} color="gray" />
+            ),
             metadata: {
               ...item.metadata,
               breadcrumbs: pathSegments,
