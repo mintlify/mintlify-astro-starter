@@ -14,12 +14,7 @@ export const getPaddingByLevel = (
   level: number,
   arrowPosition?: ArrowPosition,
 ) => {
-  // level 0 -> 1rem
-  // level 1 -> 1.75rem
-  // level 2 -> 2.50rem and so on.
-
   const levelPadding = arrowPosition === 'leading' ? 1.5 : 0.75;
-
   return `${1 + level * levelPadding}rem`;
 };
 

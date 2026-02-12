@@ -43,8 +43,6 @@ const sidebarEntries = unwrapNav(decoratedNav, currentPath);
 const groupName = findGroupForPath(sidebarEntries, currentPath);
 const tabs = getTabsFromNav(decoratedNav, currentPath);
 const { prev, next } = getFooterPages(sidebarEntries, currentPath);
-
-// Extract anchors from docs.json config
 const anchors = getAnchorsFromConfig(docsConfig);
 ---
 
@@ -59,9 +57,10 @@ const anchors = getAnchorsFromConfig(docsConfig);
       name={docsConfig.name}
       tabs={tabs}
       primaryColor={docsConfig.colors?.primary}
+      pageTitle={doc.data.title || doc.id}
+      groupName={groupName || undefined}
     />
 
-    {/* Mobile Sidebar */}
     <MobileSidebar
       navigation={decoratedNav}
       currentPath={currentPath}
@@ -74,9 +73,8 @@ const anchors = getAnchorsFromConfig(docsConfig);
     />
 
     <div
-      class="flex min-h-[calc(100vh-4rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8"
+      class="flex min-h-[calc(100vh-4rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 pt-[7.5rem] lg:pt-0"
     >
-      {/* Desktop Sidebar */}
       <div transition:animate="none">
         <Sidebar
           navigation={decoratedNav}

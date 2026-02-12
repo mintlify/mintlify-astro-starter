@@ -186,7 +186,6 @@ function SidebarGroupItem({
               />
             );
           }
-          // Handle nested groups
           if (isNavGroup(entry)) {
             return (
               <li key={i}>

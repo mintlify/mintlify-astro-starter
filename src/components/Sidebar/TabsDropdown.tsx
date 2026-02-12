@@ -31,12 +31,10 @@ export function TabsDropdown({ tabs }: TabsDropdownProps) {
 
       {isOpen && (
         <>
-          {/* Backdrop to close dropdown */}
           <div
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          {/* Dropdown menu */}
           <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200/70 rounded-lg shadow-lg p-1.5 z-20">
             {tabs.map((tab) => (
               <a

@@ -2,65 +2,196 @@
 import type { TabInfo } from '../lib/navigation';
 import { SearchBar } from './SearchBar';
 import AssistantBar from './AssistantBar';
+import { Icon } from '@mintlify/components';
 
 interface Props {
   logo?: string;
   name?: string;
   tabs: TabInfo[] | null;
   primaryColor?: string;
+  pageTitle?: string;
+  groupName?: string;
 }
 
-const { logo, name, tabs, primaryColor } = Astro.props;
+const { logo, name, tabs, primaryColor, pageTitle, groupName } = Astro.props;
+const usingTabs = tabs && tabs.length > 0;
 ---
 
-<header class="sticky top-0 z-50 bg-white">
-  <nav class="h-16 border-b border-gray-200/60">
-    <div class="h-full w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="h-full flex items-center gap-4 min-w-0">
-        <div class="flex-1 flex items-center gap-4 min-w-0">
-          <a href="/" class="flex items-center gap-2.5">
-            <img src={logo} alt={name} />
-          </a>
-        </div>
+<header class="fixed lg:sticky top-0 w-full z-50">
+  <div
+    class="absolute w-full h-full backdrop-blur flex-none transition-colors duration-500 border-b border-gray-500/5 bg-white/95 supports-backdrop-blur:bg-white/60"
+  >
+  </div>
+  <div class="max-w-8xl mx-auto relative">
+    <div>
+      <div class="relative">
         <div
-          class="relative flex-1 flex items-center gap-3 z-20 justify-center"
+          class:list={[
+            'flex items-center lg:px-12 h-16 min-w-0',
+            usingTabs ? 'mx-4 lg:mx-0' : 'px-4',
+          ]}
         >
-          <div class="w-full max-w-sm">
-            <SearchBar client:load />
-          </div>
-          <div class="shrink-0" transition:persist="assistant-bar">
-            <AssistantBar client:load />
-          </div>
-        </div>
-        <div class="flex-1 flex items-center justify-end gap-4"></div>
-      </div>
-    </div>
-  </nav>
-
-  {
-    tabs && tabs.length > 0 && (
-      <div class="w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8 border-b border-gray-100">
-        <div class="flex gap-5">
-          {tabs.map((tab) => (
-            <a
-              href={tab.href}
-              class:list={[
-                'relative py-3 text-sm leading-5 no-underline whitespace-nowrap border-b-2 -mb-px transition-colors duration-150',
-                tab.isActive
-                  ? 'text-gray-900 font-semibold'
-                  : 'text-gray-400 font-medium border-transparent hover:text-gray-500',
-              ]}
-              style={
-                tab.isActive
-                  ? `border-bottom-color: ${primaryColor}`
-                  : undefined
-              }
+          <div
+            class:list={[
+              'h-full relative flex-1 flex items-center gap-x-4 min-w-0 border-b border-gray-500/5',
+              !usingTabs && 'lg:border-none',
+            ]}
+          >
+            <div class="flex-1 flex items-center gap-x-4 min-w-0">
+              <a href="/" class="flex items-center shrink-0">
+                <img src={logo} alt={name} class="h-7" />
+              </a>
+            </div>
+            <div
+              class="flex-1 hidden lg:flex items-center justify-center gap-3 min-w-0"
             >
-              {tab.name}
-            </a>
-          ))}
+              <div class="w-full max-w-sm">
+                <SearchBar client:load />
+              </div>
+              <div class="shrink-0" transition:persist="assistant-bar">
+                <AssistantBar client:load />
+              </div>
+            </div>
+            <div class="flex-1 flex lg:hidden items-center justify-end gap-2">
+              <button
+                type="button"
+                class="text-gray-500 w-8 h-8 flex items-center justify-center hover:text-gray-600"
+                id="mobile-search-button"
+                aria-label="Search"
+              >
+                <Icon
+                  icon="search"
+                  iconLibrary="lucide"
+                  size={16}
+                  color="dimgray"
+                />
+              </button>
+              <button
+                type="button"
+                class="text-gray-500 w-8 h-8 flex items-center justify-center hover:text-gray-600"
+                id="mobile-assistant-button"
+                aria-label="AI Assistant"
+              >
+                <Icon
+                  icon="sparkles"
+                  iconLibrary="lucide"
+                  size={16}
+                  color="dimgray"
+                />
+              </button>
+            </div>
+            <div class="flex-1 hidden lg:flex items-center justify-end"></div>
+          </div>
         </div>
+        {
+          pageTitle && (
+            <button
+              type="button"
+              class="flex items-center h-14 py-4 px-5 lg:hidden focus:outline-0 w-full text-left"
+              id="mobile-nav-toggle"
+            >
+              <div class="text-gray-500 hover:text-gray-600">
+                <span class="sr-only">Navigation</span>
+                <Icon icon="menu" iconLibrary="lucide" size={20} />
+              </div>
+              <div class="ml-4 flex text-sm leading-6 whitespace-nowrap min-w-0 space-x-3 overflow-hidden">
+                {groupName && (
+                  <div class="flex items-center space-x-3 flex-shrink-0">
+                    <span>{groupName}</span>
+                    <Icon
+                      icon="chevron-right"
+                      iconLibrary="lucide"
+                      size={16}
+                      className="text-gray-400"
+                    />
+                  </div>
+                )}
+                <div class="font-semibold text-gray-900 truncate min-w-0 flex-1">
+                  {pageTitle}
+                </div>
+              </div>
+            </button>
+          )
+        }
       </div>
-    )
-  }
+      {
+        usingTabs && (
+          <div class="hidden lg:flex px-12 h-12">
+            <div class="h-full flex text-sm gap-x-6">
+              {tabs.map((tab) => (
+                <a
+                  href={tab.href}
+                  class:list={[
+                    'group relative h-full gap-2 flex items-center font-medium text-gray-600 hover:text-gray-800',
+                    tab.isActive &&
+                      'text-gray-800 [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]',
+                  ]}
+                >
+                  {tab.name}
+                  <div
+                    class:list={[
+                      'absolute bottom-0 h-[1.5px] w-full left-0',
+                      tab.isActive ? '' : 'group-hover:bg-gray-200',
+                    ]}
+                    style={
+                      tab.isActive
+                        ? `background-color: ${primaryColor || '#10b981'}`
+                        : undefined
+                    }
+                  />
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="hidden">
+    <div id="mobile-search-trigger">
+      <SearchBar client:load />
+    </div>
+    <div
+      id="mobile-assistant-trigger"
+      transition:persist="assistant-bar-mobile"
+    >
+      <AssistantBar client:load />
+    </div>
+  </div>
 </header>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const toggleButton = document.getElementById('mobile-nav-toggle');
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('toggle-mobile-sidebar'));
+      });
+    }
+
+    const searchButton = document.getElementById('mobile-search-button');
+    if (searchButton) {
+      searchButton.addEventListener('click', () => {
+        const searchTrigger = document.querySelector(
+          '#mobile-search-trigger button',
+        );
+        if (searchTrigger instanceof HTMLElement) {
+          searchTrigger.click();
+        }
+      });
+    }
+
+    const assistantButton = document.getElementById('mobile-assistant-button');
+    if (assistantButton) {
+      assistantButton.addEventListener('click', () => {
+        const assistantTrigger = document.querySelector(
+          '#mobile-assistant-trigger button',
+        );
+        if (assistantTrigger instanceof HTMLElement) {
+          assistantTrigger.click();
+        }
+      });
+    }
+  });
+</script>
