@@ -199,7 +199,12 @@ function AssistantSheetClient() {
         >
           <div className="flex items-center justify-between pb-3 px-4">
             <div className="flex items-center gap-2">
-              <Icon icon="sparkles" iconLibrary="lucide" color="var(--primary)" size={20} />
+              <Icon
+                icon="sparkles"
+                iconLibrary="lucide"
+                color="var(--primary)"
+                size={20}
+              />
               <span className="font-medium text-gray-900">Assistant</span>
             </div>
 

@@ -5,7 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer';
 import { components } from '@mintlify/astro/components';
 import docsConfig from '../../docs/docs.json';
-import Sidebar from '../components/Sidebar';
+import Sidebar, { MobileSidebar } from '../components/Sidebar';
 import { getFaviconsFromDocsConfig } from '../lib/favicon';
 import {
   decorateNavigation,
@@ -14,6 +14,7 @@ import {
   getTabsFromNav,
   getFooterPages,
 } from '../lib/navigation';
+import { getAnchorsFromConfig } from '../lib/anchors';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -42,6 +43,9 @@ const sidebarEntries = unwrapNav(decoratedNav, currentPath);
 const groupName = findGroupForPath(sidebarEntries, currentPath);
 const tabs = getTabsFromNav(decoratedNav, currentPath);
 const { prev, next } = getFooterPages(sidebarEntries, currentPath);
+
+// Extract anchors from docs.json config
+const anchors = getAnchorsFromConfig(docsConfig);
 ---
 
 <Layout
@@ -57,11 +61,30 @@ const { prev, next } = getFooterPages(sidebarEntries, currentPath);
       primaryColor={docsConfig.colors?.primary}
     />
 
+    {/* Mobile Sidebar */}
+    <MobileSidebar
+      navigation={decoratedNav}
+      currentPath={currentPath}
+      logo={docsConfig.logo?.light}
+      siteName={docsConfig.name}
+      tabs={tabs || []}
+      anchors={anchors}
+      primaryColor={docsConfig.colors?.primary}
+      client:load
+    />
+
     <div
       class="flex min-h-[calc(100vh-4rem)] w-full max-w-360 mx-auto px-4 sm:px-6 lg:px-8"
     >
+      {/* Desktop Sidebar */}
       <div transition:animate="none">
-        <Sidebar navigation={decoratedNav} currentPath={currentPath} />
+        <Sidebar
+          navigation={decoratedNav}
+          currentPath={currentPath}
+          anchors={anchors}
+          primaryColor={docsConfig.colors?.primary}
+          client:load
+        />
       </div>
 
       <main class="flex-1 min-w-0 py-10 px-8 lg:px-12">

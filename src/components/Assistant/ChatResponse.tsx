@@ -110,7 +110,12 @@ const SearchingContainer = ({
       >
         {!isSourcesOpen && (
           <span className="flex-shrink-0 group-hover:hidden">
-            <Icon icon="search" iconLibrary="lucide" size={12} color="dimgray" />
+            <Icon
+              icon="search"
+              iconLibrary="lucide"
+              size={12}
+              color="dimgray"
+            />
           </span>
         )}
         {hasResults && (
