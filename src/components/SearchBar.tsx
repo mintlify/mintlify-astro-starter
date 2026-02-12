@@ -15,10 +15,6 @@ export function openSearch() {
   window.dispatchEvent(new CustomEvent(SEARCH_OPEN_EVENT));
 }
 
-/**
- * Listens for the global 'open-search' event and opens the search modal.
- * Must be rendered inside a SearchProvider.
- */
 function SearchEventListener() {
   const search = useSearch();
 

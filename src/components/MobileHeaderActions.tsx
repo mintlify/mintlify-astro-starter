@@ -2,10 +2,6 @@ import { Icon } from '@mintlify/components';
 import { openSearch } from './SearchBar';
 import { toggleAssistant } from './Assistant/events';
 
-/**
- * Mobile action buttons for the header bar (search + assistant).
- * Rendered inside the header flex row, hidden on desktop.
- */
 export function MobileActionButtons() {
   return (
     <div className="flex-1 flex lg:hidden items-center justify-end gap-2">
@@ -34,10 +30,6 @@ export function MobileActionButtons() {
   );
 }
 
-/**
- * Mobile breadcrumb bar with nav toggle.
- * Dispatches a custom event to open the mobile sidebar.
- */
 export function MobileNavToggle({
   pageTitle,
   groupName,

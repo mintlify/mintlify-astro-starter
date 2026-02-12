@@ -16,10 +16,6 @@ type GroupedEntry =
   | { kind: 'pages'; pages: NavPage[] }
   | { kind: 'group'; group: NavGroup };
 
-/**
- * Pre-processes a flat list of NavEntry items into a grouped structure
- * where consecutive NavPage entries are bundled together.
- */
 function groupEntries(entries: NavEntry[]): GroupedEntry[] {
   const result: GroupedEntry[] = [];
 
