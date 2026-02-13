@@ -73,7 +73,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
         </div>
 
         <main class="flex-1 min-w-0 py-10">
-          <article class="max-w-3xl">
+          <article class="w-full">
             <header class="mb-8 pb-6">
               {
                 page.groupName && (
@@ -98,7 +98,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
                 )
               }
             </header>
-            <div class="mdx-content prose">
+            <div class="mdx-content prose max-w-none">
               <Content components={components} />
               <Footer
                 prev={page.footerPages.prev}
