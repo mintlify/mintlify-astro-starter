@@ -4,7 +4,7 @@ import { toggleAssistant } from './Assistant/events';
 
 export function MobileActionButtons() {
   return (
-    <div className="flex-1 flex lg:hidden items-center justify-end gap-2">
+    <div className="flex lg:hidden items-center gap-2">
       <button
         type="button"
         className="text-gray-500 w-8 h-8 flex items-center justify-center hover:text-gray-600"
@@ -39,7 +39,7 @@ export function MobileNavToggle({
   return (
     <button
       type="button"
-      className="flex items-center h-14 py-4 px-5 lg:hidden focus:outline-0 w-full text-left"
+      className="flex items-center h-14 py-4 lg:px-[5vw] lg:hidden focus:outline-0 w-full text-left"
       onClick={handleToggle}
     >
       <div className="text-gray-500 hover:text-gray-600">
