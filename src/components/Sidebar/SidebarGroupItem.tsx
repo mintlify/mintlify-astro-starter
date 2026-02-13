@@ -1,6 +1,6 @@
 import { Icon } from '@mintlify/components';
-import type { NavGroup } from '../../lib/navigation';
-import { isNavPage, isNavGroup } from '../../lib/navigation';
+import type { NavGroup } from '@mintlify/astro/helpers';
+import { isNavPage, isNavGroup } from '@mintlify/astro/helpers';
 import type { SidebarItemStyle } from './types';
 import { SideNavItem } from './SideNavItem';
 

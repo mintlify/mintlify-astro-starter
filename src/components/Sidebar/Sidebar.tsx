@@ -1,5 +1,5 @@
-import type { NavNode } from '../../lib/navigation';
-import { unwrapNav } from '../../lib/navigation';
+import type { NavNode } from '@mintlify/astro/helpers';
+import { unwrapNav } from '@mintlify/astro/helpers';
 import { type SidebarItemStyle, type AnchorItem } from './types';
 import { SidebarEntries } from './SidebarEntries';
 import { Anchors } from './Anchors';

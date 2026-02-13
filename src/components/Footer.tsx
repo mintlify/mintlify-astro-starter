@@ -1,4 +1,4 @@
-import type { NavPage } from '../lib/navigation';
+import type { NavPage } from '@mintlify/astro/helpers';
 import { Icon } from '@mintlify/components';
 
 interface FooterProps {
