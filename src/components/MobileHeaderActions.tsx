@@ -19,12 +19,7 @@ export function MobileActionButtons() {
         onClick={toggleAssistant}
         aria-label="AI Assistant"
       >
-        <Icon
-          icon="sparkles"
-          iconLibrary="lucide"
-          size={16}
-          color="dimgray"
-        />
+        <Icon icon="sparkles" iconLibrary="lucide" size={16} color="dimgray" />
       </button>
     </div>
   );
