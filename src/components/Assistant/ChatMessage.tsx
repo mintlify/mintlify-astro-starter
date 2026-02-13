@@ -25,7 +25,7 @@ export const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
         >
           <div className="flex items-start gap-4 w-full">
             <div className="flex flex-col gap-1 w-full">
-              <div className="break-words hyphens-auto text-base lg:text-sm text-gray-800">
+              <div className="wrap-break-word hyphens-auto text-base lg:text-sm text-gray-800">
                 {content}
               </div>
             </div>

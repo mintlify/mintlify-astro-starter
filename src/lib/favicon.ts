@@ -1,4 +1,12 @@
-import type { Favicons } from '@mintlify/astro';
+export type Favicons = {
+  icons: Array<{
+    rel?: string;
+    type?: string;
+    sizes?: string;
+    href?: string;
+    media?: string;
+  }>;
+};
 
 type FaviconConfig = {
   light?: string;
