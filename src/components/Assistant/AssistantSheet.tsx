@@ -131,7 +131,7 @@ function AssistantSheetClient() {
     if (isMobile) {
       return 'fixed inset-0 z-[100]';
     }
-    return cn('sticky top-0 h-screen shrink-0 z-[22]', 'bg-white');
+    return cn('sticky top-0 h-screen shrink-0 z-[60]', 'bg-white');
   };
 
   const sheetContent = (
@@ -199,7 +199,12 @@ function AssistantSheetClient() {
         >
           <div className="flex items-center justify-between pb-3 px-4">
             <div className="flex items-center gap-2">
-              <Icon icon="sparkles" iconLibrary="lucide" color="var(--primary)" size={20} />
+              <Icon
+                icon="sparkles"
+                iconLibrary="lucide"
+                color="var(--primary)"
+                size={20}
+              />
               <span className="font-medium text-gray-900">Assistant</span>
             </div>
 

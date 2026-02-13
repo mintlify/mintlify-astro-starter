@@ -175,7 +175,7 @@ export function getFooterPages(entries: NavEntry[], currentPath: string) {
 export function findGroupForPath(
   entries: NavEntry[],
   path: string,
-): string | null {
+): string | undefined {
   for (const entry of entries) {
     if (isNavGroup(entry)) {
       for (const page of entry.pages) {
@@ -189,5 +189,5 @@ export function findGroupForPath(
       }
     }
   }
-  return null;
+  return undefined;
 }
