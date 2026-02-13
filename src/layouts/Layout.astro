@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import type { Favicons } from '@mintlify/astro/helpers';
-import { AssistantSheet } from '../components/Assistant';
+import { AssistantSheet, AssistantProvider } from '../components/Assistant';
 import docsConfig from '../../docs/docs.json';
 import '../styles/global.css';
 
@@ -38,6 +38,7 @@ const primaryColor = docsConfig.colors?.primary;
     <ClientRouter />
   </head>
   <body style={primaryColor ? `--primary: ${primaryColor}` : ''}>
+    <AssistantProvider client:only="react" />
     <div class="flex">
       <div class="flex-1 min-w-0">
         <slot />
