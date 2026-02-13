@@ -150,7 +150,7 @@ function AssistantSheetClient() {
       {isMobile && (
         <div
           className={cn(
-            'absolute inset-0 bg-black/40 transition-opacity duration-200 z-[1]',
+            'absolute inset-0 bg-black/40 transition-opacity duration-200 z-1',
             isOpen ? 'opacity-100' : 'opacity-0',
           )}
           onClick={handleClose}
@@ -162,7 +162,7 @@ function AssistantSheetClient() {
         className={cn(
           'flex flex-col overflow-hidden shrink-0',
           isMobile
-            ? 'overscroll-contain bg-white z-[10]'
+            ? 'overscroll-contain bg-white z-10'
             : 'h-full bg-white border-l border-gray-200',
           isMobile &&
             !isDragging &&
@@ -276,7 +276,7 @@ function AssistantSheetClient() {
                 : undefined
             }
           >
-            <div className="flex-grow" />
+            <div className="grow" />
             {messages.length > 0 ? (
               <AssistantHistoryList messages={messages} status={status} />
             ) : (

@@ -62,7 +62,7 @@ const CopyButton = ({ content }: { content: string }) => {
 const ShimmerText = ({ children }: { children: React.ReactNode }) => (
   <>
     <span
-      className="animate-shimmer bg-[length:200%_100%] bg-clip-text text-transparent font-medium"
+      className="animate-shimmer bg-size-[200%_100%] bg-clip-text text-transparent font-medium"
       style={{
         backgroundImage:
           'linear-gradient(90deg, rgb(156 163 175) 0%, rgb(209 213 219) 50%, rgb(156 163 175) 100%)',
@@ -100,7 +100,7 @@ const SearchingContainer = ({
     <>
       <button
         className={cn(
-          'group flex items-center text-left gap-2.5 text-gray-500 flex-shrink-0 hover:text-gray-600 transition-colors',
+          'group flex items-center text-left gap-2.5 text-gray-500 shrink-0 hover:text-gray-600 transition-colors',
           hasResults ? 'cursor-pointer' : 'cursor-default',
         )}
         onClick={() => {
@@ -109,7 +109,7 @@ const SearchingContainer = ({
         }}
       >
         {!isSourcesOpen && (
-          <span className="flex-shrink-0 group-hover:hidden">
+          <span className="shrink-0 group-hover:hidden">
             <Icon
               icon="search"
               iconLibrary="lucide"
@@ -121,7 +121,7 @@ const SearchingContainer = ({
         {hasResults && (
           <span
             className={cn(
-              'flex-shrink-0',
+              'shrink-0',
               isSourcesOpen ? 'rotate-90' : 'hidden group-hover:block',
             )}
           >
@@ -388,7 +388,7 @@ export const ChatResponse = React.forwardRef<HTMLDivElement, ChatResponseProps>(
                           className="block py-1"
                         >
                           <span
-                            className="flex items-center text-sm font-normal hover:brightness-75 font-medium"
+                            className="flex items-center text-sm font-normal hover:brightness-75"
                             style={{ color: 'var(--primary)' }}
                           >
                             <span className="truncate">

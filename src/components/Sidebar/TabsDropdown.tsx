@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { cn, Icon } from '@mintlify/components';
-import type { TabInfo } from '../../lib/navigation';
+import type { TabInfo } from '@mintlify/astro/helpers';
 
 interface TabsDropdownProps {
   tabs: TabInfo[];

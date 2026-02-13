@@ -4,17 +4,10 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer';
 import { components } from '@mintlify/astro/components';
+import { resolvePageData } from '@mintlify/astro/helpers';
+import type { DocsConfig } from '@mintlify/astro';
 import docsConfig from '../../docs/docs.json';
 import Sidebar, { MobileSidebar } from '../components/Sidebar';
-import { getFaviconsFromDocsConfig } from '../lib/favicon';
-import {
-  decorateNavigation,
-  unwrapNav,
-  findGroupForPath,
-  getTabsFromNav,
-  getFooterPages,
-} from '../lib/navigation';
-import { getAnchorsFromConfig } from '../lib/anchors';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -30,57 +23,49 @@ export async function getStaticPaths() {
 
 const { doc, allDocs } = Astro.props;
 const { Content } = await render(doc);
-const favicons = getFaviconsFromDocsConfig(docsConfig);
 
 const titleMap = Object.fromEntries(
   allDocs.map((doc) => [doc.id, doc.data.title || doc.id]),
 );
-
-const decoratedNav = decorateNavigation(docsConfig.navigation, titleMap);
-
 const currentPath = doc.id === 'index' ? '/' : `/${doc.id}`;
-const sidebarEntries = unwrapNav(decoratedNav, currentPath);
-const groupName = findGroupForPath(sidebarEntries, currentPath);
-const tabs = getTabsFromNav(decoratedNav, currentPath);
-const { prev, next } = getFooterPages(sidebarEntries, currentPath);
-const anchors = getAnchorsFromConfig(docsConfig);
+const page = resolvePageData(docsConfig as DocsConfig, { currentPath, titleMap });
 ---
 
 <Layout
   title={doc.data.title || doc.id}
   description={doc.data.description}
-  favicons={favicons}
+  favicons={page.favicons}
 >
   <div style={`--primary: ${docsConfig.colors?.primary}`}>
     <Header
       logo={docsConfig.logo?.light}
       name={docsConfig.name}
-      tabs={tabs}
+      tabs={page.tabs}
       primaryColor={docsConfig.colors?.primary}
       pageTitle={doc.data.title || doc.id}
-      groupName={groupName}
+      groupName={page.groupName}
     />
 
     <MobileSidebar
-      navigation={decoratedNav}
+      navigation={page.navigation}
       currentPath={currentPath}
       logo={docsConfig.logo?.light}
       siteName={docsConfig.name}
-      tabs={tabs || []}
-      anchors={anchors}
+      tabs={page.tabs || []}
+      anchors={page.anchors}
       primaryColor={docsConfig.colors?.primary}
       client:load
     />
 
-    <div class="w-full pt-[7.5rem] lg:pt-0">
+    <div class="w-full pt-30 lg:pt-0">
       <div
         class="flex min-h-[calc(100vh-4rem)] max-w-8xl mx-auto px-4 sm:px-6 lg:px-12"
       >
         <div transition:animate="none">
           <Sidebar
-            navigation={decoratedNav}
+            navigation={page.navigation}
             currentPath={currentPath}
-            anchors={anchors}
+            anchors={page.anchors}
             primaryColor={docsConfig.colors?.primary}
             client:load
           />
@@ -90,12 +75,12 @@ const anchors = getAnchorsFromConfig(docsConfig);
           <article class="max-w-3xl">
             <header class="mb-8 pb-6">
               {
-                groupName && (
+                page.groupName && (
                   <p
                     class="text-sm font-semibold mb-2"
                     style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
                   >
-                    {groupName}
+                    {page.groupName}
                   </p>
                 )
               }
@@ -114,7 +99,7 @@ const anchors = getAnchorsFromConfig(docsConfig);
             </header>
             <div class="mdx-content prose">
               <Content components={components} />
-              <Footer prev={prev} next={next} />
+              <Footer prev={page.footerPages.prev} next={page.footerPages.next} />
             </div>
           </article>
         </main>
