@@ -4,6 +4,7 @@ import {
   SearchProvider,
   useSearch,
   type SearchResult,
+  Icon,
 } from '@mintlify/components';
 import { navigate } from 'astro:transitions/client';
 import { useDebouncedCallback } from 'use-debounce';
@@ -115,9 +116,13 @@ export function SearchBar() {
               'Untitled',
             content: item.metadata?.description || item.content || '',
             link: normalizePath(item.path),
+            icon: (
+              <Icon icon="hash" iconLibrary="lucide" size={16} color="gray" />
+            ),
             metadata: {
               ...item.metadata,
               breadcrumbs: pathSegments,
+              iconName: item.metadata.icon || 'hashtag',
             },
           };
         },
@@ -168,22 +173,31 @@ export function SearchBar() {
     }
   };
 
+  const addIconsToResults = (items: SearchResult[]): SearchResult[] => {
+    return items.map((item) => {
+      const iconName = item.metadata?.iconName || 'hashtag';
+      return {
+        ...item,
+        icon: <Icon icon={iconName} size={16} color="gray" />,
+      };
+    });
+  };
+
   if (!mounted) {
-    return <SearchButton className="w-full rounded-xl" />;
+    return <SearchButton />;
   }
 
   return (
     <SearchProvider
       searchProps={{
         onSearch: handleSearch,
-        results,
+        results: addIconsToResults(results),
         isLoading,
         onSelectResult: handleSelectResult,
-        recentSearches,
+        recentSearches: addIconsToResults(recentSearches),
       }}
     >
-      <SearchButton className="w-full rounded-xl" />
-      <SearchEventListener />
+      <SearchButton />
     </SearchProvider>
   );
 }
