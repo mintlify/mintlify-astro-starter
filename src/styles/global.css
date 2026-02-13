@@ -25,7 +25,7 @@
   }
 }
 
-/* TODO: fix css priorities */
+/* TODO ENG-6346: fix css priorities */
 kbd {
   display: inline-block !important;
 }
