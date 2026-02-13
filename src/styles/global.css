@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import '@mintlify/components/styles.css';
+@import '@mintlify/components/styles.css' layer(components);
 
 @theme {
   --animate-dot-bounce: dot-bounce 1.4s ease-in-out infinite;
@@ -23,4 +23,9 @@
   :root {
     color-scheme: light !important;
   }
+}
+
+/* TODO: fix css priorities */
+kbd {
+  display: inline-block !important;
 }
