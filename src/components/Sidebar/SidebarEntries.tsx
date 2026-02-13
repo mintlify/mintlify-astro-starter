@@ -1,5 +1,5 @@
-import type { NavEntry, NavPage, NavGroup } from '../../lib/navigation';
-import { isNavPage, isNavGroup } from '../../lib/navigation';
+import type { NavEntry, NavPage, NavGroup } from '@mintlify/astro/helpers';
+import { isNavPage, isNavGroup } from '@mintlify/astro/helpers';
 import type { SidebarItemStyle } from './types';
 import { SideNavItem } from './SideNavItem';
 import { SidebarGroupItem } from './SidebarGroupItem';
