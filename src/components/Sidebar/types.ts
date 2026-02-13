@@ -12,4 +12,3 @@ export type SidebarItemStyle =
   | 'undecorated'
   | 'arrow'
   | 'plain';
-

@@ -16,7 +16,7 @@
     "@astrojs/mdx": "^4.3.1",
     "@astrojs/react": "^4.4.2",
     "@mintlify/astro": "^0.1.4",
-    "@mintlify/components": "^1.0.4",
+    "@mintlify/components": "^1.0.5",
     "@mintlify/models": "^0.0.260",
     "@mintlify/validation": "^0.1.574",
     "@tailwindcss/vite": "^4.1.18",
