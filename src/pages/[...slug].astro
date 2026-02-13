@@ -28,7 +28,10 @@ const titleMap = Object.fromEntries(
   allDocs.map((doc) => [doc.id, doc.data.title || doc.id]),
 );
 const currentPath = doc.id === 'index' ? '/' : `/${doc.id}`;
-const page = resolvePageData(docsConfig as DocsConfig, { currentPath, titleMap });
+const page = resolvePageData(docsConfig as DocsConfig, {
+  currentPath,
+  titleMap,
+});
 ---
 
 <Layout
@@ -99,7 +102,10 @@ const page = resolvePageData(docsConfig as DocsConfig, { currentPath, titleMap }
             </header>
             <div class="mdx-content prose">
               <Content components={components} />
-              <Footer prev={page.footerPages.prev} next={page.footerPages.next} />
+              <Footer
+                prev={page.footerPages.prev}
+                next={page.footerPages.next}
+              />
             </div>
           </article>
         </main>
