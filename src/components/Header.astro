@@ -17,27 +17,22 @@ const { logo, name, tabs, primaryColor, pageTitle, groupName } = Astro.props;
 const usingTabs = tabs && tabs.length > 0;
 ---
 
-<header class="fixed lg:sticky top-0 lg:mx-6 w-full z-50">
+<header class="sticky top-0 w-full z-50">
   <div
     class="absolute w-full h-full backdrop-blur flex-none transition-colors duration-500 border-b border-gray-500/5 bg-white/95 supports-backdrop-blur:bg-white/60"
   >
   </div>
-  <div class="max-w-8xl mx-auto relative">
+  <div class="relative">
     <div>
       <div class="relative">
-        <div
-          class:list={[
-            'flex items-center lg:px-12 h-16 min-w-0',
-            usingTabs ? 'mx-4 lg:mx-0' : 'px-4',
-          ]}
-        >
+        <div class:list={['flex items-center h-16 min-w-0']}>
           <div
             class:list={[
-              'h-full relative flex-1 flex items-center gap-x-4 min-w-0 border-b border-gray-500/5',
+              'h-full relative flex-1 flex items-center justify-between gap-x-4 min-w-0 border-b border-gray-500/5',
               !usingTabs && 'lg:border-none',
             ]}
           >
-            <div class="flex-1 flex items-center gap-x-4 min-w-0">
+            <div class="flex items-center shrink-0 lg:flex-1">
               <a href="/" class="flex items-center shrink-0">
                 <img src={logo} alt={name} class="h-7" />
               </a>
@@ -68,7 +63,7 @@ const usingTabs = tabs && tabs.length > 0;
       </div>
       {
         usingTabs && (
-          <div class="hidden lg:flex px-12 h-12">
+          <div class="hidden lg:flex h-12">
             <div class="h-full flex text-sm gap-x-6">
               {tabs.map((tab) => (
                 <a

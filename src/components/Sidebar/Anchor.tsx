@@ -16,7 +16,7 @@ export function Anchor({ name, href, icon, color }: AnchorItem) {
         color ? ({ '--anchor-color': color } as React.CSSProperties) : undefined
       }
       className={cn(
-        'ml-4 group flex items-center lg:text-sm lg:leading-6 mb-5 sm:mb-4 font-medium outline-offset-4',
+        'group flex items-center lg:text-sm lg:leading-6 mb-5 sm:mb-4 font-medium outline-offset-4',
         'text-gray-600 hover:text-gray-900',
       )}
     >

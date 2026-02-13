@@ -60,10 +60,8 @@ const page = resolvePageData(docsConfig as DocsConfig, {
       client:load
     />
 
-    <div class="w-full pt-30 lg:pt-0">
-      <div
-        class="flex min-h-[calc(100vh-4rem)] max-w-8xl mx-auto px-4 sm:px-6 lg:px-12"
-      >
+    <div class="w-full pt-3 lg:pt-0">
+      <div class="flex lg:gap-8 min-h-[calc(100vh-4rem)]">
         <div transition:animate="none">
           <Sidebar
             navigation={page.navigation}
@@ -74,7 +72,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
           />
         </div>
 
-        <main class="flex-1 min-w-0 py-10 px-8 lg:px-12">
+        <main class="flex-1 min-w-0 py-10">
           <article class="max-w-3xl">
             <header class="mb-8 pb-6">
               {

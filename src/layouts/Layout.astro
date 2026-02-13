@@ -39,8 +39,8 @@ const primaryColor = docsConfig.colors?.primary;
   </head>
   <body style={primaryColor ? `--primary: ${primaryColor}` : ''}>
     <AssistantProvider client:only="react" />
-    <div class="flex">
-      <div class="flex-1 min-w-0">
+    <div class="flex px-[5vw]">
+      <div class="flex-1 min-w-0 max-w-[1400px] mx-auto w-full">
         <slot />
       </div>
       <AssistantSheet client:only="react" transition:persist />
