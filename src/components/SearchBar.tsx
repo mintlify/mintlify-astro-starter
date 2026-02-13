@@ -194,6 +194,7 @@ export function SearchBar() {
         recentSearches: addIconsToResults(recentSearches),
       }}
     >
+      <SearchEventListener />
       <SearchButton />
     </SearchProvider>
   );
