@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer';
+import SiteFooter from '../components/SiteFooter';
 import { components } from '@mintlify/astro/components';
 import { resolvePageData } from '@mintlify/astro/helpers';
 import type { DocsConfig } from '@mintlify/astro';
@@ -107,6 +108,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
               />
             </div>
           </article>
+          <SiteFooter socials={docsConfig.footer?.socials} client:load />
         </main>
 
         <TableOfContents headings={headings} client:load />
