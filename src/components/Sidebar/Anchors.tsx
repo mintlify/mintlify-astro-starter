@@ -8,7 +8,7 @@ interface AnchorsProps {
 
 export function Anchors({ anchors, primaryColor }: AnchorsProps) {
   return (
-    <ul className="list-none mb-6">
+    <ul className="list-none mb-6 pl-4">
       {anchors.map((anchor) => (
         <li key={anchor.href} className="list-none">
           <Anchor

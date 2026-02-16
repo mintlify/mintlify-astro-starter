@@ -17,7 +17,7 @@ export function SidebarGroupItem({
 }: SidebarGroupItemProps) {
   return (
     <>
-      <div className="flex items-center gap-2.5 pl-2 mb-3.5 lg:mb-2.5 font-semibold text-gray-900">
+      <div className="flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-900">
         {group.icon && (
           <Icon
             icon={group.icon}
