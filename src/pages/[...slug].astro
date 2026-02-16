@@ -8,6 +8,7 @@ import { resolvePageData } from '@mintlify/astro/helpers';
 import type { DocsConfig } from '@mintlify/astro';
 import docsConfig from '../../docs/docs.json';
 import Sidebar, { MobileSidebar } from '../components/Sidebar';
+import TableOfContents from '../components/TableOfContents';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -22,7 +23,7 @@ export async function getStaticPaths() {
 }
 
 const { doc, allDocs } = Astro.props;
-const { Content } = await render(doc);
+const { Content, headings } = await render(doc);
 
 const titleMap = Object.fromEntries(
   allDocs.map((doc) => [doc.id, doc.data.title || doc.id]),
@@ -107,6 +108,8 @@ const page = resolvePageData(docsConfig as DocsConfig, {
             </div>
           </article>
         </main>
+
+        <TableOfContents headings={headings} client:load />
       </div>
     </div>
   </div>

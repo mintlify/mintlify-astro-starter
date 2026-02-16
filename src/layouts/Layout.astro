@@ -39,7 +39,7 @@ const primaryColor = docsConfig.colors?.primary;
   </head>
   <body style={primaryColor ? `--primary: ${primaryColor}` : ''}>
     <AssistantProvider client:only="react" />
-    <div class="flex px-[5vw]">
+    <div class="flex pl-[5vw]">
       <div class="flex-1 min-w-0 max-w-[1400px] mx-auto w-full">
         <slot />
       </div>
@@ -54,6 +54,7 @@ const primaryColor = docsConfig.colors?.primary;
     margin: 0;
     width: 100%;
     height: 100%;
+    overscroll-behavior-y: none;
   }
 
   ::view-transition-old(*),

@@ -24,7 +24,7 @@ export default function Sidebar({
   const entries = unwrapNav(navigation, currentPath);
 
   return (
-    <div className="hidden lg:flex flex-col sticky h-[calc(100vh-7.5rem)] w-[18rem] shrink-0 bg-white isolate">
+    <div className="hidden lg:flex flex-col sticky top-[7rem] h-[calc(100vh-7rem)] w-[18rem] shrink-0 bg-white isolate">
       <nav className="flex-1 overflow-y-auto pr-8 pb-10">
         <div className="sticky top-0 h-8 z-[5] bg-linear-to-b from-white" />
 
