@@ -25,7 +25,10 @@ export default function TableOfContents({
 
     if (headingElements.length === 0) return;
 
-    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 10) {
+    if (
+      window.innerHeight + window.scrollY >=
+      document.body.scrollHeight - 10
+    ) {
       setActiveSlug(headingElements[headingElements.length - 1].id);
       return;
     }
