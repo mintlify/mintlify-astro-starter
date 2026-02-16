@@ -42,9 +42,9 @@ export function MobileNavToggle({
       className="flex items-center h-14 py-4 lg:px-[5vw] lg:hidden focus:outline-0 w-full text-left"
       onClick={handleToggle}
     >
-      <div className="text-gray-500 hover:text-gray-600">
+      <div className="flex items-center text-gray-500 hover:text-gray-600">
         <span className="sr-only">Navigation</span>
-        <Icon icon="menu" iconLibrary="lucide" size={20} />
+        <Icon icon="menu" iconLibrary="lucide" size={18} />
       </div>
       <div className="ml-4 flex text-sm leading-6 whitespace-nowrap min-w-0 space-x-3 overflow-hidden">
         {groupName && (
