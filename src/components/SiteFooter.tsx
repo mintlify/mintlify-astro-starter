@@ -1,5 +1,5 @@
 import { Icon } from '@mintlify/components';
-import { MintlifyLogo } from './MintlifyLogo';
+import { MintlifyLogo } from '../icons/MintlifyLogo';
 
 interface SocialLink {
   type: string;
