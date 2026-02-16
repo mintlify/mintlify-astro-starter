@@ -76,27 +76,29 @@ const page = resolvePageData(docsConfig as DocsConfig, {
 
         <main class="flex-1 min-w-0 py-10">
           <article class="w-full">
-            <header class="mb-8 pb-6">
-              {
-                page.groupName && (
-                  <p
-                    class="text-sm font-semibold mb-2"
-                    style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
-                  >
-                    {page.groupName}
-                  </p>
-                )
-              }
-              <h1
-                class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-3"
-              >
-                {doc.data.title || doc.id}
-              </h1>
+            <header class="leading-none pb-6">
+              <div class="mt-0.5 space-y-2.5">
+                {
+                  page.groupName && (
+                    <p
+                      class="text-sm font-semibold"
+                      style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
+                    >
+                      {page.groupName}
+                    </p>
+                  )
+                }
+                <h1
+                  class="text-2xl sm:text-3xl text-gray-900 tracking-tight font-bold wrap-anywhere"
+                >
+                  {doc.data.title || doc.id}
+                </h1>
+              </div>
               {
                 doc.data.description && (
-                  <p class="text-lg leading-relaxed max-w-2xl">
-                    {doc.data.description}
-                  </p>
+                  <div class="mt-2 text-lg prose prose-gray max-w-2xl">
+                    <p>{doc.data.description}</p>
+                  </div>
                 )
               }
             </header>
