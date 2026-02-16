@@ -1,0 +1,34 @@
+.mdx-content.prose :is(h2, h3) {
+  letter-spacing: -0.025em;
+}
+
+.mdx-content.prose h2 {
+  margin-bottom: 0.6666667em;
+  font-weight: 600;
+}
+
+.mdx-content.prose h3 {
+  margin-top: 2.4em;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.mdx-content.prose h4 {
+  margin-top: 2em;
+  font-size: 1.125em;
+  font-weight: 600;
+}
+
+.mdx-content.prose > p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+.mdx-content.prose > :is(h2, h3, h4) + p,
+.mdx-content.prose > p:first-child {
+  margin-top: 0;
+}
+
+.mdx-content.prose :is(code, kbd, pre, samp) {
+  font-family: var(--font-family-mono-custom, var(--font-mono));
+}
