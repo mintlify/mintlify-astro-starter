@@ -41,7 +41,9 @@ const page = resolvePageData(docsConfig as DocsConfig, {
   description={doc.data.description}
   favicons={page.favicons}
 >
-  <div style={`--primary: ${docsConfig.colors?.primary}`}>
+  <div
+    style={`--primary: ${docsConfig.colors?.primary}; --color-primary: ${docsConfig.colors?.primary}`}
+  >
     <Header
       logo={docsConfig.logo?.light}
       name={docsConfig.name}
@@ -63,7 +65,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
     />
 
     <div class="w-full px-4 lg:px-0 pt-3 lg:pt-0">
-      <div class="flex lg:gap-8 min-h-[calc(100vh-4rem)]">
+      <div class="flex lg:gap-10 min-h-[calc(100vh-4rem)]">
         <div transition:animate="none">
           <Sidebar
             navigation={page.navigation}
@@ -76,7 +78,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
 
         <main class="flex-1 min-w-0 py-10">
           <article class="w-full">
-            <header class="leading-none pb-6">
+            <header class="leading-none pb-8">
               <div class="mt-0.5 space-y-2.5">
                 {
                   page.groupName && (
