@@ -12,6 +12,18 @@ Click the green **Use this template** button at the top of this repo to copy the
 
 **[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
 
+## AI-assisted writing
+
+Set up your AI coding tool to work with Mintlify:
+
+```bash
+npx skills add https://mintlify.com/docs
+```
+
+This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
+
+See the [AI tools guides](/ai-tools) for tool-specific setup.
+
 ## Development
 
 Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
@@ -40,5 +52,4 @@ Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/sett
 - If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
 
 ### Resources
-
 - [Mintlify documentation](https://mintlify.com/docs)
