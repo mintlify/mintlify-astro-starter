@@ -7,6 +7,11 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   integrations: [mintlify({ docsDir: './docs' }), react(), mdx()],
+  markdown: {
+    shikiConfig: {
+      theme: 'github-light-default',
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
