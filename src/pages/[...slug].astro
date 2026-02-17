@@ -41,9 +41,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
   description={doc.data.description}
   favicons={page.favicons}
 >
-  <div
-    style={`--primary: ${docsConfig.colors?.primary}; --color-primary: ${docsConfig.colors?.primary}`}
-  >
+  <div>
     <Header
       logo={docsConfig.logo?.light}
       name={docsConfig.name}
