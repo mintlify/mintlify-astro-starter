@@ -43,7 +43,7 @@ const primaryColor = docsConfig.colors?.primary;
     {description && <meta name="description" content={description} />}
     <ClientRouter />
   </head>
-  <body style={primaryColor ? `--primary: ${primaryColor}` : ''}>
+  <body style={primaryColor ? `--primary: ${primaryColor};` : undefined}>
     <AssistantProvider client:only="react" />
     <div class="flex antialiased">
       <div class="flex-1 min-w-0 max-w-[1400px] mx-auto w-full">

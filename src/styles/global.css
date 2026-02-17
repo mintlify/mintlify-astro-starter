@@ -3,6 +3,7 @@
 @import '@mintlify/components/styles.css' layer(components);
 @import './typography.css';
 @import './prose.css';
+@import './prose-components.css';
 @import './kbd.css';
 
 @theme {
