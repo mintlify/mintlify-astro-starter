@@ -1,0 +1,75 @@
+---
+title: Customize your site
+description: Understand what docs.json controls and how to style your custom frontend
+keywords: customization, docs.json, navigation, styling, astro, layout
+---
+
+This starter uses a custom Astro frontend with Mintlify's content tools and components. Because the frontend is yours, not every `docs.json` configuration option from the [full Mintlify reference](https://mintlify.com/docs/settings) applies here.
+
+**What `docs.json` controls:** Navigation structure, page metadata, and content configuration.
+
+**What you control:** Styling, layouts, and how your site renders. These live in your Astro project under `src/`.
+
+<Note>
+  If a `docs.json` option doesn't seem to have any effect, it likely isn't wired up in the Astro frontend. Check the templates in `src/` to see how configuration values are consumed, and adjust there.
+</Note>
+
+## Navigation
+
+Navigation is the primary thing `docs.json` manages. It's defined under `navigation.tabs`, where each tab contains groups and each group lists pages:
+
+```json docs/docs.json
+{
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Docs",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "index",
+              "quickstart"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Page paths are relative to the `docs/` directory without the `.mdx` extension. Use forward slashes for nested pages (for example, `guides/example`).
+
+## Site metadata
+
+You can set a site name and other metadata in `docs.json`:
+
+```json docs/docs.json
+{
+  "name": "My Docs",
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  }
+}
+```
+
+Whether these values take effect depends on how the Astro templates in `src/` reference them.
+
+## Styling and layouts
+
+Since this is a custom Astro project, you have direct control over how your site looks:
+
+| Path | What it controls |
+|------|-----------------|
+| `src/layouts/` | Page layout templates. |
+| `src/styles/` | Global CSS and Tailwind configuration. |
+| `src/components/` | Custom Astro and React components. |
+
+To change colors, fonts, spacing, or other visual properties, edit the files in `src/` directly rather than relying on `docs.json` values like `colors` or `navbar`.
+
+<Tip>
+  Changes to files in `src/` take effect immediately when the dev server is running.
+</Tip>

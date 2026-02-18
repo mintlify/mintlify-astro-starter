@@ -1,0 +1,111 @@
+---
+title: Setting up authentication
+description: A sample guide showing how a typical documentation page looks
+keywords: example, guide, authentication, sample
+---
+
+This is a sample documentation page. It demonstrates how to combine prose, steps, code blocks, and callouts into a realistic guide. Replace this content with your own.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A running instance of the application (`npm run dev`)
+- An API key from the dashboard
+
+<Warning>
+  Keep your API key secret. Never commit it to version control or expose it in client-side code.
+</Warning>
+
+## Configure authentication
+
+<Steps>
+  <Step title="Install the SDK">
+    Add the authentication SDK to your project:
+
+    <CodeGroup>
+      ```bash npm
+      npm install @example/auth
+      ```
+      ```bash yarn
+      yarn add @example/auth
+      ```
+    </CodeGroup>
+  </Step>
+  <Step title="Initialize the client">
+    Create an auth client with your API key:
+
+    ```typescript auth.ts
+    import { createAuthClient } from "@example/auth";
+
+    const auth = createAuthClient({
+      apiKey: process.env.AUTH_API_KEY,
+    });
+    ```
+  </Step>
+  <Step title="Protect a route">
+    Use the middleware to require authentication:
+
+    ```typescript middleware.ts
+    import { auth } from "./auth";
+
+    export async function onRequest(context, next) {
+      const session = await auth.getSession(context.request);
+
+      if (!session) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+
+      return next();
+    }
+    ```
+  </Step>
+</Steps>
+
+## Verify it works
+
+After completing the setup, test that authentication is working:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" http://localhost:4321/api/protected
+```
+
+A successful response returns your user data:
+
+```json
+{
+  "user": {
+    "id": "usr_123",
+    "email": "ada@example.com"
+  }
+}
+```
+
+## Common issues
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized on every request">
+    Check that your `AUTH_API_KEY` environment variable is set and matches the key in your dashboard.
+  </Accordion>
+  <Accordion title="Session expires immediately">
+    The default session duration is 24 hours. You can extend it in the client configuration:
+
+    ```typescript
+    const auth = createAuthClient({
+      apiKey: process.env.AUTH_API_KEY,
+      sessionDuration: "7d",
+    });
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Components" icon="grid-2" href="/components">
+    See all available components for your pages.
+  </Card>
+  <Card title="Customization" icon="palette" href="/customization">
+    Configure your site's look and feel.
+  </Card>
+</Columns>

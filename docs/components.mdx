@@ -1,0 +1,123 @@
+---
+title: Components
+description: Available Mintlify components for building documentation pages
+keywords: components, cards, accordions, tabs, code blocks, callouts, steps
+---
+
+Mintlify components work directly in your MDX files without imports. This page shows each component rendered so you can see what's available. To see the source syntax, open the MDX file for this page.
+
+## Cards
+
+Use cards to link to related content or highlight key actions.
+
+<Card title="Quickstart" icon="rocket" href="/quickstart" horizontal>
+  Get your dev environment set up in minutes.
+</Card>
+
+Use `Columns` to arrange cards in a grid:
+
+<Columns cols={2}>
+  <Card title="First card" icon="circle-1">
+    Cards can contain short descriptions.
+  </Card>
+  <Card title="Second card" icon="circle-2">
+    Arrange them in columns for scannability.
+  </Card>
+</Columns>
+
+## Accordions
+
+Use accordions to collapse content that isn't needed on every visit.
+
+<AccordionGroup>
+  <Accordion title="What formats are supported?">
+    Pages are written in MDX, which combines Markdown with JSX components.
+  </Accordion>
+  <Accordion title="Do I need to import components?">
+    No. Mintlify components are available globally in all MDX files.
+  </Accordion>
+</AccordionGroup>
+
+## Steps
+
+Use steps for sequential instructions.
+
+<Steps>
+  <Step title="Create a file">
+    Add a new `.mdx` file to the `docs/` directory.
+  </Step>
+  <Step title="Add frontmatter">
+    Include `title` and `description` in the YAML frontmatter.
+  </Step>
+  <Step title="Update navigation">
+    Add the page path to `docs.json`.
+  </Step>
+</Steps>
+
+## Tabs
+
+Use tabs to present alternative content in the same space.
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn install
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm install
+    ```
+  </Tab>
+</Tabs>
+
+## Code blocks
+
+Fenced code blocks support syntax highlighting and titles.
+
+```typescript example.ts
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+function getUser(id: string): User {
+  return { id, name: "Ada Lovelace", email: "ada@example.com" };
+}
+```
+
+Group related code blocks with `CodeGroup`:
+
+<CodeGroup>
+  ```bash npm
+  npm run dev
+  ```
+  ```bash yarn
+  yarn dev
+  ```
+  ```bash pnpm
+  pnpm dev
+  ```
+</CodeGroup>
+
+## Callouts
+
+Use callouts to draw attention to specific information.
+
+<Note>
+  Notes provide additional context that's helpful but not critical.
+</Note>
+
+<Tip>
+  Tips suggest best practices or useful shortcuts.
+</Tip>
+
+<Warning>
+  Warnings flag potential problems or destructive actions.
+</Warning>
