@@ -1,11 +1,14 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState } from 'react';
 import { Icon, cn } from '@mintlify/components';
-import { useContextualOptions } from '../hooks/useContextualOptions';
-import { useCopyPage } from '../hooks/useCopyPage';
+import {
+  useContextualOptions,
+  type ContextualOptionItem,
+} from '../hooks/useContextualOptions';
+
+type CopyState = 'idle' | 'copying' | 'copied' | 'error';
 
 interface PageContextMenuProps {
   pathname: string;
-  options?: string[];
   className?: string;
 }
 
@@ -16,42 +19,39 @@ export function PageContextMenu({
 }: PageContextMenuProps) {
   const markdownPath = pathname === '/' ? '/index' : pathname;
 
-  const { options: rawOptions } = useContextualOptions({
+  const { options } = useContextualOptions({
     pathname: markdownPath,
     options: configOptions,
   });
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    state: copyState,
-    text: copyText,
-    execute: executeCopy,
-    isDisabled,
-  } = useCopyPage();
-
-  const wrapAction = useCallback(
-    (optionId: string, actionFn: () => void | Promise<boolean>) => {
-      return async () => {
-        setIsOpen(false);
-        if (optionId === 'copy') {
-          await executeCopy(actionFn);
-        } else {
-          void actionFn();
-        }
-      };
-    },
-    [executeCopy],
-  );
-
-  const options = useMemo(
-    () =>
-      rawOptions.map((option) => ({
-        ...option,
-        action: wrapAction(option.id, option.action),
-      })),
-    [rawOptions, wrapAction],
-  );
+  const [copyState, setCopyState] = useState<CopyState>('idle');
 
   if (!options.length) return null;
+
+  const handleAction = async (option: ContextualOptionItem) => {
+    setIsOpen(false);
+    if (option.id === 'copy') {
+      setCopyState('copying');
+      try {
+        const result = await option.action();
+        setCopyState(result === false ? 'error' : 'copied');
+      } catch {
+        setCopyState('error');
+      }
+      setTimeout(() => setCopyState('idle'), 2000);
+    } else {
+      option.action();
+    }
+  };
+
+  const copyText =
+    copyState === 'copying'
+      ? 'Copying...'
+      : copyState === 'copied'
+        ? 'Copied!'
+        : copyState === 'error'
+          ? 'Error'
+          : 'Copy page';
 
   const firstOption = options[0];
 
@@ -65,10 +65,8 @@ export function PageContextMenu({
               options.length === 1 ? 'rounded-xl' : 'border-r-0',
               copyState !== 'idle' && 'text-stone-600',
             )}
-            onClick={() => {
-              void firstOption.action();
-            }}
-            disabled={isDisabled}
+            onClick={() => void handleAction(firstOption)}
+            disabled={copyState === 'copying'}
             aria-label={firstOption.title}
           >
             <div className="flex items-center gap-2 text-sm font-medium whitespace-nowrap">
@@ -107,10 +105,10 @@ export function PageContextMenu({
             onClick={() => setIsOpen(false)}
           />
           <div className="rounded-2xl absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-auto min-w-[280px] sm:w-64 bg-white border border-stone-200 shadow-lg z-20 overflow-hidden">
-            {options.map((option, index) => (
+            {options.map((option) => (
               <button
-                key={option.id + index}
-                onClick={option.action}
+                key={option.id}
+                onClick={() => void handleAction(option)}
                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-stone-50 text-left"
               >
                 <div className="border border-stone-200 rounded-md p-1.5">
