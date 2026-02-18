@@ -27,7 +27,7 @@ export function useContextualOptions({
 }: UseContextualOptionsProps) {
   const copyPageAsMarkdown = useCallback(async (): Promise<boolean> => {
     try {
-      const markdownUrl = pathname === '/' ? '/index.md' : `${pathname}.md`;
+      const markdownUrl = `${pathname}.md`;
       const response = await fetch(markdownUrl);
 
       if (!response.ok) {
@@ -44,7 +44,7 @@ export function useContextualOptions({
   }, [pathname]);
 
   const viewAsMarkdown = useCallback(() => {
-    const markdownPath = pathname === '/' ? '/index.md' : `${pathname}.md`;
+    const markdownPath = `${pathname}.md`;
     window.open(markdownPath, '_blank');
   }, [pathname]);
 
