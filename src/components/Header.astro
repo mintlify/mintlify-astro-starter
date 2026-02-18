@@ -75,7 +75,9 @@ const usingTabs = tabs && tabs.length > 0;
                   <div
                     class:list={[
                       'absolute bottom-0 h-[1.5px] w-full left-0',
-                      tab.isActive ? 'bg-(--primary)' : 'group-hover:bg-gray-200',
+                      tab.isActive
+                        ? 'bg-(--primary)'
+                        : 'group-hover:bg-gray-200',
                     ]}
                   />
                 </a>
