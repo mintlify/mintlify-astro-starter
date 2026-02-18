@@ -9,6 +9,7 @@ type CopyState = 'idle' | 'copying' | 'copied' | 'error';
 
 interface PageContextMenuProps {
   pathname: string;
+  options?: string[];
   className?: string;
 }
 
