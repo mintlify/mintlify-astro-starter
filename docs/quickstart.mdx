@@ -20,13 +20,10 @@ description: "Set up your development environment and add your first page"
     npm run dev
     ```
 
-    {/* TODO: Confirm default port — Astro defaults to 4321 but @mintlify/astro may override. */}
     Open the URL shown in your terminal (usually `http://localhost:4321`) to see your site.
-
-    <Tip>The dev server reloads automatically when you edit files.</Tip>
   </Step>
   <Step title="Edit a page">
-    Open `docs/index.mdx` in your editor and make a change. You'll see it update in the browser right away.
+    Open `docs/index.mdx` in your editor and make a change. You'll see changes in your local preview.
   </Step>
 </Steps>
 
@@ -37,7 +34,7 @@ Your content lives in the `docs/` directory:
 | Path | Purpose |
 |------|---------|
 | `docs/*.mdx` | Documentation pages written in MDX. |
-| `docs/docs.json` | Site configuration: navigation, name, colors, logos. |
+| `docs/docs.json` | Configuration for navigation and site metadata. |
 | `docs/images/` | Images referenced from your pages. |
 | `src/` | Astro layouts, components, and styles you can customize. |
 
@@ -49,8 +46,8 @@ Your content lives in the `docs/` directory:
 
     ```mdx docs/my-page.mdx
     ---
-    title: My page
-    description: A brief description of this page
+    title: "My page"
+    description: "A brief description of this page"
     ---
 
     Write your content here using MDX.
@@ -74,7 +71,6 @@ Your content lives in the `docs/` directory:
 
 ## Deploy
 
-{/* TODO: Add specific deploy instructions once a recommended hosting path is established (Vercel, Netlify, etc.). */}
 Push your changes to GitHub. If your hosting is configured to build on push, your site deploys automatically.
 
 To build the site locally:
