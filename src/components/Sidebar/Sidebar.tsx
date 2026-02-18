@@ -26,9 +26,7 @@ export default function Sidebar({
       <nav className="relative lg:text-sm lg:leading-6 flex-1 overflow-y-auto pr-8 pb-10">
         <div className="sticky top-0 h-8 z-5 bg-linear-to-b from-white" />
 
-        {anchors.length > 0 && (
-          <Anchors anchors={anchors} />
-        )}
+        {anchors.length > 0 && <Anchors anchors={anchors} />}
 
         <SidebarEntries
           entries={entries}

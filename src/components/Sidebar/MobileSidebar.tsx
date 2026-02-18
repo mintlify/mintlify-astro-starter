@@ -77,7 +77,11 @@ export function MobileSidebar({
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 pt-6 pb-4">
-            <img src="/logo/light.svg" alt="Mint Starter Kit" className="h-7 w-auto" />
+            <img
+              src="/logo/light.svg"
+              alt="Mint Starter Kit"
+              className="h-7 w-auto"
+            />
           </div>
 
           <nav className="flex-1 overflow-y-auto pt-4 pb-8">

@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { cn } from '@mintlify/components';
+import {
+  getAssistantOpen,
+  subscribeToAssistant,
+} from '../utils/assistantState';
 
 export interface TocHeading {
   depth: number;
@@ -17,6 +21,9 @@ export default function TableOfContents({
     [headings],
   );
   const [activeSlug, setActiveSlug] = useState('');
+  const [isAssistantOpen, setIsAssistantOpen] = useState(() =>
+    getAssistantOpen(),
+  );
 
   const handleScroll = useCallback(() => {
     const headingElements = tocHeadings
@@ -47,7 +54,13 @@ export default function TableOfContents({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  if (tocHeadings.length === 0) return null;
+  useEffect(() => {
+    return subscribeToAssistant(() => {
+      setIsAssistantOpen(getAssistantOpen());
+    });
+  }, []);
+
+  if (tocHeadings.length === 0 || isAssistantOpen) return null;
 
   return (
     <div className="hidden xl:flex flex-col sticky top-38 h-[calc(100vh-9.5rem)] w-80 shrink-0 pl-10">

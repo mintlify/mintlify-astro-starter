@@ -7,6 +7,7 @@ import { AssistantEmptyState } from './AssistantEmptyState';
 import { AssistantHistoryList } from './AssistantHistoryList';
 import { AssistantTextArea } from './AssistantTextArea';
 import { ASSISTANT_EVENTS } from './events';
+import { setAssistantOpen } from '../../utils/assistantState';
 
 const CHAT_SHEET_MIN_WIDTH = 368;
 const CHAT_SHEET_MAX_WIDTH = 576;
@@ -64,6 +65,10 @@ function AssistantSheetClient() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    setAssistantOpen(isOpen);
+  }, [isOpen]);
 
   useEffect(() => {
     const handleToggle = () => {
