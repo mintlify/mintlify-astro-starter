@@ -64,7 +64,10 @@ const page = resolvePageData(docsConfig as DocsConfig, {
           />
         </div>
 
-        <main class="flex-1 min-w-0 py-10">
+        <main
+          class="flex-1 min-w-0 py-10 transition-[padding] duration-200"
+          id="main-content"
+        >
           <article class="w-full">
             <header class="leading-none pb-8">
               {
@@ -114,3 +117,20 @@ const page = resolvePageData(docsConfig as DocsConfig, {
     </div>
   </div>
 </Layout>
+
+<script>
+  import {
+    subscribeToAssistant,
+    getAssistantOpen,
+  } from '../utils/assistantState';
+
+  function updateMainPadding() {
+    const main = document.getElementById('main-content');
+    if (!main) return;
+
+    const isOpen = getAssistantOpen();
+    main.style.paddingRight = isOpen ? '32px' : '0';
+  }
+  updateMainPadding();
+  subscribeToAssistant(updateMainPadding);
+</script>

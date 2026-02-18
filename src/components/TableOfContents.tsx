@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { cn } from '@mintlify/components';
-import { ASSISTANT_EVENTS } from './Assistant/events';
+import {
+  getAssistantOpen,
+  subscribeToAssistant,
+} from '../utils/assistantState';
 
 export interface TocHeading {
   depth: number;
@@ -18,7 +21,9 @@ export default function TableOfContents({
     [headings],
   );
   const [activeSlug, setActiveSlug] = useState('');
-  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(() =>
+    getAssistantOpen(),
+  );
 
   const handleScroll = useCallback(() => {
     const headingElements = tocHeadings
@@ -50,19 +55,9 @@ export default function TableOfContents({
   }, [handleScroll]);
 
   useEffect(() => {
-    const handleToggle = () => setIsAssistantOpen((prev) => !prev);
-    const handleOpen = () => setIsAssistantOpen(true);
-    const handleClose = () => setIsAssistantOpen(false);
-
-    window.addEventListener(ASSISTANT_EVENTS.TOGGLE, handleToggle);
-    window.addEventListener(ASSISTANT_EVENTS.OPEN, handleOpen);
-    window.addEventListener(ASSISTANT_EVENTS.CLOSE, handleClose);
-
-    return () => {
-      window.removeEventListener(ASSISTANT_EVENTS.TOGGLE, handleToggle);
-      window.removeEventListener(ASSISTANT_EVENTS.OPEN, handleOpen);
-      window.removeEventListener(ASSISTANT_EVENTS.CLOSE, handleClose);
-    };
+    return subscribeToAssistant(() => {
+      setIsAssistantOpen(getAssistantOpen());
+    });
   }, []);
 
   if (tocHeadings.length === 0 || isAssistantOpen) return null;
