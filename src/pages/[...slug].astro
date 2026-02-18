@@ -39,14 +39,10 @@ const page = resolvePageData(docsConfig as DocsConfig, {
 <Layout
   title={doc.data.title || doc.id}
   description={doc.data.description}
-  favicons={page.favicons}
 >
   <div>
     <Header
-      logo={docsConfig.logo?.light}
-      name={docsConfig.name}
       tabs={page.tabs}
-      primaryColor={docsConfig.colors?.primary}
       pageTitle={doc.data.title || doc.id}
       groupName={page.groupName}
     />
@@ -54,11 +50,8 @@ const page = resolvePageData(docsConfig as DocsConfig, {
     <MobileSidebar
       navigation={page.navigation}
       currentPath={currentPath}
-      logo={docsConfig.logo?.light}
-      siteName={docsConfig.name}
       tabs={page.tabs || []}
       anchors={page.anchors}
-      primaryColor={docsConfig.colors?.primary}
       client:load
     />
 
@@ -69,7 +62,6 @@ const page = resolvePageData(docsConfig as DocsConfig, {
             navigation={page.navigation}
             currentPath={currentPath}
             anchors={page.anchors}
-            primaryColor={docsConfig.colors?.primary}
             client:load
           />
         </div>
@@ -80,10 +72,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
               <div class="mt-0.5 space-y-2.5">
                 {
                   page.groupName && (
-                    <p
-                      class="text-sm font-semibold"
-                      style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
-                    >
+                    <p class="text-sm font-semibold text-(--primary)">
                       {page.groupName}
                     </p>
                   )
@@ -110,7 +99,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
               />
             </div>
           </article>
-          <SiteFooter socials={docsConfig.footer?.socials} client:load />
+          <SiteFooter/>
         </main>
 
         <TableOfContents headings={headings} client:load />
