@@ -14,8 +14,10 @@ export function PageContextMenu({
   options: configOptions,
   className,
 }: PageContextMenuProps) {
+  const markdownPath = pathname === '/' ? '/index' : pathname;
+
   const { options: rawOptions } = useContextualOptions({
-    pathname,
+    pathname: markdownPath,
     options: configOptions,
   });
   const [isOpen, setIsOpen] = useState(false);

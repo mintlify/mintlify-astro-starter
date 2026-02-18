@@ -57,7 +57,6 @@ export function useContextualOptions({
       let prompt = `Read from ${cleanUrl}.md so I can ask questions about it.`;
 
       if (provider === 'chatgpt') {
-        prompt = `Read from ${cleanUrl} so I can ask questions about it.`;
         window.open(
           `https://chat.openai.com/?hints=search&q=${encodeURIComponent(prompt)}`,
           '_blank',
