@@ -8,7 +8,6 @@ interface SidebarProps {
   navigation: NavNode;
   currentPath: string;
   anchors?: AnchorItem[];
-  primaryColor?: string;
   sidebarItemStyle?: SidebarItemStyle;
   showDivider?: boolean;
 }
@@ -17,7 +16,6 @@ export default function Sidebar({
   navigation,
   currentPath,
   anchors = [],
-  primaryColor,
   sidebarItemStyle = 'container',
   showDivider = false,
 }: SidebarProps) {
@@ -29,7 +27,7 @@ export default function Sidebar({
         <div className="sticky top-0 h-8 z-5 bg-linear-to-b from-white" />
 
         {anchors.length > 0 && (
-          <Anchors anchors={anchors} primaryColor={primaryColor} />
+          <Anchors anchors={anchors} />
         )}
 
         <SidebarEntries

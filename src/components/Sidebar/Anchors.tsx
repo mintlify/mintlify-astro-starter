@@ -3,10 +3,9 @@ import type { AnchorItem } from './types';
 
 interface AnchorsProps {
   anchors: AnchorItem[];
-  primaryColor?: string;
 }
 
-export function Anchors({ anchors, primaryColor }: AnchorsProps) {
+export function Anchors({ anchors }: AnchorsProps) {
   return (
     <ul className="list-none mb-6 pl-4">
       {anchors.map((anchor) => (
@@ -15,7 +14,7 @@ export function Anchors({ anchors, primaryColor }: AnchorsProps) {
             href={anchor.href}
             name={anchor.name}
             icon={anchor.icon}
-            color={anchor.color ?? primaryColor}
+            color={anchor.color}
           />
         </li>
       ))}

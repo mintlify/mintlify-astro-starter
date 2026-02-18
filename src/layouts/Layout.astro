@@ -1,18 +1,14 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import type { Favicons } from '@mintlify/astro/helpers';
 import { AssistantSheet, AssistantProvider } from '../components/Assistant';
-import docsConfig from '../../docs/docs.json';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
-  favicons?: Favicons;
 }
 
-const { title = 'Mintlify Docs', description, favicons } = Astro.props;
-const primaryColor = docsConfig.colors?.primary;
+const { title = 'Mintlify Docs', description } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,24 +22,13 @@ const primaryColor = docsConfig.colors?.primary;
       href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap"
       rel="stylesheet"
     />
-    {
-      favicons?.icons &&
-        favicons.icons.map((icon) => (
-          <link
-            rel={icon.rel}
-            type={icon.type}
-            sizes={icon.sizes}
-            href={icon.href}
-            media={icon.media}
-          />
-        ))
-    }
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <ClientRouter />
   </head>
-  <body style={primaryColor ? `--primary: ${primaryColor};` : undefined}>
+  <body style="--primary: #16A34A;">
     <AssistantProvider client:only="react" />
     <div class="flex antialiased">
       <div class="flex-1 min-w-0 max-w-[1400px] mx-auto w-full">
