@@ -1,12 +1,9 @@
 ---
-title: Customize your site
-description: Understand what docs.json controls and how to style your custom frontend
-keywords: customization, docs.json, navigation, styling, astro, layout
+title: "Customize your site"
+description: "Understand what docs.json controls and how to style your custom frontend"
 ---
 
-This starter uses a custom Astro frontend with Mintlify's content tools and components. Because the frontend is yours, not every `docs.json` configuration option from the [full Mintlify reference](https://mintlify.com/docs/settings) applies here.
-
-{/* TODO: Confirm with engineering exactly which docs.json properties @mintlify/astro consumes. Update this page with specifics once known. */}
+This starter uses a custom Astro frontend with Mintlify's content tools and components. Because the frontend is yours, not every `docs.json` configuration option from the [full Mintlify reference](https://mintlify.com/docs/organize/settings) applies.
 
 **What `docs.json` controls:** Navigation structure, page metadata, and content configuration.
 
@@ -18,7 +15,7 @@ This starter uses a custom Astro frontend with Mintlify's content tools and comp
 
 ## Navigation
 
-Navigation is the primary thing `docs.json` manages. It's defined under `navigation.tabs`, where each tab contains groups and each group lists pages:
+Construct the navigation for your documentation in `docs.json`.
 
 ```json docs/docs.json
 {
@@ -41,11 +38,11 @@ Navigation is the primary thing `docs.json` manages. It's defined under `navigat
 }
 ```
 
-Page paths are relative to the `docs/` directory without the `.mdx` extension. Use forward slashes for nested pages (for example, `guides/example`).
+Page paths are relative to the `docs/` directory without the `.mdx` extension. Use forward slashes for nested pages. For example, `guides/example`.
 
 ## Site metadata
 
-You can set a site name and other metadata in `docs.json`:
+Set a site name and other metadata in `docs.json`.
 
 ```json docs/docs.json
 {
