@@ -122,7 +122,7 @@ export function useContextualOptions({
   );
 
   const options = useMemo(() => {
-    if (!configOptions || configOptions.length === 0) return [];
+    if (!configOptions || configOptions.length === 0) return allOptions;
 
     return configOptions
       .map((optionId) => allOptions.find((o) => o.id === optionId))

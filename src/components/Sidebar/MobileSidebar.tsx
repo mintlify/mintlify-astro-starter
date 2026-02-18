@@ -10,11 +10,8 @@ import { TabsDropdown } from './TabsDropdown';
 interface MobileSidebarProps {
   navigation: NavNode;
   currentPath: string;
-  logo?: string;
-  siteName?: string;
   tabs?: TabInfo[];
   anchors?: AnchorItem[];
-  primaryColor?: string;
   sidebarItemStyle?: SidebarItemStyle;
   showDivider?: boolean;
 }
@@ -22,11 +19,8 @@ interface MobileSidebarProps {
 export function MobileSidebar({
   navigation,
   currentPath,
-  logo,
-  siteName,
   tabs = [],
   anchors = [],
-  primaryColor,
   sidebarItemStyle = 'container',
   showDivider = false,
 }: MobileSidebarProps) {
@@ -83,13 +77,11 @@ export function MobileSidebar({
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 pt-6 pb-4">
-            {logo ? (
-              <img src={logo} alt={siteName || 'Logo'} className="h-7 w-auto" />
-            ) : (
-              <span className="font-semibold text-gray-900">
-                {siteName || 'Menu'}
-              </span>
-            )}
+            <img
+              src="/logo/light.svg"
+              alt="Mint Starter Kit"
+              className="h-7 w-auto"
+            />
           </div>
 
           <nav className="flex-1 overflow-y-auto pt-4 pb-8">
@@ -101,7 +93,7 @@ export function MobileSidebar({
 
             {anchors.length > 0 && (
               <div className="px-2">
-                <Anchors anchors={anchors} primaryColor={primaryColor} />
+                <Anchors anchors={anchors} />
               </div>
             )}
 

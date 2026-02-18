@@ -5,15 +5,12 @@ import AssistantBar from './AssistantBar';
 import { MobileActionButtons, MobileNavToggle } from './MobileHeaderActions';
 
 interface Props {
-  logo?: string;
-  name?: string;
   tabs: TabInfo[] | null;
-  primaryColor?: string;
   pageTitle?: string;
   groupName?: string;
 }
 
-const { logo, name, tabs, primaryColor, pageTitle, groupName } = Astro.props;
+const { tabs, pageTitle, groupName } = Astro.props;
 const usingTabs = tabs && tabs.length > 0;
 ---
 
@@ -34,7 +31,7 @@ const usingTabs = tabs && tabs.length > 0;
           >
             <div class="flex items-center shrink-0 lg:flex-1">
               <a href="/" class="flex items-center shrink-0">
-                <img src={logo} alt={name} class="h-7" />
+                <img src="/logo/light.svg" alt="Mint Starter Kit" class="h-7" />
               </a>
             </div>
             <div
@@ -78,13 +75,10 @@ const usingTabs = tabs && tabs.length > 0;
                   <div
                     class:list={[
                       'absolute bottom-0 h-[1.5px] w-full left-0',
-                      tab.isActive ? '' : 'group-hover:bg-gray-200',
-                    ]}
-                    style={
                       tab.isActive
-                        ? `background-color: ${primaryColor || '#10b981'}`
-                        : undefined
-                    }
+                        ? 'bg-(--primary)'
+                        : 'group-hover:bg-gray-200',
+                    ]}
                   />
                 </a>
               ))}

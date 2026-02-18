@@ -37,17 +37,10 @@ const page = resolvePageData(docsConfig as DocsConfig, {
 });
 ---
 
-<Layout
-  title={doc.data.title || doc.id}
-  description={doc.data.description}
-  favicons={page.favicons}
->
+<Layout title={doc.data.title || doc.id} description={doc.data.description}>
   <div>
     <Header
-      logo={docsConfig.logo?.light}
-      name={docsConfig.name}
       tabs={page.tabs}
-      primaryColor={docsConfig.colors?.primary}
       pageTitle={doc.data.title || doc.id}
       groupName={page.groupName}
     />
@@ -55,11 +48,8 @@ const page = resolvePageData(docsConfig as DocsConfig, {
     <MobileSidebar
       navigation={page.navigation}
       currentPath={currentPath}
-      logo={docsConfig.logo?.light}
-      siteName={docsConfig.name}
       tabs={page.tabs || []}
       anchors={page.anchors}
-      primaryColor={docsConfig.colors?.primary}
       client:load
     />
 
@@ -70,44 +60,39 @@ const page = resolvePageData(docsConfig as DocsConfig, {
             navigation={page.navigation}
             currentPath={currentPath}
             anchors={page.anchors}
-            primaryColor={docsConfig.colors?.primary}
             client:load
           />
         </div>
 
         <main class="flex-1 min-w-0 py-10">
           <article class="w-full">
-            <header class="mb-8 pb-6">
+            <header class="leading-none pb-8">
               {
                 page.groupName && (
-                  <p
-                    class="text-sm font-semibold mb-2"
-                    style={`color: ${docsConfig.colors?.primary ?? '#16A34A'}`}
-                  >
+                  <p class="text-sm font-semibold text-(--primary) mt-0.5">
                     {page.groupName}
                   </p>
                 )
               }
               <div
-                class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-3"
+                class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mt-2.5"
               >
-                <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-2.5">
                   <h1
-                    class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900"
+                    class="text-2xl sm:text-3xl text-gray-900 tracking-tight font-bold wrap-anywhere"
                   >
                     {doc.data.title || doc.id}
                   </h1>
                   {
                     doc.data.description && (
-                      <p class="text-lg leading-relaxed max-w-2xl">
-                        {doc.data.description}
-                      </p>
+                      <div class="text-lg prose prose-gray max-w-2xl">
+                        <p>{doc.data.description}</p>
+                      </div>
                     )
                   }
                 </div>
                 <PageContextMenu
                   pathname={currentPath}
-                  options={docsConfig.contextual?.options}
                   className="sm:mt-0"
                   client:load
                 />
@@ -121,7 +106,7 @@ const page = resolvePageData(docsConfig as DocsConfig, {
               />
             </div>
           </article>
-          <SiteFooter socials={docsConfig.footer?.socials} client:load />
+          <SiteFooter />
         </main>
 
         <TableOfContents headings={headings} client:load />
