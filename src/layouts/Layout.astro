@@ -28,7 +28,7 @@ const { title = 'Mintlify Docs', description } = Astro.props;
     {description && <meta name="description" content={description} />}
     <ClientRouter />
   </head>
-  <body style="--primary: #16A34A;">
+  <body>
     <AssistantProvider client:only="react" />
     <div class="flex antialiased">
       <div class="flex-1 min-w-0 max-w-[1400px] mx-auto w-full">
