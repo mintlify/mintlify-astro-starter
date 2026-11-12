@@ -16,6 +16,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "start": "node ./dist/server/entry.mjs",
     "astro": "astro",
     "format": "prettier --write .",
     "lint": "eslint .",
@@ -24,6 +25,7 @@
   "dependencies": {
     "@ai-sdk/react": "^3.0.70",
     "@astrojs/mdx": "^4.3.1",
+    "@astrojs/node": "^9.5.3",
     "@astrojs/react": "^4.4.2",
     "@mintlify/astro": "^0.1.9",
     "@mintlify/components": "^1.0.5",

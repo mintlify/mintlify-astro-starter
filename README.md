@@ -36,12 +36,12 @@ If you have a [Pro or Enterprise plan](https://mintlify.com/pricing), create a `
 
 ```bash
 PUBLIC_MINTLIFY_SUBDOMAIN=your-subdomain
-PUBLIC_MINTLIFY_ASSISTANT_KEY=your-assistant-api-key
+MINTLIFY_ASSISTANT_KEY=your-assistant-api-key
 ```
 
 **Subdomain** — the domain name portion of your dashboard URL. For example, if your URL is `https://dashboard.mintlify.com/org-name/domain-name`, your subdomain is `domain-name`.
 
-**Assistant API key** — generate one on the [API keys](https://dashboard.mintlify.com/settings/organization/api-keys) page of your dashboard. It starts with `mint_dsc_`.
+**Assistant API key** — generate one on the [API keys](https://dashboard.mintlify.com/settings/organization/api-keys) page of your dashboard. It starts with `mint_dsc_`. Only the server reads this key. Don't add the `PUBLIC_` prefix, which bundles the value into client code that anyone can read.
 
 ### 4. Install and run
 
@@ -65,7 +65,8 @@ Your site is now running at `http://localhost:4321`.
 │       └── example.mdx
 ├── src/
 │   ├── pages/
-│   │   └── [...slug].astro  # Catch-all route for MDX pages
+│   │   ├── [...slug].astro  # Catch-all route for MDX pages
+│   │   └── api/             # Server routes for search and the assistant
 │   ├── layouts/
 │   │   └── Layout.astro     # Root HTML layout
 │   ├── components/
@@ -93,17 +94,28 @@ The `@mintlify/astro` integration connects three parts: the Astro build system, 
 The integration is configured in `astro.config.mjs`:
 
 ```javascript
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import { mintlify } from '@mintlify/astro';
+import node from '@astrojs/node';
 
 export default defineConfig({
+  adapter: node({ mode: 'standalone' }),
+  env: {
+    schema: {
+      MINTLIFY_ASSISTANT_KEY: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+    },
+  },
   integrations: [mintlify({ docsDir: './docs' }), react(), mdx()],
 });
 ```
 
-At build time, the integration reads `docs.json` and your MDX files, processes them into `.mintlify/docs/`, and Astro's content collections pick them up.
+At build time, the integration reads `docs.json` and your MDX files, processes them into `.mintlify/docs/`, and Astro's content collections pick them up. Pages are prerendered to static HTML. The Node adapter serves them and runs the API routes for search and the assistant.
 
 ### Content
 
@@ -133,10 +145,33 @@ You have full control over the presentation layer. Key files to customize:
 
 > Requires a [Pro or Enterprise plan](https://mintlify.com/pricing).
 
-The starter includes search and assistant components that connect to Mintlify's APIs. Both require the `PUBLIC_MINTLIFY_SUBDOMAIN` and `PUBLIC_MINTLIFY_ASSISTANT_KEY` environment variables.
+The starter includes search and assistant components that connect to Mintlify's APIs. Both require the `PUBLIC_MINTLIFY_SUBDOMAIN` and `MINTLIFY_ASSISTANT_KEY` environment variables.
 
-- **Search** — the `SearchBar` component in `src/components/SearchBar.tsx` queries the Mintlify search API.
-- **Assistant** — the `Assistant` component in `src/components/Assistant/` provides an AI chat interface that answers questions using your documentation content.
+- **Search** — the `SearchBar` component in `src/components/SearchBar.tsx` calls `/api/search`.
+- **Assistant** — the `Assistant` component in `src/components/Assistant/` provides an AI chat interface that answers questions using your documentation content. It calls `/api/assistant`.
+
+The browser never calls Mintlify's APIs directly. The server routes in `src/pages/api/` add your assistant API key to each request and forward it to Mintlify, so the key stays on the server. The routes also set the request options, such as filters, so visitors can't change them.
+
+Anyone who can reach your site can call these routes, and each call uses your assistant credits, the same as the assistant on a Mintlify-hosted site.
+
+## Deploy
+
+The starter uses the [Node adapter](https://docs.astro.build/en/guides/integrations-guide/node/) in standalone mode, so it deploys anywhere that runs a Node.js server. Build the site and start the server:
+
+```bash
+npm run build
+npm run start
+```
+
+Set `PUBLIC_MINTLIFY_SUBDOMAIN` before you build, and set `MINTLIFY_ASSISTANT_KEY` in your host's environment variables. The server reads the key at runtime, so it isn't written into the build output.
+
+The production server doesn't read your `.env` file. To test the production build locally with the values in `.env`, run:
+
+```bash
+node --env-file=.env ./dist/server/entry.mjs
+```
+
+To deploy to a host such as Vercel, Netlify, or Cloudflare, replace the Node adapter with that host's [Astro adapter](https://docs.astro.build/en/guides/on-demand-rendering/). Keep an adapter that supports server routes. Without one, search and the assistant don't work.
 
 ## Available scripts
 
@@ -145,6 +180,7 @@ The starter includes search and assistant components that connect to Mintlify's 
 | `npm run dev`      | Start the development server         |
 | `npm run build`    | Build the site for production        |
 | `npm run preview`  | Preview the production build locally |
+| `npm run start`    | Start the production server          |
 | `npm run format`   | Format code with Prettier            |
 | `npm run lint`     | Run ESLint                           |
 | `npm run lint:fix` | Run ESLint with auto-fix             |
