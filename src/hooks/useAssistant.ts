@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import useMessagesStore from './useMessagesStore';
 
 const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
-const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
 
 export const useAssistant = () => {
   const isClearedRef = useRef(false);
@@ -22,10 +21,8 @@ export const useAssistant = () => {
   const { messages, sendMessage, status, setMessages, stop } = useChat({
     id: `assistant-${SUBDOMAIN}`,
     transport: new DefaultChatTransport({
-      api: `https://api.mintlify.com/discovery/v2/assistant/${SUBDOMAIN}/message`,
-      headers: {
-        ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
-      },
+      // src/pages/api/assistant.ts adds the API key and forwards the request.
+      api: '/api/assistant',
       prepareSendMessagesRequest: ({ messages }) => {
         const storedKey = sessionStorage.getItem('assistant-threadKey');
         const storedId = sessionStorage.getItem('assistant-threadId');
@@ -33,9 +30,6 @@ export const useAssistant = () => {
         return {
           body: {
             messages,
-            fp: 'anonymous',
-            retrievalPageSize: 5,
-            context: [],
             ...(storedId && { threadId: storedId }),
             ...(storedKey && { threadKey: storedKey }),
           },

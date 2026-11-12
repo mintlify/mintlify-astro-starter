@@ -28,9 +28,6 @@ function SearchEventListener() {
   return null;
 }
 
-const SUBDOMAIN = import.meta.env.PUBLIC_MINTLIFY_SUBDOMAIN;
-const API_KEY = import.meta.env.PUBLIC_MINTLIFY_ASSISTANT_KEY;
-
 const normalizePath = (path: string | undefined): string => {
   if (!path) return '/';
 
@@ -73,23 +70,12 @@ export function SearchBar() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        `https://api.mintlify.com/discovery/v1/search/${SUBDOMAIN}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(API_KEY && { Authorization: `Bearer ${API_KEY}` }),
-          },
-          body: JSON.stringify({
-            query: searchQuery,
-            pageSize: 10,
-            filter: {
-              language: 'en',
-            },
-          }),
-        },
-      );
+      // src/pages/api/search.ts adds the API key and forwards the request.
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery }),
+      });
 
       if (!response.ok) {
         throw new Error('Search failed');
